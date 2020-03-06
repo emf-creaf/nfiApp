@@ -1,0 +1,137 @@
+/*
+Custom css for NFI app.
+Citations:
+  - input, div.outer, #cite and #controls taken from superzip shiny example
+    (https://github.com/rstudio/shiny-examples/blob/master/063-superzip-example/styles.css)
+*/
+
+input[type="number"] {
+  max-width: 80%;
+}
+
+/* map container */
+div.mapouter {
+  position: fixed;
+  top: 41px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* map legend */
+div.info.legend.leaflet-control{
+  font-size: 12px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* NA legend out */
+.na_out i {
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  opacity: 0.7;
+  display: none;
+  vertical-align: top;
+  /*For IE 7*/
+  zoom: 1;
+  *display: inline;
+}
+
+.circles i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 4px;
+  opacity: 0.7;
+  display: inline-block;
+  vertical-align: top;
+  /*For IE 7*/
+  zoom: 1;
+  *display: inline;
+}
+
+/*
+div > i {
+  position: relative;
+  float: right;
+}
+*/
+
+/* table container */
+div.tableinner {
+  position: fixed;
+  top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 15px 50px 50px 50px;
+  overflow: auto;
+  background-color: #DDDDDD;
+}
+
+div.table_container {
+  overflow-y: scroll;
+}
+
+/* Position and style citation */
+#cite {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  font-size: 12px;
+}
+
+/* debug */
+#debug {
+  z-index: 1500;
+}
+
+/* Controls */
+#dataControls {
+  /* Appearance */
+  /* background-color: #bdc3c7; */
+  padding: 0 20px 20px 20px;
+  cursor: move;
+  border-radius: 8px;
+  /* Fade out while not hovering */
+  opacity: 0.65;
+  zoom: 0.9;
+  transition: opacity 1s 100ms;
+  z-index: 1000;
+}
+#dataControls:hover {
+  /* Fade in while hovering */
+  opacity: 0.95;
+  transition-delay: 0;
+}
+
+#infoPanel {
+  /* background-color: #bdc3c7; */
+  padding: 0 20px 20px 20px;
+  cursor: move;
+  border-radius: 8px;
+  zoom: 0.9;
+  z-index: 1500;
+}
+
+#tableTabHeader {
+  background-color: var(--main-dark-color);
+  padding: 6px 10px 6px 10px;
+  border-radius: 8px;
+  color: var(--main-bg-color);
+}
+
+/* modal lg size refactoring */
+.modal-body {
+  min-height: 800px;
+}
+
+#download_table_modal > #shiny-modal > .modal-dialog > .modal-content > .modal-body {
+  min-height: 210px;
+}
+
+.modal-lg {
+  width: 1200px;
+}

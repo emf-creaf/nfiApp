@@ -1,0 +1,218 @@
+/* CORPORATIVE IMAGE */
+/*
+
+Esto es una tentativa de establecer una paleta de colores basada en los colores del
+CREAF y del CTFC e uniformizar el estilo de las apps
+
+This is a try to establish a color palette based on the main colors of CREAF and CTFC, and
+uniformize the apps style
+
+*/
+
+:root {
+  --main-bg-color: #c8cac8;
+  --main-dark-color: #001629;
+  --main-selected-color: #448714;
+  --main-not-focused-color: #647a8d;
+  --main-button-color: #15351e;
+  --main-button-hover-color: #76f7a7
+}
+
+/* language selector */
+.navbar-form {
+  margin-top: 8px;
+  margin-bottom: 0px;
+}
+
+.navbar-form > .form-group {
+  position: absolute;
+  right: 25px;
+}
+
+.flag-lang {
+  display: inline;
+  vertical-align: middle;
+  padding-left: 10px;
+}
+
+.flag-image {
+  border-radius: 50%;
+}
+
+/* navbar */
+.navbar-static-top {
+  background-color: var(--main-dark-color);
+  border: 0px;
+}
+
+.navbar-default .navbar-brand {
+  color: var(--main-bg-color);
+}
+
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active>a:hover {
+  background-color: var(--main-selected-color);
+  color: var(--main-bg-color);
+}
+
+.navbar-default .navbar-nav>li>a,
+.navbar-default .navbar-nav>li>a:hover {
+  background-color: var(--main-not-focused-color);
+  border: 0px;
+  color: var(--main-bg-color);
+}
+
+/* main panel tabs & pill tabs */
+
+.tabbable .nav-tabs>li>a,
+.tabbable .nav-pills>li>a {
+  background-color: var(--main-not-focused-color);
+  border: 0px;
+  color: var(--main-bg-color);
+}
+
+.tabbable .nav-tabs>.active>a,
+.tabbable .nav-tabs>.active>a:focus,
+.tabbable .nav-tabs>.active>a:hover,
+.tabbable .nav-pills>.active>a,
+.tabbable .nav-pills>.active>a:focus,
+.tabbable .nav-pills>.active>a:hover {
+  background-color: var(--main-selected-color);
+  color: var(--main-bg-color);
+  border: 0px;
+}
+
+/* well panels and sidebars */
+.well {
+  background-color: var(--main-dark-color);
+  color: var(--main-bg-color);
+  border: 0px;
+}
+
+/* lang input and inputs as buttons*/
+.dropdown-menu,
+.dropdown-menu>.selected>a,
+.dropdown-menu>li>a {
+  background-color: var(--main-bg-color);
+}
+
+.dropdown-menu>.active>a {
+  background-color: var(--main-bg-color);
+  color: #333;
+}
+
+.dropdown-menu>.active>a:hover {
+  background-color: var(--main-selected-color);
+  color: #333;
+}
+
+.dropdown-menu>li>a:hover {
+  background-color: var(--main-selected-color);
+}
+
+button.btn.dropdown-toggle.btn-default {
+  background-color: var(--main-bg-color);
+  border-color: var(--main-bg-color);
+  color: #333;
+}
+
+/* inputs */
+.form-control, .datepicker-dropdown, .datepicker {
+  background-color: var(--main-bg-color);
+  border: 0px;
+}
+
+.selectize-dropdown, .selectize-input.full, .optgroup-header, .option, .selectize-input {
+  background-color: var(--main-bg-color) !important;
+  border: 0px;
+}
+
+.option:hover, .option:focus {
+  background-color: #448714 !important;
+  border: 0px;
+}
+
+
+/* body background */
+body {
+  background-color: var(--main-bg-color);
+}
+
+/* buttons */
+.btn-default, .btn-default:focus,
+.swal-button, .swal-button:focus {
+  background-color: var(--main-button-color);
+  border-color: var(--main-button-color);
+  color: var(--main-bg-color);
+}
+
+.bttn, .bttn:focus {
+  background-color: var(--main-button-color) !important;
+  border-color: var(--main-button-color) !important;
+  color: var(--main-bg-color) !important;
+}
+
+.btn-default:hover, .btn-default:active,
+.swal-button:hover, .swal-button:active {
+  background-color: var(--main-button-hover-color);
+  border-color: var(--main-button-hover-color);
+  color: var(--main-not-focused-color);
+}
+
+.bttn:hover, .bttn:active {
+  background-color: var(--main-button-hover-color) !important;
+  border-color: var(--main-button-hover-color) !important;
+  color: var(--main-not-focused-color) !important;
+}
+
+/* modals */
+.modal-content, .swal-modal {
+  background-color: var(--main-dark-color);
+  border-color: var(--main-dark-color);
+  color: var(--main-bg-color);
+}
+
+.swal-title, .swal-text {
+  color: var(--main-bg-color);
+}
+
+/* panels */
+
+.panel, .panel-body {
+  background-color: var(--main-dark-color);
+  border-color: var(--main-dark-color);
+  color: var(--main-bg-color);
+}
+
+.panel-default>.panel-heading {
+  background-color: var(--main-selected-color);
+  border-color: var(--main-selected-color);
+  color: var(--main-bg-color);
+}
+
+input.form-control {
+  background-color: var(--main-bg-color) !important;
+}
+
+/* shinyWidgets */
+
+.btn-lfc_radiogroupbuttons {
+  background-color: var(--main-not-focused-color);
+  color: var(--main-bg-color);
+}
+
+.btn-lfc_radiogroupbuttons.active {
+  background-color: var(--main-selected-color);
+  color: var(--main-bg-color);
+}
+
+/* formattable thingys */
+.lfc_formattable th {
+  display: none;
+  border: none;
+}
+
+.lfc_formattable>tbody>tr>td {
+  border: none;
+}
