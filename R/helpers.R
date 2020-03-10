@@ -15,24 +15,16 @@ navbarPageWithInputs <- function(..., inputs) {
 text_translate <- function(text, lang, texts_thes) {
 
   text[is.na(text)] <- 'NA_'
-
-  text_df <- texts_thes %>%
-    dplyr::select(dplyr::one_of('text_id', glue::glue("text_{lang}"))) %>%
-    dplyr::filter(text_id %in% text) %>%
-    # dplyr::collect() %>%
-    as.data.frame()
-
-  # if no translation is found return the original text
-  if (nrow(text_df) < 1) {
+  res <- texts_thes[
+    texts_thes$text_id == text, as.character(glue::glue('text_{lang}')),
+    drop = TRUE
+  ]
+  if (length(res) < 1) {
     message(glue::glue("{text} not found in thesaurus"))
     return(text)
+  } else {
+    return(res)
   }
-
-  # return the translation for the selected language
-  text %>%
-    purrr::map_chr(
-      ~ text_df[text_df$text_id == .x, glue::glue('text_{lang}')]
-    )
 }
 
 # main table (results) to look at
@@ -120,8 +112,7 @@ translate_var <- function(
       dplyr::select(-dplyr::one_of(
         'var_table'
       )) %>%
-      dplyr::distinct() %>%
-      as.data.frame()
+      dplyr::distinct()
   }
 
   if (isTRUE(need_order)) {
@@ -133,7 +124,9 @@ translate_var <- function(
       order()
 
     ordered_res <- vars[order_of_vars] %>%
-      magrittr::set_names(var_lookup_table[order_of_vars, 'var_name'])
+      magrittr::set_names(
+        var_lookup_table[order_of_vars, 'var_name', drop = TRUE]
+      )
 
     return(ordered_res)
   } else {
