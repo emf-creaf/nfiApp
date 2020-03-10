@@ -13,9 +13,8 @@ mod_filtersUI <- function(id) {
   # UI ####
   shiny::tagList(
     shiny::br(),
-    shiny::uiOutput(
-      ns('mod_filters_container')
-    )
+    shiny::uiOutput(ns('variable_selector_panel')),
+    shiny::uiOutput(ns('proper_filter_panel'))
   )
 }
 
@@ -86,8 +85,8 @@ mod_filters <- function(
     ))
   })
 
-  # renderUI ####
-  output$mod_filters_container <- shiny::renderUI({
+  # variable_selector_panel ####
+  output$variable_selector_panel <- shiny::renderUI({
     # ns
     ns <- session$ns
 
@@ -176,5 +175,28 @@ mod_filters <- function(
         )
       ) # end of filter categories row
     ) # end of tagList
+  }) # end of variable_selector_panel
+
+  variables_to_filter_by <- shiny::reactive({
+    browser()
+    c(input$fil_res_vars, input$fil_clim_vars, input$fil_plot_vars)
   })
+
+  # proper_filter_panel ####
+  output$proper_filter_panel <- shiny::renderUI({
+    ns <- session$ns
+    # create the inputs for each variable selected
+    vars_to_filter_by <- variables_to_filter_by()
+
+    # tagList
+    shiny::tagList(
+      shiny::hr(),
+      shiny::tags$strong(text_translate('filter_the_data', lang(), texts_thes)),
+      shiny::br(), shiny::br(),
+      # filters_inputs()
+    )
+
+
+
+  }) # end of proper_filter_panel
 }
