@@ -86,7 +86,7 @@ nfi_app <- function() {
             # this is gonna be a tabsetPanel, for data selection, filtering and
             # viz
             shiny::tabsetPanel(
-              id = 'sidebar_tabset', type = 'pills',
+              id = 'sidebar_tabset', type = 'tabs',
               # TODO transform titles in ui's for translations
               # data tab
               shiny::tabPanel(
