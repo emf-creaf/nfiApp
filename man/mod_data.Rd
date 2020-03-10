@@ -4,7 +4,8 @@
 \alias{mod_data}
 \title{mod_data server function}
 \usage{
-mod_data(input, output, session, nfidb, lang)
+mod_data(input, output, session, nfidb, lang, var_thes, numerical_thes,
+  texts_thes)
 }
 \arguments{
 \item{input}{internal}
@@ -16,6 +17,8 @@ mod_data(input, output, session, nfidb, lang)
 \item{nfidb}{lfcdata::lfcNFI object to access the nfi db}
 
 \item{lang}{lang reactive}
+
+\item{var_thes, }{numerical_thes, texts_thes thesauruses}
 }
 \description{
 mod_data server function

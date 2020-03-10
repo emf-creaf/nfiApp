@@ -8,6 +8,11 @@ nfi_app <- function() {
   ### DB access ################################################################
   nfidb <- lfcdata::nfi()
 
+  ### thesauruses ##############################################################
+  var_thes <- nfidb$get_data('variables_thesaurus')
+  numerical_thes <- nfidb$get_data('variables_numerical')
+  texts_thes <- nfidb$get_data('texts_thesaurus')
+
   ### Language input ###########################################################
   shiny::addResourcePath(
     'images', system.file('resources', 'images', package = 'NFIappkg')
@@ -41,8 +46,8 @@ nfi_app <- function() {
       id = 'nav',
       collapsible = TRUE,
 
-      # navbar with inputs (helpers.R) accepts an input argument, we use it for the lang
-      # selector
+      # navbar with inputs (helpers.R) accepts an input argument, we use it for
+      # the lang selector
       inputs = shinyWidgets::pickerInput(
         'lang', NULL,
         choices = lang_choices,
@@ -57,33 +62,53 @@ nfi_app <- function() {
         )
       ),
 
-      # css
-      shiny::tags$head(
-        # custom css
-        shiny::includeCSS(
-          system.file('resources', 'nfi.css', package = 'NFIappkg')
+      # main tab
+      shiny::tabPanel(
+        title = 'Main',
+        # css
+        shiny::tags$head(
+          # custom css
+          shiny::includeCSS(
+            system.file('resources', 'nfi.css', package = 'NFIappkg')
+          ),
+          # corporative image css
+          shiny::includeCSS(
+            system.file('resources', 'corp_image.css', package = 'NFIappkg')
+          )
         ),
-        # corporative image css
-        shiny::includeCSS(
-          system.file('resources', 'corp_image.css', package = 'NFIappkg')
-        )
-      ),
-
-      # Sidebar layout
-      shiny::sidebarLayout(
-        ## options
-        position = 'left', fluid = TRUE,
-        ## sidebar panel
-        sidebarPanel = shiny::sidebarPanel(
-          width = 5,
-          mod_dataInput('mod_dataInput')
-        ),
-        ## main panel
-        mainPanel = shiny::mainPanel(
-          width = 7,
-          shiny::uiOutput("main_tabbed")
-        )
-      ) # end sidebar layout
+        # Sidebar layout
+        shiny::sidebarLayout(
+          ## options
+          position = 'left', fluid = TRUE,
+          ## sidebar panel
+          sidebarPanel = shiny::sidebarPanel(
+            width = 5,
+            # this is gonna be a tabsetPanel, for data selection, filtering and
+            # viz
+            shiny::tabsetPanel(
+              id = 'sidebar_tabset', type = 'pills',
+              # TODO transform titles in ui's for translations
+              # data tab
+              shiny::tabPanel(
+                title = 'data',
+                value = 'h4_data_selection',
+                mod_dataInput('mod_dataInput')
+              ), # end of data tab
+              # filter tab
+              shiny::tabPanel(
+                title = 'filters',
+                value = 'data_tab_2',
+                mod_filtersUI('mod_filtersUI')
+              ) # end of filter tab
+            ) # end of sidebar tabsetPanel
+          ),
+          ## main panel
+          mainPanel = shiny::mainPanel(
+            width = 7,
+            shiny::uiOutput("main_tabbed")
+          )
+        ) # end sidebar layout
+      )
     ) # end NavBarWithInputs
 
   ) # end of UI
@@ -98,7 +123,14 @@ nfi_app <- function() {
 
     # data inputs
     data_reactives <- shiny::callModule(
-      mod_data, 'mod_dataInput', nfidb, lang()
+      mod_data, 'mod_dataInput', nfidb, lang(),
+      var_thes, numerical_thes, texts_thes
+    )
+
+    filter_reactives <- shiny::callModule(
+      mod_filters, 'mod_filtersUI', nfidb, lang(),
+      data_reactives,
+      var_thes, numerical_thes, texts_thes
     )
 
   } # end of server
