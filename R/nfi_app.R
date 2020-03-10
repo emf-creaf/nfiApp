@@ -67,11 +67,48 @@ nfi_app <- function() {
         shiny::includeCSS(
           system.file('resources', 'corp_image.css', package = 'NFIappkg')
         )
-      )
+      ),
 
+      # Sidebar layout
+      shiny::sidebarLayout(
+        ## options
+        position = 'left', fluid = TRUE,
+        ## sidebar panel
+        sidebarPanel = shiny::sidebarPanel(
+          width = 5,
+          mod_dataInput('mod_dataInput')
+        ),
+        ## main panel
+        mainPanel = shiny::mainPanel(
+          width = 7,
+          shiny::uiOutput("main_tabbed")
+        )
+      ) # end sidebar layout
+    ) # end NavBarWithInputs
 
+  ) # end of UI
+
+  ## server ####
+  server <- function(input, output, session) {
+
+    # lang reactive ####
+    lang <- shiny::reactive({
+      input$lang
+    })
+
+    # data inputs
+    data_reactives <- shiny::callModule(
+      mod_data, 'mod_dataInput', nfidb, lang()
     )
 
+  } # end of server
+
+  # Run the application
+  nfi_app_res <- shiny::shinyApp(
+    ui = ui, server = server
   )
+
+  # shiny::runApp(nfi_app)
+  return(nfi_app_res)
 
 }
