@@ -25,7 +25,7 @@ mod_dataInput <- function(id) {
 #'
 #' @param nfidb lfcdata::lfcNFI object to access the nfi db
 #' @param lang lang reactive
-#' @param var_thes, numerical_thes, texts_thes thesauruses
+#' @param var_thes,numerical_thes,texts_thes thesauruses
 #'
 #' @export
 mod_data <- function(

@@ -18,7 +18,7 @@ mod_data(input, output, session, nfidb, lang, var_thes, numerical_thes,
 
 \item{lang}{lang reactive}
 
-\item{var_thes, }{numerical_thes, texts_thes thesauruses}
+\item{var_thes, numerical_thes, texts_thes}{thesauruses}
 }
 \description{
 mod_data server function

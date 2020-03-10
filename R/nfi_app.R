@@ -127,7 +127,7 @@ nfi_app <- function() {
       var_thes, numerical_thes, texts_thes
     )
 
-    filter_reactives <- shiny::callModule(
+    filters_reactives <- shiny::callModule(
       mod_filters, 'mod_filtersUI', nfidb, lang(),
       data_reactives,
       var_thes, numerical_thes, texts_thes
