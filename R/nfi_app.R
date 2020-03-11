@@ -87,7 +87,17 @@ nfi_app <- function() {
           sidebarPanel = shiny::sidebarPanel(
             width = 5,
             # this is gonna be a tabsetPanel, for data selection, filtering and
-            # viz
+            # viz. The apply button will be on the top, that way is always
+            # visible in any size
+            # apply button
+            shiny::fluidRow(
+              shiny::actionButton(
+                'main_apply',
+                'Apply', # TODO translations -> transform this in a module
+                icon = shiny::icon('check-circle')
+              )
+            ),
+            # tabset panel
             shiny::tabsetPanel(
               id = 'sidebar_tabset', type = 'tabs',
               # TODO transform titles in ui's for translations
@@ -139,6 +149,50 @@ nfi_app <- function() {
       data_reactives, filters_cache,
       var_thes, numerical_thes, texts_thes, categorical_thes
     )
+
+    # main data ####
+    # we have all we need to retrieve the main data. The map will need other
+    # transformations (summarising...), and we need inputs now is convoluted
+    # to do (like draw polygons or file inputs). Let's retrieve the main data,
+    # and lets delegate the data transformations to the places they are needed
+    main_data <- shiny::eventReactive(
+      eventExpr = input$main_apply,
+      valueExpr = {
+
+        # tables to look at
+        nfi <- data_reactives$nfi
+        desglossament <- data_reactives$desglossament
+        diameter_classes <- data_reactives$diameter_classes
+        admin_div <- glue::glue("admin_{data_reactives$admin_div}")
+
+        tables_to_look_at <- c(
+          main_table_to_look_at(nfi, desglossament, diameter_classes),
+          ancillary_tables_to_look_at(nfi)
+        )
+
+        browser()
+
+        # get data, join it
+        main_data_table <-
+          tables_to_look_at %>%
+          purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
+          purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
+          dplyr::left_join(
+            nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
+              dplyr::select(plot_id, geometry),
+            by = 'plot_id'
+          ) %>%
+          sf::st_as_sf(sf_column_name = 'geometry')
+
+        return(main_data_table)
+      }
+    )
+
+   shiny::observe({
+     shiny::validate(shiny::need(main_data(), 'no data'))
+     data <- main_data()
+   })
+
 
   } # end of server
 
