@@ -177,6 +177,9 @@ nfi_app <- function() {
           tables_to_look_at %>%
           purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
           purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
+          dplyr::filter(
+            !!! filters_reactives$filter_expressions
+          ) %>%
           dplyr::left_join(
             nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
               dplyr::select(plot_id, geometry),

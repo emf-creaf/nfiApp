@@ -318,7 +318,7 @@ mod_filters <- function(
 
       # lets create the expressions on a map
       variables_to_filter_by() %>%
-        magrittr::set_names(.,.) %>%
+        # magrittr::set_names(.,.) %>%
         purrr::map(
           function(x) {
             # extract the var type
