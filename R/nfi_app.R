@@ -158,8 +158,16 @@ nfi_app <- function() {
     main_data <- shiny::eventReactive(
       eventExpr = input$main_apply,
       valueExpr = {
+        # set a progress
+        progress <- shiny::Progress$new(session, min = 0, max = 100)
+        on.exit(progress$close())
+        progress$set(
+          message = 'Calculation in progress',
+          detail = 'This may take a while...'
+        )
 
         # tables to look at
+        browser()
         nfi <- data_reactives$nfi
         desglossament <- data_reactives$desglossament
         diameter_classes <- data_reactives$diameter_classes
@@ -170,12 +178,15 @@ nfi_app <- function() {
           ancillary_tables_to_look_at(nfi)
         )
 
-        browser()
+        progress$set(value = 10)
 
         # get data, join it
         main_data_table <-
           tables_to_look_at %>%
           purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
+          purrr::walk(
+            ~ progress$set(value = 45)
+          ) %>%
           purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
           dplyr::filter(
             !!! filters_reactives$filter_expressions
@@ -185,8 +196,12 @@ nfi_app <- function() {
               dplyr::select(plot_id, geometry),
             by = 'plot_id'
           ) %>%
+          purrr::walk(
+            ~ progress$set(value = 85)
+          ) %>%
           sf::st_as_sf(sf_column_name = 'geometry')
 
+        progress$set(value = 100)
         return(main_data_table)
       }
     )

@@ -314,11 +314,14 @@ mod_filters <- function(
     valueExpr = {
 
       # validation
-      shiny::validate(shiny::need(variables_to_filter_by(), 'no variables'))
+      # shiny::validate(shiny::need(variables_to_filter_by(), 'no variables'))
+      # check the case of empty filter vars
+      if (is.null(variables_to_filter_by()) || variables_to_filter_by() == '') {
+        return(rlang::quos())
+      }
 
       # lets create the expressions on a map
       variables_to_filter_by() %>%
-        # magrittr::set_names(.,.) %>%
         purrr::map(
           function(x) {
             # extract the var type
