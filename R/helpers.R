@@ -149,9 +149,6 @@ filter_inputs_builder_helper <- function(
   texts_thes, var_thes, numerical_thes, categorical_thes,
   lang, ns, cache
 ) {
-
-  # browser()
-
   # checking the type of the variable
   variable_description <-
     var_thes %>%
@@ -170,6 +167,7 @@ filter_inputs_builder_helper <- function(
   # variable_type
   variable_type <- variable_description %>% dplyr::pull(var_type)
 
+  # browser()
   # character variable
   if (variable_type == 'character') {
     # get the available choices for the categorical variable
@@ -188,7 +186,9 @@ filter_inputs_builder_helper <- function(
     # build the input
     res <- shinyWidgets::pickerInput(
       ns(variable),
-      label = translate_var(variable, tables, lang, var_thes, numerical_thes),
+      label = names(translate_var(
+        variable, tables, lang, var_thes, numerical_thes
+      )),
       choices = input_choices,
       selected = previous_value,
       multiple = TRUE,
@@ -227,7 +227,9 @@ filter_inputs_builder_helper <- function(
     # build the input
     res <- shiny::sliderInput(
       ns(variable),
-      label = translate_var(variable, tables, lang, var_thes, numerical_thes),
+      label = names(translate_var(
+        variable, tables, lang, var_thes, numerical_thes
+      )),
       min = input_choices[['min']],
       max = input_choices[['max']],
       value = c(previous_value[[1]], previous_value[[2]]),
@@ -250,7 +252,9 @@ filter_inputs_builder_helper <- function(
     # build the input
     res <- shinyWidgets::pickerInput(
       ns(variable),
-      label = translate_var(variable, tables, lang, var_thes, numerical_thes),
+      label = names(translate_var(
+        variable, tables, lang, var_thes, numerical_thes
+      )),
       choices = input_choices,
       selected = previous_value,
       multiple = TRUE,

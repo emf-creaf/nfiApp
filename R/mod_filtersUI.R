@@ -245,46 +245,81 @@ mod_filters <- function(
     )
   }) # end of proper_filter_panel
 
+  # cache updating does not work if is done in the on_the_fly_inputs reactive,
+  # as cache does not change when input change. Lets do this with an observer
+  shiny::observe({
+    # browser()
+    # validation
+    shiny::validate(
+      shiny::need(variables_to_filter_by(), 'no variables to filter')
+    )
+    # vars
+    vars_to_filter_by <- shiny::isolate(variables_to_filter_by()) %>%
+      magrittr::set_names(., .)
+    # cache list
+    cache_list <-
+      vars_to_filter_by %>%
+      purrr::map(~ cache$get(stringr::str_remove_all(., '_'), missing = NULL))
+    # inputs values
+    input_values <-
+      vars_to_filter_by %>%
+      purrr::map(~ input[[.]])
+
+    vars_to_filter_by %>%
+      purrr::walk(
+        ~ {
+          if (
+            # input must be no null and if it is not, then it must be different
+            # from cache
+            !is.null(input_values[[.]]) &
+            !identical(cache_list[[.]], input_values[[.]])
+          ) {
+            cache$set(stringr::str_remove_all(., '_'), input_values[[.]])
+          }
+        }
+      )
+  })
+
   # reactive to activate the filter expressions generation. The logic is as
   # follows:
   #   - Lets retrieve the input value. Also, if it exists, lets retrieve the
   #     cache value.
   #   - If they are identical, return the input value, not change the cache
   #   - If they are not identical, update the cache, return the input value
-  on_the_fly_inputs <- shiny::eventReactive(
-    eventExpr = filter_inputs_builder(),
-    valueExpr = {
-
-      retrieve_function <- function(.x, cache) {
-
-        browser()
-        # input value
-        input_value <- input[[.x]]
-        # cache value, if exists
-        if (cache$exists(stringr::str_remove_all(.x, '_'))) {
-          cache_value <- cache$get(stringr::str_remove_all(.x, '_'))
-        } else {
-          cache_value <- NULL
-        }
-        # check if input is the same as cache
-        if (identical(input_value, cache_value)) {
-          return(input_value)
-        } else {
-          cache$set(stringr::str_remove_all(.x, '_'), input_value)
-          return(input_value)
-        }
-      }
-
-      variables_to_filter_by() %>%
-        purrr::map(
-          retrieve_function, cache = cache
-        )
-
-    }
-  ) # end of onthefly inputs
-
-  # filter expressions builder ####
-  data_filter_expressions <- shiny::observe({
-    foo <- on_the_fly_inputs()
-  })
+  # on_the_fly_inputs <- shiny::eventReactive(
+  #   eventExpr = filter_inputs_builder(),
+  #   valueExpr = {
+  #
+  #     retrieve_function <- function(.x, cache) {
+  #
+  #       browser()
+  #       # input value
+  #       input_value <- input[[.x]]
+  #       # cache value, if exists
+  #       if (cache$exists(stringr::str_remove_all(.x, '_'))) {
+  #         cache_value <- cache$get(stringr::str_remove_all(.x, '_'))
+  #       } else {
+  #         cache_value <- NULL
+  #       }
+  #       # check if input is the same as cache
+  #       if (identical(input_value, cache_value)) {
+  #         return(input_value)
+  #       } else {
+  #         cache$set(stringr::str_remove_all(.x, '_'), input_value)
+  #         return(input_value)
+  #       }
+  #     }
+  #
+  #     variables_to_filter_by() %>%
+  #       purrr::map(
+  #         retrieve_function, cache = cache
+  #       )
+  #
+  #   }
+  # ) # end of onthefly inputs
+  #
+  # # filter expressions builder ####
+  # data_filter_expressions <- shiny::observe({
+  #   foo <- on_the_fly_inputs()
+  # })
 }
