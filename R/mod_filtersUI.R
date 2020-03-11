@@ -26,7 +26,8 @@ mod_filtersUI <- function(id) {
 #' @param nfidb object to access the nfi db
 #' @param lang lang reactive value
 #' @param data_reactives reactives from the dataInput module
-#' @param var_thes,numerical_thes,texts_thes thesauruses
+#' @param cache memoryCache to store the filters values
+#' @param var_thes,numerical_thes,texts_thes,categorical_thes thesauruses
 #'
 #' @importFrom dplyr between
 #'
@@ -36,8 +37,8 @@ mod_filtersUI <- function(id) {
 mod_filters <- function(
   input, output, session,
   nfidb, lang,
-  data_reactives,
-  var_thes, numerical_thes, texts_thes
+  data_reactives, cache,
+  var_thes, numerical_thes, texts_thes, categorical_thes
 ) {
 
   # variables available ####
@@ -64,8 +65,15 @@ mod_filters <- function(
       stringr::str_detect(vars_overall, "^admin_|^feat_|^topo_")
     ]
 
+    # sampling times, we need to remove them
+    plot_vars <- plot_vars[
+      stringr::str_detect(plot_vars, "_date$|_time$", negate = TRUE)
+    ]
+
     removed_vars <- vars_overall[
-      stringr::str_detect(vars_overall, "^old_|^coords_|^presence_|plot_id")
+      stringr::str_detect(
+        vars_overall, "^old_|^coords_|^presence_|plot_id|poly_id"
+      )
     ]
 
     res_vars <- vars_overall[
@@ -89,11 +97,10 @@ mod_filters <- function(
   output$variable_selector_panel <- shiny::renderUI({
     # ns
     ns <- session$ns
-
+    # choices for the inputs
     fil_res_vars_choices <- variables_available()$res_vars
     fil_clim_vars_choices <- variables_available()$clim_vars
     fil_plot_vars_choices <- variables_available()$plot_vars
-
     # tagList
     shiny::tagList(
       # filter categories row
@@ -177,10 +184,51 @@ mod_filters <- function(
     ) # end of tagList
   }) # end of variable_selector_panel
 
+  # lets collect the variables selected by the user
   variables_to_filter_by <- shiny::reactive({
-    browser()
     c(input$fil_res_vars, input$fil_clim_vars, input$fil_plot_vars)
   })
+
+  # filter inputs builder ####
+  # a reactive to get the build the inputs. The logic is as follows:
+  #   - based on the variables selected by the user, we build the inputs in a
+  #     loop, but...
+  #   - if the variable was previously selected and set, we set the values
+  #     recorded in the cache.
+  #   - we only update the cache when retrieving the input values
+  #   - the cache is in the nfi_app.R file to be able to use it for the same
+  #     session (if it was in the module it will be created every time the
+  #     module runs, I think)
+  #   - for building the input, first we need to know if the variable is
+  #     character, numeric, logical or date to know the correct input for
+  #     each. This is with vars_thes. Second check the cache and set the values
+  #     if found. After that, build the input. This is going to be done by a
+  #     function in helpers.R
+  filter_inputs_builder <- shiny::eventReactive(
+    eventExpr = variables_to_filter_by(),
+    valueExpr = {
+
+      # tables to look at
+      nfi <- data_reactives$nfi
+      desglossament <- data_reactives$desglossament
+      diameter_classes <- data_reactives$diameter_classes
+
+      tables_to_look_at <- c(
+        main_table_to_look_at(nfi, desglossament, diameter_classes),
+        ancillary_tables_to_look_at(nfi)
+      )
+      # ns
+      ns <- session$ns
+      # variables
+      filter_inputs <- variables_to_filter_by() %>%
+        purrr::map(
+          filter_inputs_builder_helper, tables = tables_to_look_at,
+          var_thes = var_thes, texts_thes = texts_thes,
+          numerical_thes = numerical_thes, categorical_thes = categorical_thes,
+          lang = lang, ns = ns, cache = cache
+        )
+    }
+  )
 
   # proper_filter_panel ####
   output$proper_filter_panel <- shiny::renderUI({
@@ -191,12 +239,9 @@ mod_filters <- function(
     # tagList
     shiny::tagList(
       shiny::hr(),
-      shiny::tags$strong(text_translate('filter_the_data', lang(), texts_thes)),
+      shiny::tags$strong(text_translate('filter_the_data', lang, texts_thes)),
       shiny::br(), shiny::br(),
-      # filters_inputs()
+      filter_inputs_builder()
     )
-
-
-
   }) # end of proper_filter_panel
 }

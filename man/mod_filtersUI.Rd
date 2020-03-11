@@ -7,8 +7,8 @@
 \usage{
 mod_filtersUI(id)
 
-mod_filters(input, output, session, nfidb, lang, data_reactives, var_thes,
-  numerical_thes, texts_thes)
+mod_filters(input, output, session, nfidb, lang, data_reactives, cache,
+  var_thes, numerical_thes, texts_thes, categorical_thes)
 }
 \arguments{
 \item{id}{shiny id}
@@ -25,7 +25,9 @@ mod_filters(input, output, session, nfidb, lang, data_reactives, var_thes,
 
 \item{data_reactives}{reactives from the dataInput module}
 
-\item{var_thes, numerical_thes, texts_thes}{thesauruses}
+\item{cache}{memoryCache to store the filters values}
+
+\item{var_thes, numerical_thes, texts_thes, categorical_thes}{thesauruses}
 
 \item{nfidb}{object to access the nfi db}
 }

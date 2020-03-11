@@ -12,6 +12,9 @@ nfi_app <- function() {
   var_thes <- nfidb$get_data('variables_thesaurus')
   numerical_thes <- nfidb$get_data('variables_numerical')
   texts_thes <- nfidb$get_data('texts_thesaurus')
+  categorical_thes <- nfidb$get_data('variables_categorical') %>%
+    dplyr::select(-dummy_id) %>%
+    tidyr::nest(var_values = c(var_values))
 
   ### Language input ###########################################################
   shiny::addResourcePath(
@@ -121,16 +124,20 @@ nfi_app <- function() {
       input$lang
     })
 
+    # cache ####
+    filters_cache <- shiny::memoryCache(evict = 'fifo')
+
+    # modeules ####
     # data inputs
     data_reactives <- shiny::callModule(
       mod_data, 'mod_dataInput', nfidb, lang(),
       var_thes, numerical_thes, texts_thes
     )
-
+    # filters
     filters_reactives <- shiny::callModule(
       mod_filters, 'mod_filtersUI', nfidb, lang(),
-      data_reactives,
-      var_thes, numerical_thes, texts_thes
+      data_reactives, filters_cache,
+      var_thes, numerical_thes, texts_thes, categorical_thes
     )
 
   } # end of server

@@ -15,4 +15,7 @@ Imports:
     dplyr,
     shiny,
     shinyjs,
-    shinyWidgets
+    shinyWidgets,
+    tidyr,
+    stringr,
+    magrittr

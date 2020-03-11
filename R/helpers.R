@@ -137,3 +137,133 @@ translate_var <- function(
       )
   }
 }
+
+# Input builder, for a single variable, designed to be used in a map or lapply
+#   - for building the input, first we need to know if the variable is
+#     character, numeric, logical or date to know the correct input for
+#     each. This is with vars_thes and the table names. Second check the cache
+#     and set the values if found. After that, build the input. This is going to
+#     be done by a function in helpers.R
+filter_inputs_builder_helper <- function(
+  variable, tables,
+  texts_thes, var_thes, numerical_thes, categorical_thes,
+  lang, ns, cache
+) {
+
+  # checking the type of the variable
+  variable_description <-
+    var_thes %>%
+    dplyr::filter(var_id == variable, var_table %in% tables) %>%
+    dplyr::select(var_id, var_table, var_type) %>%
+    dplyr::distinct() %>%
+    dplyr::left_join(numerical_thes, by = c('var_id', 'var_table')) %>%
+    dplyr::left_join(categorical_thes, by = c('var_id', 'var_table'))
+
+  # check for special case, plot_id which is present in all the tables,
+  # in that case, we choose the results table, that is the one more
+  # restrictive (less options)
+  if (nrow(variable_description) > 1) {
+    variable_description <- dplyr::slice(variable_description, 1)
+  }
+  # variable_type
+  variable_type <- variable_description %>% dplyr::pull(var_type)
+
+  # character variable
+  if (variable_type == 'character') {
+    # get the available choices for the categorical variable
+    input_choices <- variable_description %>%
+      tidyr::unnest(cols = c(var_values)) %>%
+      dplyr::arrange(var_values) %>%
+      dplyr::pull(var_values)
+
+    # check the cache to look if there was set before
+    if (cache$exists(stringr::str_remove_all(variable, '_'))) {
+      previous_value <- cache$get(stringr::str_remove_all(variable, '_'))
+    } else {
+      previous_value <- NULL
+    }
+
+    # build the input
+    res <- shinyWidgets::pickerInput(
+      ns(variable),
+      label = translate_var(variable, tables, lang, var_thes, numerical_thes),
+      choices = input_choices,
+      selected = previous_value,
+      multiple = TRUE,
+      options = list(
+        `actions-box` = FALSE,
+        `deselect-all-text` = text_translate('deselect-all-text', lang, texts_thes),
+        `select-all-text` = text_translate('select-all-text', lang, texts_thes),
+        `selected-text-format` = 'count',
+        `count-selected-text` = text_translate('count-selected-text-value', lang, texts_thes),
+        `size` = 10,
+        `live-search` = TRUE,
+        `tick-icon` = 'glyphicon-tree-deciduous'
+      )
+    )
+    return(res)
+  } # end of character
+  # numeric
+  if (variable_type %in% c('numeric', 'integer')) {
+    # get the available min max values for the numeric
+    input_choices <- c(
+      min = variable_description %>% dplyr::pull(var_min),
+      max = variable_description %>% dplyr::pull(var_max)
+    )
+
+    # check the cache to look if there was set before
+    if (cache$exists(stringr::str_remove_all(variable, '_'))) {
+      previous_value <- cache$get(stringr::str_remove_all(variable, '_'))
+    } else {
+      previous_value <- c(input_choices[['min']], input_choices[['max']])
+    }
+
+    # build the input
+    res <- shiny::sliderInput(
+      ns(variable),
+      label = translate_var(variable, tables, lang, var_thes, numerical_thes),
+      min = input_choices[['min']],
+      max = input_choices[['max']],
+      value = c(previous_value[[1]], previous_value[[2]]),
+      width = '100%'
+    )
+    return(res)
+  } # end of numeric
+  # logical
+  if (variable_type == 'logical') {
+    # choices
+    input_choices <- c('true', 'false')
+
+    # check the cache to look if there was set before
+    if (cache$exists(stringr::str_remove_all(variable, '_'))) {
+      previous_value <- cache$get(stringr::str_remove_all(variable, '_'))
+    } else {
+      previous_value <- input_choices[1]
+    }
+
+    # build the input
+    res <- shinyWidgets::pickerInput(
+      ns(variable),
+      label = translate_var(variable, tables, lang, var_thes, numerical_thes),
+      choices = input_choices,
+      selected = previous_value,
+      multiple = TRUE,
+      options = list(
+        `actions-box` = FALSE,
+        `deselect-all-text` = text_translate('deselect-all-text', lang, texts_thes),
+        `select-all-text` = text_translate('select-all-text', lang, texts_thes),
+        `selected-text-format` = 'count',
+        `count-selected-text` = text_translate('count-selected-text-value', lang, texts_thes),
+        `size` = 10,
+        `live-search` = TRUE,
+        `tick-icon` = 'glyphicon-tree-deciduous'
+      )
+    )
+    return(res)
+  } # end of logical
+  if (variable_type == 'POSIXct') {
+    # TODO (they are removed from appear)
+    return()
+  }
+
+}
