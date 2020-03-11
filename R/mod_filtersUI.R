@@ -244,4 +244,47 @@ mod_filters <- function(
       filter_inputs_builder()
     )
   }) # end of proper_filter_panel
+
+  # reactive to activate the filter expressions generation. The logic is as
+  # follows:
+  #   - Lets retrieve the input value. Also, if it exists, lets retrieve the
+  #     cache value.
+  #   - If they are identical, return the input value, not change the cache
+  #   - If they are not identical, update the cache, return the input value
+  on_the_fly_inputs <- shiny::eventReactive(
+    eventExpr = filter_inputs_builder(),
+    valueExpr = {
+
+      retrieve_function <- function(.x, cache) {
+
+        browser()
+        # input value
+        input_value <- input[[.x]]
+        # cache value, if exists
+        if (cache$exists(stringr::str_remove_all(.x, '_'))) {
+          cache_value <- cache$get(stringr::str_remove_all(.x, '_'))
+        } else {
+          cache_value <- NULL
+        }
+        # check if input is the same as cache
+        if (identical(input_value, cache_value)) {
+          return(input_value)
+        } else {
+          cache$set(stringr::str_remove_all(.x, '_'), input_value)
+          return(input_value)
+        }
+      }
+
+      variables_to_filter_by() %>%
+        purrr::map(
+          retrieve_function, cache = cache
+        )
+
+    }
+  ) # end of onthefly inputs
+
+  # filter expressions builder ####
+  data_filter_expressions <- shiny::observe({
+    foo <- on_the_fly_inputs()
+  })
 }

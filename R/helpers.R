@@ -150,6 +150,8 @@ filter_inputs_builder_helper <- function(
   lang, ns, cache
 ) {
 
+  # browser()
+
   # checking the type of the variable
   variable_description <-
     var_thes %>%
@@ -192,10 +194,14 @@ filter_inputs_builder_helper <- function(
       multiple = TRUE,
       options = list(
         `actions-box` = FALSE,
-        `deselect-all-text` = text_translate('deselect-all-text', lang, texts_thes),
+        `deselect-all-text` = text_translate(
+          'deselect-all-text', lang, texts_thes
+        ),
         `select-all-text` = text_translate('select-all-text', lang, texts_thes),
         `selected-text-format` = 'count',
-        `count-selected-text` = text_translate('count-selected-text-value', lang, texts_thes),
+        `count-selected-text` = text_translate(
+          'count-selected-text-value', lang, texts_thes
+        ),
         `size` = 10,
         `live-search` = TRUE,
         `tick-icon` = 'glyphicon-tree-deciduous'
@@ -250,10 +256,14 @@ filter_inputs_builder_helper <- function(
       multiple = TRUE,
       options = list(
         `actions-box` = FALSE,
-        `deselect-all-text` = text_translate('deselect-all-text', lang, texts_thes),
+        `deselect-all-text` = text_translate(
+          'deselect-all-text', lang, texts_thes
+        ),
         `select-all-text` = text_translate('select-all-text', lang, texts_thes),
         `selected-text-format` = 'count',
-        `count-selected-text` = text_translate('count-selected-text-value', lang, texts_thes),
+        `count-selected-text` = text_translate(
+          'count-selected-text-value', lang, texts_thes
+        ),
         `size` = 10,
         `live-search` = TRUE,
         `tick-icon` = 'glyphicon-tree-deciduous'
