@@ -29,6 +29,18 @@ mod_filtersUI <- function(id) {
 #' @param cache memoryCache to store the filters values
 #' @param var_thes,numerical_thes,texts_thes,categorical_thes thesauruses
 #'
+#' @details
+#'   The logic is the following: With the available variables on the data,
+#'   meaning main table, plots table and dynamic table if any, lets build
+#'   inputs in three categories, results, climatic and other.
+#'   When any variable is selected, create an on the fly input (in a loop), and
+#'   collect the value for the input. This should be cached, this way if the
+#'   user selects a variable and set a value to filter, but after they select
+#'   another variable, the first one set values are remembered.
+#'   After collecting the inputs, we need to build non evaluated filter
+#'   expressions to return, as they will be needed later in the data
+#'   retrieving module.
+#'
 #' @importFrom dplyr between
 #'
 #' @export
@@ -245,6 +257,16 @@ mod_filters <- function(
     )
   }) # end of proper_filter_panel
 
+  # reactive to get the inputs
+  on_the_fly_inputs <- shiny::reactive({
+    variables_to_filter_by() %>%
+      purrr::map(
+        ~ input[[.]]
+      ) %>%
+      magrittr::set_names(variables_to_filter_by())
+  }) # end of onthefly inputs
+
+  ## cache updater ####
   # cache updating does not work if is done in the on_the_fly_inputs reactive,
   # as cache does not change when input change. Lets do this with an observer
   shiny::observe({
@@ -269,6 +291,7 @@ mod_filters <- function(
       purrr::walk(
         ~ {
           if (
+            # logic:
             # input must be no null and if it is not, then it must be different
             # from cache
             !is.null(input_values[[.]]) &
@@ -280,46 +303,60 @@ mod_filters <- function(
       )
   })
 
-  # reactive to activate the filter expressions generation. The logic is as
-  # follows:
-  #   - Lets retrieve the input value. Also, if it exists, lets retrieve the
-  #     cache value.
-  #   - If they are identical, return the input value, not change the cache
-  #   - If they are not identical, update the cache, return the input value
-  # on_the_fly_inputs <- shiny::eventReactive(
-  #   eventExpr = filter_inputs_builder(),
-  #   valueExpr = {
-  #
-  #     retrieve_function <- function(.x, cache) {
-  #
-  #       browser()
-  #       # input value
-  #       input_value <- input[[.x]]
-  #       # cache value, if exists
-  #       if (cache$exists(stringr::str_remove_all(.x, '_'))) {
-  #         cache_value <- cache$get(stringr::str_remove_all(.x, '_'))
-  #       } else {
-  #         cache_value <- NULL
-  #       }
-  #       # check if input is the same as cache
-  #       if (identical(input_value, cache_value)) {
-  #         return(input_value)
-  #       } else {
-  #         cache$set(stringr::str_remove_all(.x, '_'), input_value)
-  #         return(input_value)
-  #       }
-  #     }
-  #
-  #     variables_to_filter_by() %>%
-  #       purrr::map(
-  #         retrieve_function, cache = cache
-  #       )
-  #
-  #   }
-  # ) # end of onthefly inputs
-  #
-  # # filter expressions builder ####
-  # data_filter_expressions <- shiny::observe({
-  #   foo <- on_the_fly_inputs()
-  # })
+  # filter expressions builder ####
+  # we have the inputs created and their values retrieved in on_the_fly_inputs
+  # so we need to create the expressions to filter the data with. The logic is
+  # as follows:
+  #   - get the list of variables
+  #   - check its type and build the input accordingly
+  filter_expressions_builder <- shiny::eventReactive(
+    eventExpr = on_the_fly_inputs(),
+    valueExpr = {
+
+      # validation
+      shiny::validate(shiny::need(variables_to_filter_by(), 'no variables'))
+
+      # lets create the expressions on a map
+      variables_to_filter_by() %>%
+        magrittr::set_names(.,.) %>%
+        purrr::map(
+          function(x) {
+            # extract the var type
+            var_type <- var_thes %>%
+              dplyr::filter(var_id == x) %>%
+              dplyr::pull(var_type) %>%
+              magrittr::extract(1)
+            # build the correct filter expression
+            if (var_type == 'character') {
+              return(rlang::quo(!!rlang::sym(x) %in% !!input[[x]]))
+            }
+            if (var_type %in% c('integer', 'numeric')) {
+              return(rlang::quo(
+                dplyr::between(
+                  !!rlang::sym(x), !!input[[x]][1], !!input[[x]][2]
+                )
+              ))
+            }
+            if (var_type == 'logical') {
+              input_transformed <- dplyr::if_else(
+                input[[x]] == 'true', TRUE, FALSE
+              )
+              return(
+                rlang::quo(!!rlang::sym(x) %in% !!input_transformed)
+              )
+            }
+          }
+        )
+    }
+  ) # end of filter expressions builder
+
+  filter_reactives <- shiny::reactiveValues()
+  shiny::observe({
+    filter_reactives$filter_expressions <- filter_expressions_builder()
+    filter_reactives$filter_vars <- variables_to_filter_by()
+    # inputs created on the fly
+    filter_reactives$otf_filter_inputs <- on_the_fly_inputs()
+  })
+
+  return(filter_reactives)
 }

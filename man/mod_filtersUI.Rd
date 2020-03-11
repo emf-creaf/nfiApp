@@ -34,3 +34,15 @@ mod_filters(input, output, session, nfidb, lang, data_reactives, cache,
 \description{
 A shiny module to generate and process the filters
 }
+\details{
+The logic is the following: With the available variables on the data,
+  meaning main table, plots table and dynamic table if any, lets build
+  inputs in three categories, results, climatic and other.
+  When any variable is selected, create an on the fly input (in a loop), and
+  collect the value for the input. This should be cached, this way if the
+  user selects a variable and set a value to filter, but after they select
+  another variable, the first one set values are remembered.
+  After collecting the inputs, we need to build non evaluated filter
+  expressions to return, as they will be needed later in the data
+  retrieving module.
+}
