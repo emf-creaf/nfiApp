@@ -89,14 +89,9 @@ nfi_app <- function() {
             # this is gonna be a tabsetPanel, for data selection, filtering and
             # viz. The apply button will be on the top, that way is always
             # visible in any size
-            # apply button
-            shiny::fluidRow(
-              shiny::actionButton(
-                'main_apply',
-                'Apply', # TODO translations -> transform this in a module
-                icon = shiny::icon('check-circle')
-              )
-            ),
+            # apply button module
+            mod_applyButtonInput("mod_applyButtonInput"),
+            shiny::br(),
             # tabset panel
             shiny::tabsetPanel(
               id = 'sidebar_tabset', type = 'tabs',
@@ -138,6 +133,10 @@ nfi_app <- function() {
     filters_cache <- shiny::memoryCache(evict = 'fifo')
 
     # modeules ####
+    # apply_button
+    apply_reactives <- shiny::callModule(
+      mod_applyButton, 'mod_applyButtonInput', lang(), texts_thes
+    )
     # data inputs
     data_reactives <- shiny::callModule(
       mod_data, 'mod_dataInput', nfidb, lang(),
@@ -156,8 +155,9 @@ nfi_app <- function() {
     # to do (like draw polygons or file inputs). Let's retrieve the main data,
     # and lets delegate the data transformations to the places they are needed
     main_data <- shiny::eventReactive(
-      eventExpr = input$main_apply,
+      eventExpr = apply_reactives$apply_button,
       valueExpr = {
+
         # set a progress
         progress <- shiny::Progress$new(session, min = 0, max = 100)
         on.exit(progress$close())
@@ -167,7 +167,6 @@ nfi_app <- function() {
         )
 
         # tables to look at
-        browser()
         nfi <- data_reactives$nfi
         desglossament <- data_reactives$desglossament
         diameter_classes <- data_reactives$diameter_classes
@@ -177,6 +176,8 @@ nfi_app <- function() {
           main_table_to_look_at(nfi, desglossament, diameter_classes),
           ancillary_tables_to_look_at(nfi)
         )
+
+        message(as.character(filters_reactives$filter_expressions))
 
         progress$set(value = 10)
 

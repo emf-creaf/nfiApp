@@ -266,43 +266,6 @@ mod_filters <- function(
       magrittr::set_names(variables_to_filter_by())
   }) # end of onthefly inputs
 
-  ## cache updater ####
-  # cache updating does not work if is done in the on_the_fly_inputs reactive,
-  # as cache does not change when input change. Lets do this with an observer
-  shiny::observe({
-    # browser()
-    # validation
-    shiny::validate(
-      shiny::need(variables_to_filter_by(), 'no variables to filter')
-    )
-    # vars
-    vars_to_filter_by <- shiny::isolate(variables_to_filter_by()) %>%
-      magrittr::set_names(., .)
-    # cache list
-    cache_list <-
-      vars_to_filter_by %>%
-      purrr::map(~ cache$get(stringr::str_remove_all(., '_'), missing = NULL))
-    # inputs values
-    input_values <-
-      vars_to_filter_by %>%
-      purrr::map(~ input[[.]])
-
-    vars_to_filter_by %>%
-      purrr::walk(
-        ~ {
-          if (
-            # logic:
-            # input must be no null and if it is not, then it must be different
-            # from cache
-            !is.null(input_values[[.]]) &
-            !identical(cache_list[[.]], input_values[[.]])
-          ) {
-            cache$set(stringr::str_remove_all(., '_'), input_values[[.]])
-          }
-        }
-      )
-  })
-
   # filter expressions builder ####
   # we have the inputs created and their values retrieved in on_the_fly_inputs
   # so we need to create the expressions to filter the data with. The logic is
@@ -352,6 +315,43 @@ mod_filters <- function(
         )
     }
   ) # end of filter expressions builder
+
+  ## cache updater ####
+  # cache updating does not work if is done in the on_the_fly_inputs reactive,
+  # as cache does not change when input change. Lets do this with an observer
+  shiny::observe({
+    # browser()
+    # validation
+    shiny::validate(
+      shiny::need(variables_to_filter_by(), 'no variables to filter')
+    )
+    # vars
+    vars_to_filter_by <- shiny::isolate(variables_to_filter_by()) %>%
+      magrittr::set_names(., .)
+    # cache list
+    cache_list <-
+      vars_to_filter_by %>%
+      purrr::map(~ cache$get(stringr::str_remove_all(., '_'), missing = NULL))
+    # inputs values
+    input_values <-
+      vars_to_filter_by %>%
+      purrr::map(~ input[[.]])
+
+    vars_to_filter_by %>%
+      purrr::walk(
+        ~ {
+          if (
+            # logic:
+            # input must be no null and if it is not, then it must be different
+            # from cache
+            !is.null(input_values[[.]]) &
+            !identical(cache_list[[.]], input_values[[.]])
+          ) {
+            cache$set(stringr::str_remove_all(., '_'), input_values[[.]])
+          }
+        }
+      )
+  }) # end of cache updater
 
   filter_reactives <- shiny::reactiveValues()
   shiny::observe({
