@@ -34,7 +34,7 @@ main_table_to_look_at <- function(nfi, desglossament, diameter_classes) {
   #     the desgossament level, the nfi and the diameter_classes if checked
   #   - a simple switch must work
   if (isTRUE(diameter_classes)) {
-    dc <- 'DIAMCLASS_'
+    dc <- 'diamclass_'
   } else {
     dc <- ''
   }
@@ -280,4 +280,65 @@ filter_inputs_builder_helper <- function(
     return()
   }
 
+}
+
+# general_summary_grouping_vars
+# logic as follows:
+#   - div grouping is always present, being poly_id in custom polys
+#   - if dominancy, then add the dominance checking for nfi table in case of
+#     comparisions
+#   - if not dominancy, check for desglossament and diameter classes
+general_summary_grouping_vars <- function(
+  nfi, diameter_classes, admin_div, group_by_dom, dominant_group,
+  dominant_criteria, dominant_nfi, desglossament
+) {
+
+  # admin
+  admin_div_grouping <- ''
+  if (admin_div %in% c('file', 'drawn_poly')) {
+    admin_div_grouping <- 'poly_id'
+  } else {
+    admin_div_grouping <- glue::glue("admin_{admin_div}")
+  }
+
+  # dominancy
+  if (isTRUE(group_by_dom)) {
+    if (nfi %in% c('nfi_2_nfi_3', 'nfi_3_nfi_4')) {
+      dominancy_grouping <- glue::glue(
+        "{dominant_criteria}_{dominant_group}_dominant_{dominant_nfi}"
+      )
+    } else {
+      dominancy_grouping <- glue::glue(
+        "{dominant_criteria}_{dominant_group}_dominant"
+      )
+    }
+
+    # when dominancy is setted, there can't be desglossament or diameter classes
+    res <- rlang::quos(
+      !! rlang::sym(admin_div_grouping), !! rlang::sym(dominancy_grouping)
+    )
+    return(res)
+  }
+
+  # no dominancy we build all, and remove them in order to get what we need
+  desglossament_grouping <- glue::glue("{desglossament}_id")
+  diameter_classes_grouping <- "diamclass_id"
+
+  res <- rlang::quos(
+    !! rlang::sym(admin_div_grouping),
+    !! rlang::sym(desglossament_grouping),
+    !! rlang::sym(diameter_classes_grouping)
+  )
+
+  # removing in this order maintains the consistency. No matter if diam class
+  # is present, desglossament will be always the second. If diam classes is
+  # present
+  if (!isTRUE(diameter_classes)) {
+    res <- res[-3]
+  }
+  if (desglossament == 'plot') {
+    res <- res[-2]
+  }
+
+  return(res)
 }

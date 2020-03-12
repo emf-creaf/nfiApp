@@ -101,10 +101,11 @@ mod_data <- function(
       ))
 
     dominant_group_choices <- c(
-      'none', 'species', 'simpspecies', 'genus', 'dec', 'bc'
+      # 'none',
+      'species', 'simpspecies', 'genus', 'dec', 'bc'
     ) %>%
       magrittr::set_names(c(
-        text_translate('none', lang, texts_thes),
+        # text_translate('none', lang, texts_thes),
         text_translate('species', lang, texts_thes),
         text_translate('simpspecies', lang, texts_thes),
         text_translate('genus', lang, texts_thes),
@@ -128,15 +129,6 @@ mod_data <- function(
 
     # tagList
     shiny::tagList(
-      # filter warning
-      shiny::div(
-        id = ns('filter_warning_panel'),
-        shiny::fluidRow(
-          shiny::helpText(
-            text_translate('filters_warning', lang, texts_thes)
-          )
-        )
-      ),
       # data version and admin row
       shiny::fluidRow(
         shiny::column(
@@ -215,7 +207,7 @@ mod_data <- function(
               shinyWidgets::prettyRadioButtons(
                 ns('dominant_group'), label = 'Dominant group to group by',
                 choices = dominant_group_choices,
-                selected = 'none',
+                selected = 'species',
                 status = 'success',
                 fill = TRUE,
                 shape = 'round'
@@ -450,20 +442,20 @@ mod_data <- function(
 
   ## returning inputs ####
   # reactive values to return and use in other modules
-  data_inputs <- shiny::reactiveValues()
+  data_reactives <- shiny::reactiveValues()
 
   shiny::observe({
-    data_inputs$nfi <- input$nfi
-    data_inputs$admin_div <- input$admin_div
-    data_inputs$desglossament <- input$desglossament
-    data_inputs$diameter_classes <- input$diameter_classes
-    data_inputs$user_file_sel <- input$user_file_sel
-    data_inputs$group_by_div <- input$group_by_div
-    data_inputs$group_by_dom <- input$group_by_dom
-    data_inputs$dominant_group <- input$dominant_group
-    data_inputs$dominant_criteria <- input$dominant_criteria
-    data_inputs$dominant_nfi <- input$dominant_nfi
+    data_reactives$nfi <- input$nfi
+    data_reactives$admin_div <- input$admin_div
+    data_reactives$desglossament <- input$desglossament
+    data_reactives$diameter_classes <- input$diameter_classes
+    data_reactives$user_file_sel <- input$user_file_sel
+    data_reactives$group_by_div <- input$group_by_div
+    data_reactives$group_by_dom <- input$group_by_dom
+    data_reactives$dominant_group <- input$dominant_group
+    data_reactives$dominant_criteria <- input$dominant_criteria
+    data_reactives$dominant_nfi <- input$dominant_nfi
   })
 
-  return(data_inputs)
+  return(data_reactives)
 }
