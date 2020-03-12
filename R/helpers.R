@@ -135,16 +135,18 @@ translate_var <- function(
   }
 
   if (isTRUE(need_order)) {
+    # intended for input population, as we need an specific order
     order_of_vars <-
       var_lookup_table %>%
       dplyr::arrange(var_order_app) %>%
-      dplyr::pull(var_id) %>%
-      match(vars, .) %>%
-      order()
+      dplyr::select(var_id, var_name)
 
-    ordered_res <- vars[order_of_vars] %>%
+    ordered_res <-
+      order_of_vars %>%
+      dplyr::pull(var_id) %>%
       magrittr::set_names(
-        var_lookup_table[order_of_vars, 'var_name', drop = TRUE]
+        order_of_vars %>%
+          dplyr::pull(var_name)
       )
 
     return(ordered_res)
@@ -161,6 +163,42 @@ translate_var <- function(
       )
     return(res)
   }
+}
+
+# Aggregator of inputs
+var_inputs_aggregator <- function(ready_vars, lang, texts_thes) {
+
+  list(
+    id = ready_vars[stringr::str_detect(ready_vars, '_id')] %>%
+      magrittr::extract(!stringr::str_detect(., 'admin_|old_')),
+    admin = ready_vars[stringr::str_detect(ready_vars, 'admin_')] %>%
+      magrittr::extract(!stringr::str_detect(., '_id')),
+    proper_table = ready_vars[
+      !stringr::str_detect(ready_vars, 'admin_') &
+        !stringr::str_detect(ready_vars, '_id') &
+        !stringr::str_detect(ready_vars, 'clim_') &
+        !stringr::str_detect(ready_vars, 'topo_') &
+        !stringr::str_detect(ready_vars, 'feat_') &
+        !stringr::str_detect(ready_vars, 'coords_') &
+        !stringr::str_detect(ready_vars, 'old_')
+    ],
+    clim = ready_vars[stringr::str_detect(ready_vars, 'clim_')],
+    topo = ready_vars[stringr::str_detect(ready_vars, 'topo_')],
+    feat = ready_vars[stringr::str_detect(ready_vars, 'feat_')]
+    # coord = ready_vars[stringr::str_detect(ready_vars, 'coords_')],
+    # old = ready_vars[stringr::str_detect(ready_vars, 'old_')]
+  ) %>%
+    magrittr::set_names(c(
+      text_translate('id', lang, texts_thes),
+      text_translate('admin', lang, texts_thes),
+      text_translate('proper_table', lang, texts_thes),
+      text_translate('clim', lang, texts_thes),
+      text_translate('topo', lang, texts_thes),
+      text_translate('feat', lang, texts_thes)
+      # text_translate('coord', lang, texts_thes),
+      # text_translate('old', lang, texts_thes)
+    ))
+
 }
 
 # Input builder, for a single variable, designed to be used in a map or lapply

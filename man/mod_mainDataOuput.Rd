@@ -4,7 +4,7 @@
 \alias{mod_mainData}
 \title{mod_mainData server function}
 \usage{
-mod_mainData(input, output, session, data_reactives, filters_reactives,
+mod_mainData(input, output, session, data_reactives, filter_reactives,
   apply_reactives, nfidb, lang, texts_thes)
 }
 \arguments{
@@ -16,7 +16,7 @@ mod_mainData(input, output, session, data_reactives, filters_reactives,
 
 \item{data_reactives}{reactives from dataInput module}
 
-\item{filters_reactives}{filter reactives}
+\item{filter_reactives}{filter reactives}
 
 \item{nfidb}{object to access the nfi db#'}
 

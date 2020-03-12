@@ -39,14 +39,14 @@ mod_applyButtonInput <- function(id) {
 mod_applyButton <- function(
   input, output, session,
   lang, texts_thes, var_thes, numerical_thes,
-  data_reactives, filters_reactives
+  data_reactives, filter_reactives
 ) {
 
   # filter_warning ####
   output$filter_warning <- shiny::renderPrint({
 
     shiny::validate(
-      shiny::need(filters_reactives$filter_vars, '')
+      shiny::need(filter_reactives$filter_vars, '')
     )
 
     # tables to look at for translations
@@ -59,7 +59,7 @@ mod_applyButton <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-    filter_vars <- filters_reactives$filter_vars
+    filter_vars <- filter_reactives$filter_vars
     glue::glue(
       "{text_translate('filter_warning', lang, texts_thes)} ",
       "{names(translate_var(

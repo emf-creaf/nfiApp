@@ -17,7 +17,7 @@ mod_mainDataOutput <- function(id) {
 #' @param session internal
 #'
 #' @param data_reactives reactives from dataInput module
-#' @param filters_reactives filter reactives
+#' @param filter_reactives filter reactives
 #' @param nfidb object to access the nfi db#'
 #' @param lang lang selected
 #' @param texts_thes thesaurus
@@ -30,7 +30,7 @@ mod_mainDataOutput <- function(id) {
 #' @rdname mod_mainDataOuput
 mod_mainData <- function(
   input, output, session,
-  data_reactives, filters_reactives, apply_reactives,
+  data_reactives, filter_reactives, apply_reactives,
   nfidb, lang, texts_thes
 ) {
 
@@ -132,7 +132,7 @@ mod_mainData <- function(
         ancillary_tables_to_look_at(nfi)
       )
 
-      message(as.character(filters_reactives$filter_expressions))
+      message(as.character(filter_reactives$filter_expressions))
 
       progress$set(value = 5)
 
@@ -145,7 +145,7 @@ mod_mainData <- function(
         ) %>%
         purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
         dplyr::filter(
-          !!! filters_reactives$filter_expressions
+          !!! filter_reactives$filter_expressions
         ) %>%
         dplyr::left_join(
           nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%

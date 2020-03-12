@@ -157,7 +157,7 @@ nfi_app <- function() {
       var_thes, numerical_thes, texts_thes
     )
     # filters
-    filters_reactives <- shiny::callModule(
+    filter_reactives <- shiny::callModule(
       mod_filters, 'mod_filtersUI', nfidb, lang(),
       data_reactives, filters_cache,
       var_thes, numerical_thes, texts_thes, categorical_thes
@@ -166,16 +166,16 @@ nfi_app <- function() {
     apply_reactives <- shiny::callModule(
       mod_applyButton, 'mod_applyButtonInput', lang(),
       texts_thes, var_thes, numerical_thes,
-      data_reactives, filters_reactives
+      data_reactives, filter_reactives
     )
     # main data
     main_data_reactives <- shiny::callModule(
       mod_mainData, 'mod_mainDataOutput',
-      data_reactives, filters_reactives, apply_reactives,
+      data_reactives, filter_reactives, apply_reactives,
       nfidb, lang(), texts_thes
     )
     # viz
-    filters_reactives <- shiny::callModule(
+    viz_reactives <- shiny::callModule(
       mod_viz, 'mod_vizInput',
       data_reactives, filter_reactives, main_data_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, lang()
