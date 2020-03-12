@@ -63,7 +63,7 @@ mod_applyButton <- function(
     glue::glue(
       "{text_translate('filter_warning', lang, texts_thes)} ",
       "{names(translate_var(
-        filter_vars, tables_to_look_at, lang, var_thes, numerical_thes
+        filter_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
       ))}"
     )
   })

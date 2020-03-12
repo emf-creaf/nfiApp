@@ -77,10 +77,29 @@ ancillary_tables_to_look_at <- function(nfi) {
 # translate variables function. Similar as text_translate, but for variables
 translate_var <- function(
   vars, tables, lang,
-  var_thes, numerical_thes,
+  var_thes, numerical_thes, texts_thes,
   is_summary = FALSE, need_order = TRUE
 ) {
   if (isTRUE(is_summary)) {
+    vars_translation <- stringr::str_remove(
+      vars, '_mean$|_se$|_min$|_max$|_n$'
+    ) %>%
+      translate_var(
+        tables, lang, var_thes, numerical_thes, texts_thes,
+        need_order = FALSE
+      ) %>%
+      names()
+    vars_stat <- stringr::str_extract(vars, '_mean$|_se$|_min$|_max$|_n$') %>%
+      stringr::str_remove('_') %>%
+      purrr::map_chr(
+        text_translate, lang = lang, texts_thes = texts_thes
+      )
+    res <- vars %>%
+      magrittr::set_names(
+        glue::glue("{vars_stat} {vars_translation}") %>%
+          stringr::str_remove('NA ')
+      )
+    return(res)
 
   } else {
     var_lookup_table <-
@@ -130,11 +149,17 @@ translate_var <- function(
 
     return(ordered_res)
   } else {
-    var_lookup_table %>%
-      dplyr::pull(var_id) %>%
+
+    res <- vars %>%
       magrittr::set_names(
-        var_lookup_table %>% dplyr::pull(var_name)
+        vars %>%
+          purrr::map_chr(
+            ~ var_lookup_table[
+              var_lookup_table$var_id == .x, 'var_name', drop = TRUE
+            ]
+          )
       )
+    return(res)
   }
 }
 
@@ -187,7 +212,7 @@ filter_inputs_builder_helper <- function(
     res <- shinyWidgets::pickerInput(
       ns(variable),
       label = names(translate_var(
-        variable, tables, lang, var_thes, numerical_thes
+        variable, tables, lang, var_thes, numerical_thes, texts_thes
       )),
       choices = input_choices,
       selected = previous_value,
@@ -228,7 +253,7 @@ filter_inputs_builder_helper <- function(
     res <- shiny::sliderInput(
       ns(variable),
       label = names(translate_var(
-        variable, tables, lang, var_thes, numerical_thes
+        variable, tables, lang, var_thes, numerical_thes, texts_thes
       )),
       min = input_choices[['min']],
       max = input_choices[['max']],
@@ -253,7 +278,7 @@ filter_inputs_builder_helper <- function(
     res <- shinyWidgets::pickerInput(
       ns(variable),
       label = names(translate_var(
-        variable, tables, lang, var_thes, numerical_thes
+        variable, tables, lang, var_thes, numerical_thes, texts_thes
       )),
       choices = input_choices,
       selected = previous_value,

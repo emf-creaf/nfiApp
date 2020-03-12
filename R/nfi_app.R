@@ -107,7 +107,13 @@ nfi_app <- function() {
                 title = 'filters',
                 value = 'filters_panel',
                 mod_filtersUI('mod_filtersUI')
-              ) # end of filter tab
+              ), # end of filter tab
+              # viz tab
+              shiny::tabPanel(
+                title = 'viz',
+                value = 'viz_panel',
+                mod_vizInput('mod_vizInput')
+              ) # end of viz tab
             ) # end of sidebar tabsetPanel
           ),
           ## main panel
@@ -122,8 +128,8 @@ nfi_app <- function() {
               ),
               shiny::tabPanel(
                 title = 'table',
-                value = 'table_panel'
-                # mod_dataTableOutput('mod_dataTableOutput')
+                value = 'table_panel',
+                mod_dataTableOutput('mod_dataTableOutput')
               )
             )
           )
@@ -167,6 +173,18 @@ nfi_app <- function() {
       mod_mainData, 'mod_mainDataOutput',
       data_reactives, filters_reactives, apply_reactives,
       nfidb, lang(), texts_thes
+    )
+    # viz
+    filters_reactives <- shiny::callModule(
+      mod_viz, 'mod_vizInput',
+      data_reactives, filter_reactives, main_data_reactives,
+      nfidb, var_thes, texts_thes, numerical_thes, lang()
+    )
+    # table
+    shiny::callModule(
+      mod_dataTable, 'mod_dataTableOutput',
+      main_data_reactives, data_reactives, #filter_reactives,
+      nfidb, var_thes, texts_thes, numerical_thes, lang()
     )
 
   } # end of server

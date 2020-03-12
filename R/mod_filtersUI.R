@@ -3,7 +3,6 @@
 #' @description A shiny module to generate and process the filters
 #'
 #' @param id shiny id
-#' @param nfidb pool object to access the nfi db
 #'
 #' @export
 mod_filtersUI <- function(id) {
@@ -94,13 +93,13 @@ mod_filters <- function(
 
     return(list(
       res_vars = translate_var(
-        res_vars, tables_to_look_at, lang, var_thes, numerical_thes
+        res_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
       ),
       clim_vars = translate_var(
-        clim_vars, tables_to_look_at, lang, var_thes, numerical_thes
+        clim_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
       ),
       plot_vars = translate_var(
-        plot_vars, tables_to_look_at, lang, var_thes, numerical_thes
+        plot_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
       )
     ))
   })

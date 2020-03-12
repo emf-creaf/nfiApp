@@ -19,7 +19,7 @@ mod_filters(input, output, session, nfidb, lang, data_reactives, cache,
 
 \item{session}{internal}
 
-\item{nfidb}{pool object to access the nfi db}
+\item{nfidb}{object to access the nfi db}
 
 \item{lang}{lang reactive value}
 
@@ -28,8 +28,6 @@ mod_filters(input, output, session, nfidb, lang, data_reactives, cache,
 \item{cache}{memoryCache to store the filters values}
 
 \item{var_thes, numerical_thes, texts_thes, categorical_thes}{thesauruses}
-
-\item{nfidb}{object to access the nfi db}
 }
 \description{
 A shiny module to generate and process the filters
