@@ -11,7 +11,16 @@ mod_applyButtonInput <- function(id) {
 
   # tagList
   shiny::tagList(
-    shiny::uiOutput(ns("apply_panel"))
+    shiny::fluidRow(
+      shiny::column(
+        6, align = 'left',
+        shiny::verbatimTextOutput(ns('filter_warning'))
+      ),
+      shiny::column(
+        6, align = 'center',
+        shiny::uiOutput(ns("apply_panel"))
+      )
+    )
   )
 
 
@@ -27,7 +36,37 @@ mod_applyButtonInput <- function(id) {
 #' @export
 #'
 #' @rdname mod_applyButtonInput
-mod_applyButton <- function(input, output, session, lang, texts_thes) {
+mod_applyButton <- function(
+  input, output, session,
+  lang, texts_thes, var_thes, numerical_thes,
+  data_reactives, filters_reactives
+) {
+
+  # filter_warning ####
+  output$filter_warning <- shiny::renderPrint({
+
+    shiny::validate(
+      shiny::need(filters_reactives$filter_vars, '')
+    )
+
+    # tables to look at for translations
+    nfi <- data_reactives$nfi
+    desglossament <- data_reactives$desglossament
+    diameter_classes <- data_reactives$diameter_classes
+
+    tables_to_look_at <- c(
+      main_table_to_look_at(nfi, desglossament, diameter_classes),
+      ancillary_tables_to_look_at(nfi)
+    )
+
+    filter_vars <- filters_reactives$filter_vars
+    glue::glue(
+      "{text_translate('filter_warning', lang, texts_thes)} ",
+      "{names(translate_var(
+        filter_vars, tables_to_look_at, lang, var_thes, numerical_thes
+      ))}"
+    )
+  })
 
   # renderUI ####
   output$apply_panel <- shiny::renderUI({

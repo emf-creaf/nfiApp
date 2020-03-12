@@ -128,6 +128,15 @@ mod_data <- function(
 
     # tagList
     shiny::tagList(
+      # filter warning
+      shiny::div(
+        id = ns('filter_warning_panel'),
+        shiny::fluidRow(
+          shiny::helpText(
+            text_translate('filters_warning', lang, texts_thes)
+          )
+        )
+      ),
       # data version and admin row
       shiny::fluidRow(
         shiny::column(

@@ -133,10 +133,6 @@ nfi_app <- function() {
     filters_cache <- shiny::memoryCache(evict = 'fifo')
 
     # modeules ####
-    # apply_button
-    apply_reactives <- shiny::callModule(
-      mod_applyButton, 'mod_applyButtonInput', lang(), texts_thes
-    )
     # data inputs
     data_reactives <- shiny::callModule(
       mod_data, 'mod_dataInput', nfidb, lang(),
@@ -148,70 +144,18 @@ nfi_app <- function() {
       data_reactives, filters_cache,
       var_thes, numerical_thes, texts_thes, categorical_thes
     )
-
-    # main data ####
-    # we have all we need to retrieve the main data. The map will need other
-    # transformations (summarising...), and we need inputs now is convoluted
-    # to do (like draw polygons or file inputs). Let's retrieve the main data,
-    # and lets delegate the data transformations to the places they are needed
-    main_data <- shiny::eventReactive(
-      eventExpr = apply_reactives$apply_button,
-      valueExpr = {
-
-        # set a progress
-        progress <- shiny::Progress$new(session, min = 0, max = 100)
-        on.exit(progress$close())
-        progress$set(
-          message = 'Calculation in progress',
-          detail = 'This may take a while...'
-        )
-
-        # tables to look at
-        nfi <- data_reactives$nfi
-        desglossament <- data_reactives$desglossament
-        diameter_classes <- data_reactives$diameter_classes
-        admin_div <- glue::glue("admin_{data_reactives$admin_div}")
-
-        tables_to_look_at <- c(
-          main_table_to_look_at(nfi, desglossament, diameter_classes),
-          ancillary_tables_to_look_at(nfi)
-        )
-
-        message(as.character(filters_reactives$filter_expressions))
-
-        progress$set(value = 10)
-
-        # get data, join it
-        main_data_table <-
-          tables_to_look_at %>%
-          purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
-          purrr::walk(
-            ~ progress$set(value = 45)
-          ) %>%
-          purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
-          dplyr::filter(
-            !!! filters_reactives$filter_expressions
-          ) %>%
-          dplyr::left_join(
-            nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
-              dplyr::select(plot_id, geometry),
-            by = 'plot_id'
-          ) %>%
-          purrr::walk(
-            ~ progress$set(value = 85)
-          ) %>%
-          sf::st_as_sf(sf_column_name = 'geometry')
-
-        progress$set(value = 100)
-        return(main_data_table)
-      }
+    # apply button
+    apply_reactives <- shiny::callModule(
+      mod_applyButton, 'mod_applyButtonInput', lang(),
+      texts_thes, var_thes, numerical_thes,
+      data_reactives, filters_reactives
     )
-
-   shiny::observe({
-     shiny::validate(shiny::need(main_data(), 'no data'))
-     data <- main_data()
-   })
-
+    # main data
+    main_data_reactives <- shiny::callModule(
+      mod_mainData, 'mod_mainDataOutput',
+      data_reactives, filters_reactives, apply_reactives,
+      nfidb, lang(), texts_thes
+    )
 
   } # end of server
 
