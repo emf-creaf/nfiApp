@@ -94,18 +94,18 @@ nfi_app <- function() {
             shiny::br(),
             # tabset panel
             shiny::tabsetPanel(
-              id = 'sidebar_tabset', type = 'tabs',
+              id = 'sidebar_tabset', type = 'pills',
               # TODO transform titles in ui's for translations
               # data tab
               shiny::tabPanel(
                 title = 'data',
-                value = 'h4_data_selection',
+                value = 'data_inputs_panel',
                 mod_dataInput('mod_dataInput')
               ), # end of data tab
               # filter tab
               shiny::tabPanel(
                 title = 'filters',
-                value = 'data_tab_2',
+                value = 'filters_panel',
                 mod_filtersUI('mod_filtersUI')
               ) # end of filter tab
             ) # end of sidebar tabsetPanel
@@ -113,7 +113,19 @@ nfi_app <- function() {
           ## main panel
           mainPanel = shiny::mainPanel(
             width = 7,
-            shiny::uiOutput("main_tabbed")
+            shiny::tabsetPanel(
+              id = 'main_panel_tabset', type = 'pills',
+              shiny::tabPanel(
+                title = 'map',
+                value = 'map_panel'
+                # mod_mapOutput('mod_mapOutput')
+              ),
+              shiny::tabPanel(
+                title = 'table',
+                value = 'table_panel'
+                # mod_dataTableOutput('mod_dataTableOutput')
+              )
+            )
           )
         ) # end sidebar layout
       )
