@@ -100,7 +100,40 @@ mod_dataTable <- function(
         fg_var <- "density_species_dominant"
       }
     }
-    # browser()
+    browser()
+
+    # as viz inputs are not triggering data but they are triggering map and
+    # table we need to check if new intended data is different from existing
+    # data in main_data.
+    # This happens when we change data basic inputs (dc, desglossament, nfi) and
+    # go back to viz without applying. Logic is as follows:
+    #   - check for diferences in new and old data names
+    #   - if enough differences are found return a new tagList with a text
+    #     asking for applying
+    #   - if no differences, then continue with the normal tagList
+    new_data_vars <-
+      var_thes %>%
+      dplyr::filter(var_table %in% tables_to_look_at) %>%
+      dplyr::pull(var_id)
+    old_data_vars <-
+      names(main_data_reactives$main_data$requested_data) %>%
+      magrittr::extract(
+        stringr::str_detect(
+          ., "^geometry$", negate = TRUE
+        )
+      )
+
+    browser()
+    if (sum(!new_data_vars %in% old_data_vars) > 3) {
+      res <- shiny::tagList(
+        shiny::fluidRow(
+          shiny::tags$p(text_translate('apply_warning', lang, texts_thes))
+        )
+      )
+
+      return(res)
+    }
+
     # choices
     col_vis_selector_choices <-
       names(main_data_reactives$main_data$requested_data) %>%
