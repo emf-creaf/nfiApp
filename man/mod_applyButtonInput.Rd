@@ -7,8 +7,17 @@
 \usage{
 mod_applyButtonInput(id)
 
-mod_applyButton(input, output, session, lang, texts_thes, var_thes,
-  numerical_thes, data_reactives, filter_reactives)
+mod_applyButton(
+  input,
+  output,
+  session,
+  lang,
+  texts_thes,
+  var_thes,
+  numerical_thes,
+  data_reactives,
+  filter_reactives
+)
 }
 \arguments{
 \item{id}{shiny id}

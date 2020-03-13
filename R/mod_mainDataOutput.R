@@ -16,11 +16,11 @@ mod_mainDataOutput <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param data_reactives reactives from dataInput module
-#' @param filter_reactives filter reactives
-#' @param nfidb object to access the nfi db#'
+#' @param data_reactives,filter_reactives,apply_reactives reactives from modules
+#' @param nfidb object to access the nfi db
 #' @param lang lang selected
 #' @param texts_thes thesaurus
+#' @param parent_session parent session to be able to update tabset panel
 #'
 #' @import tidyNFI
 #' @importFrom dplyr n
@@ -31,7 +31,7 @@ mod_mainDataOutput <- function(id) {
 mod_mainData <- function(
   input, output, session,
   data_reactives, filter_reactives, apply_reactives,
-  nfidb, lang, texts_thes
+  nfidb, lang, texts_thes, parent_session
 ) {
 
   # custom polygon ####
@@ -105,6 +105,10 @@ mod_mainData <- function(
   main_data <- shiny::eventReactive(
     eventExpr = apply_reactives$apply_button,
     valueExpr = {
+
+      shiny::updateTabsetPanel(
+        parent_session, 'sidebar_tabset', selected = 'viz_panel'
+      )
 
       # set a progress
       progress <- shiny::Progress$new(session, min = 0, max = 100)
@@ -278,7 +282,6 @@ mod_mainData <- function(
       return(res)
     }
   )
-
 
   # reactive to return
   main_data_reactives <- shiny::reactiveValues()

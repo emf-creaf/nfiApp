@@ -405,3 +405,18 @@ general_summary_grouping_vars <- function(
 
   return(res)
 }
+
+# # reactive trigger based on
+# # https://github.com/daattali/advanced-shiny/tree/master/reactive-trigger
+# makeReactiveTrigger <- function() {
+#   rv <- shiny::reactiveValues(a = 0)
+#   list(
+#     depend = function() {
+#       rv$a
+#       invisible()
+#     },
+#     trigger = function() {
+#       rv$a <- shiny::isolate(rv$a + 1)
+#     }
+#   )
+# }

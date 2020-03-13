@@ -59,6 +59,7 @@ mod_dataTable <- function(
     viz_statistic <- viz_reactives$viz_statistic
     viz_size <- viz_reactives$viz_size
 
+
     # translate needed
     tables_to_look_at <- c(
       main_table_to_look_at(nfi, desglossament, diameter_classes),

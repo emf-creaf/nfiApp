@@ -4,8 +4,18 @@
 \alias{mod_mainData}
 \title{mod_mainData server function}
 \usage{
-mod_mainData(input, output, session, data_reactives, filter_reactives,
-  apply_reactives, nfidb, lang, texts_thes)
+mod_mainData(
+  input,
+  output,
+  session,
+  data_reactives,
+  filter_reactives,
+  apply_reactives,
+  nfidb,
+  lang,
+  texts_thes,
+  parent_session
+)
 }
 \arguments{
 \item{input}{internal}
@@ -14,15 +24,15 @@ mod_mainData(input, output, session, data_reactives, filter_reactives,
 
 \item{session}{internal}
 
-\item{data_reactives}{reactives from dataInput module}
+\item{data_reactives, filter_reactives, apply_reactives}{reactives from modules}
 
-\item{filter_reactives}{filter reactives}
-
-\item{nfidb}{object to access the nfi db#'}
+\item{nfidb}{object to access the nfi db}
 
 \item{lang}{lang selected}
 
 \item{texts_thes}{thesaurus}
+
+\item{parent_session}{parent session to be able to update tabset panel}
 }
 \description{
 mod_mainData server function

@@ -7,8 +7,19 @@
 \usage{
 mod_filtersUI(id)
 
-mod_filters(input, output, session, nfidb, lang, data_reactives, cache,
-  var_thes, numerical_thes, texts_thes, categorical_thes)
+mod_filters(
+  input,
+  output,
+  session,
+  nfidb,
+  lang,
+  data_reactives,
+  cache,
+  var_thes,
+  numerical_thes,
+  texts_thes,
+  categorical_thes
+)
 }
 \arguments{
 \item{id}{shiny id}

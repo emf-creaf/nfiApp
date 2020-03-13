@@ -36,7 +36,15 @@ nfi_app <- function() {
     )
   )
 
-  ## UI ####
+  ## JS code needed ############################################################
+  js_script <- shiny::HTML(
+'$(document).on("shiny:idle", function(event) {
+  Shiny.setInputValue("first_time", "true", {priority: "event"});
+});'
+  )
+
+
+  ## UI ########################################################################
   ui <- shiny::tagList(
 
     # use shinyjs
@@ -70,6 +78,8 @@ nfi_app <- function() {
         title = 'Main',
         # css
         shiny::tags$head(
+          # js script,
+          shiny::tags$script(js_script),
           # custom css
           shiny::includeCSS(
             system.file('resources', 'nfi.css', package = 'NFIappkg')
@@ -150,7 +160,7 @@ nfi_app <- function() {
     # cache ####
     filters_cache <- shiny::memoryCache(evict = 'fifo')
 
-    # modeules ####
+    # modules ####
     # data inputs
     data_reactives <- shiny::callModule(
       mod_data, 'mod_dataInput', nfidb, lang(),
@@ -172,7 +182,7 @@ nfi_app <- function() {
     main_data_reactives <- shiny::callModule(
       mod_mainData, 'mod_mainDataOutput',
       data_reactives, filter_reactives, apply_reactives,
-      nfidb, lang(), texts_thes
+      nfidb, lang(), texts_thes, session
     )
     # viz
     viz_reactives <- shiny::callModule(
@@ -187,6 +197,19 @@ nfi_app <- function() {
       main_data_reactives, data_reactives, viz_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, lang()
     )
+
+    # first time observer
+    shiny::observeEvent(
+      once = TRUE, priority = 1,
+      eventExpr = {
+        input$first_time
+        shiny::isolate(data_reactives$nfi)
+      },
+      handlerExpr = {
+        shinyjs::click("mod_applyButtonInput-apply", asis = TRUE)
+      }
+    )
+
 
   } # end of server
 
