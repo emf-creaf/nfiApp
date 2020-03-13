@@ -184,7 +184,7 @@ nfi_app <- function() {
     # table
     shiny::callModule(
       mod_dataTable, 'mod_dataTableOutput',
-      main_data_reactives, data_reactives, #filter_reactives,
+      main_data_reactives, data_reactives, viz_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, lang()
     )
 

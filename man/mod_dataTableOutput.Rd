@@ -8,7 +8,7 @@
 mod_dataTableOutput(id)
 
 mod_dataTable(input, output, session, main_data_reactives, data_reactives,
-  nfidb, var_thes, texts_thes, numerical_thes, lang)
+  viz_reactives, nfidb, var_thes, texts_thes, numerical_thes, lang)
 }
 \arguments{
 \item{id}{shiny id}
