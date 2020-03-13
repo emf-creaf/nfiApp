@@ -187,7 +187,7 @@ nfi_app <- function() {
     # viz
     viz_reactives <- shiny::callModule(
       mod_viz, 'mod_vizInput',
-      data_reactives, filter_reactives, main_data_reactives,
+      data_reactives, filter_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, categorical_thes,
       lang()
     )

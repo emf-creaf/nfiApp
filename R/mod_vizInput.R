@@ -21,7 +21,7 @@ mod_vizInput <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param data_reactives,filter_reactives,main_data_reactives reactives from
+#' @param data_reactives,filter_reactives reactives from
 #'   other modules
 #' @param nfidb pool object to access nfi db
 #' @param var_thes,texts_thes,numerical_thes thesauruses
@@ -32,7 +32,7 @@ mod_vizInput <- function(id) {
 #' @rdname mod_vizUI
 mod_viz <- function(
   input, output, session,
-  data_reactives, filter_reactives, main_data_reactives,
+  data_reactives, filter_reactives,
   nfidb, var_thes, texts_thes, numerical_thes, categorical_thes, lang
 ) {
 
