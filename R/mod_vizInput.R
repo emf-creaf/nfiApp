@@ -52,6 +52,24 @@ mod_viz <- function(
         text_translate('n_stat', lang, texts_thes)
       ))
 
+    color_choices <- vars_to_viz_by()
+    size_choices <- c('', color_choices)
+
+    # let's make density (or density_balance) the selected var
+    if ('density' %in% color_choices) {
+      selected_col <- 'density'
+    } else {
+      if ('density_balance' %in% color_choices) {
+        selected_col <- 'density_balance'
+      } else {
+        if ('regeneration_small_trees' %in% color_choices) {
+          selected_col <- 'regeneration_small_trees'
+        } else {
+          selected_col <- 'shrub_canopy_cover'
+        }
+      }
+    }
+
     shiny::tagList(
       # color & palette settings
       shiny::fluidRow(
@@ -60,7 +78,9 @@ mod_viz <- function(
           shinyWidgets::pickerInput(
             ns('viz_color'),
             text_translate('viz_color_input', lang, texts_thes),
-            choices = 'density',
+            choices = color_choices %>%
+              var_inputs_aggregator(lang, texts_thes),
+            selected = selected_col,
             options = list(
               `size` = 10,
               `live-search` = TRUE,
@@ -69,16 +89,18 @@ mod_viz <- function(
           ),
 
           # size
-          shinyjs::hidden(
+          # shinyjs::hidden(
             shinyWidgets::pickerInput(
               ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
-              choices = '',
+              choices = size_choices %>%
+                var_inputs_aggregator(lang, texts_thes),
+              selected = '',
               options = list(
                 `size` = 10,
                 `live-search` = TRUE,
                 `action-box` = FALSE
               )
-            )
+            # )
           ),
 
           # statistic
@@ -155,16 +177,16 @@ mod_viz <- function(
     )
 
     # triggers
-    group_by_div <- data_reactives$group_by_div
-    group_by_dom <- data_reactives$group_by_dom
+    # group_by_div <- data_reactives$group_by_div
+    # group_by_dom <- data_reactives$group_by_dom
 
     return(tables_to_look_at)
   })
   # we need the vars in the data to be able to show the names in the color and size inputs
   vars_to_viz_by <- shiny::reactive({
 
-    group_by_div <- data_reactives$group_by_div
-    group_by_dom <- data_reactives$group_by_dom
+    group_by_div <- shiny::isolate(data_reactives$group_by_div)
+    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
 
     all_variables <- var_thes %>%
       dplyr::filter(
@@ -197,47 +219,11 @@ mod_viz <- function(
 
   # observers ####
   # here we update the viz inputs based on the data available
-  # color input updater
-  shiny::observe({
-
-    color_choices <- vars_to_viz_by()
-    shiny::validate(
-      shiny::need(color_choices, 'No variables to visualize')
-    )
-
-    # let's make density (or density_balance) the selected var
-    if ('density' %in% color_choices) {
-      selected_col <- 'density'
-    } else {
-      if ('density_balance' %in% color_choices) {
-        selected_col <- 'density_balance'
-      } else {
-        if ('regeneration_small_trees' %in% color_choices) {
-          selected_col <- 'regeneration_small_trees'
-        } else {
-          selected_col <- 'shrub_canopy_cover'
-        }
-      }
-    }
-
-    # browser()
-    # update the pickerInput
-    shinyWidgets::updatePickerInput(
-      session, 'viz_color',
-      choices = color_choices %>%
-        var_inputs_aggregator(lang, texts_thes),
-      label = text_translate('viz_color_input', lang, texts_thes),
-      selected = selected_col
-    )
-  }) # end of color updater
-
   # size input updater
   shiny::observe({
 
-    # browser()
-
-    group_by_div <- shiny::isolate(data_reactives$group_by_div)
-    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+    group_by_div <- data_reactives$group_by_div
+    group_by_dom <- data_reactives$group_by_dom
     # the logic here is that if there is summary, hide this, if not show it and
     # update it
     if (any(group_by_div, group_by_dom)) {
@@ -245,17 +231,8 @@ mod_viz <- function(
       shinyjs::disable('viz_size')
       shinyjs::hide('viz_size')
     } else {
-      size_choices <- vars_to_viz_by()
-      # update the pickerInput
-      shinyWidgets::updatePickerInput(
-        session, 'viz_size',
-        choices = c(
-          '', size_choices %>% var_inputs_aggregator(lang, texts_thes)
-        ),
-        label = text_translate('viz_size_input', lang, texts_thes)
-      )
       # show and enable
-      # shinyjs::enable('viz_size')
+      shinyjs::enable('viz_size')
       shinyjs::show('viz_size')
     }
   }) # end of size updater
