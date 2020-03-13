@@ -104,15 +104,12 @@ mod_viz <- function(
           ),
 
           # statistic
-          # shinyjs::hidden(
-          #   shinyWidgets::pickerInput(
-          #     ns('viz_statistic'), text_translate('viz_statistic_input', lang, texts_thes),
-          #     choices = statistic_choices
-          #   )
-          # ),
-          shinyWidgets::pickerInput(
-            ns('viz_statistic'), text_translate('viz_statistic_input', lang, texts_thes),
-            choices = statistic_choices
+          shinyjs::hidden(
+            shinyWidgets::pickerInput(
+              ns('viz_statistic'),
+              text_translate('viz_statistic_input', lang, texts_thes),
+              choices = statistic_choices
+            )
           ),
 
           # functional group value
@@ -236,5 +233,22 @@ mod_viz <- function(
       shinyjs::show('viz_size')
     }
   }) # end of size updater
+
+  # statistic input updater
+  shiny::observe({
+
+    group_by_div <- data_reactives$group_by_div
+    group_by_dom <- data_reactives$group_by_dom
+    # the logic here is that if there is summary, show this, if not hide it
+    if (any(group_by_div, group_by_dom)) {
+      # show and enable
+      shinyjs::enable('viz_statistic')
+      shinyjs::show('viz_statistic')
+    } else {
+      shinyjs::reset('viz_statistic')
+      shinyjs::disable('viz_statistic')
+      shinyjs::hide('viz_statistic')
+    }
+  }) # end of statistic updater
 
 }
