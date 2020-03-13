@@ -33,7 +33,7 @@ mod_vizInput <- function(id) {
 mod_viz <- function(
   input, output, session,
   data_reactives, filter_reactives, main_data_reactives,
-  nfidb, var_thes, texts_thes, numerical_thes, lang
+  nfidb, var_thes, texts_thes, numerical_thes, categorical_thes, lang
 ) {
 
   # static UI, later we populate the inputs with updaters
@@ -53,8 +53,6 @@ mod_viz <- function(
       ))
 
     color_choices <- vars_to_viz_by()
-    size_choices <- c('', color_choices)
-
     # let's make density (or density_balance) the selected var
     if ('density' %in% color_choices) {
       selected_col <- 'density'
@@ -68,6 +66,15 @@ mod_viz <- function(
           selected_col <- 'shrub_canopy_cover'
         }
       }
+    }
+    size_choices <- c('', color_choices)
+    diameter_classes_choices <- seq(10, 70, 5) %>% as.character()
+    dc_filter_vals <- filter_reactives$otf_filter_inputs[['diamclass_id']]
+
+    if (!is.null(dc_filter_vals)) {
+      diameter_classes_choices <- diameter_classes_choices[
+        diameter_classes_choices %in% dc_filter_vals
+      ]
     }
 
     shiny::tagList(
@@ -89,18 +96,16 @@ mod_viz <- function(
           ),
 
           # size
-          # shinyjs::hidden(
-            shinyWidgets::pickerInput(
-              ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
-              choices = size_choices %>%
-                var_inputs_aggregator(lang, texts_thes),
-              selected = '',
-              options = list(
-                `size` = 10,
-                `live-search` = TRUE,
-                `action-box` = FALSE
-              )
-            # )
+          shinyWidgets::pickerInput(
+            ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
+            choices = size_choices %>%
+              var_inputs_aggregator(lang, texts_thes),
+            selected = '',
+            options = list(
+              `size` = 10,
+              `live-search` = TRUE,
+              `action-box` = FALSE
+            )
           ),
 
           # statistic
@@ -126,12 +131,21 @@ mod_viz <- function(
           ),
 
           # diameter class to visualize
-          shinyjs::hidden(
-            shinyWidgets::pickerInput(
-              ns('viz_diamclass'), text_translate('viz_diamclass_input', lang, texts_thes),
-              choices = '10'
-            )
-          )
+          {
+            if (data_reactives$diameter_classes) {
+              shinyWidgets::pickerInput(
+                ns('viz_diamclass'), text_translate('viz_diamclass_input', lang, texts_thes),
+                choices = diameter_classes_choices
+              )
+            } else {
+              shinyjs::hidden(
+                shinyWidgets::pickerInput(
+                  ns('viz_diamclass'), text_translate('viz_diamclass_input', lang, texts_thes),
+                  choices = diameter_classes_choices
+                )
+              )
+            }
+          }
         ),
         shiny::column(
           4,
@@ -236,7 +250,6 @@ mod_viz <- function(
 
   # statistic input updater
   shiny::observe({
-
     group_by_div <- data_reactives$group_by_div
     group_by_dom <- data_reactives$group_by_dom
     # the logic here is that if there is summary, show this, if not hide it
@@ -250,5 +263,83 @@ mod_viz <- function(
       shinyjs::hide('viz_statistic')
     }
   }) # end of statistic updater
+
+  # functional group
+  shiny::observe({
+    desglossament <- data_reactives$desglossament
+    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+    dominant_group <- shiny::isolate(data_reactives$dominant_group)
+    dominant_criteria <- shiny::isolate(data_reactives$dominant_criteria)
+    dominant_nfi <- shiny::isolate(data_reactives$dominant_nfi)
+
+
+    browser()
+    if (desglossament %in% c('species', 'simpspecies', 'genus', 'dec', 'bc')) {
+      fg_var <- glue::glue("{desglossament}_id")
+    } else {
+      if (isTRUE(shiny::isolate(data_reactives$group_by_dom))) {
+        if (data_reactives$nfi %in% c('nfi_2_nfi_3', 'nfi_3_nfi_4')) {
+          fg_var <- glue::glue(
+            "{dominant_criteria}_{dominant_group}_dominant_{dominant_nfi}"
+          )
+        } else {
+          fg_var <- glue::glue(
+            "{dominant_criteria}_{dominant_group}_dominant"
+          )
+        }
+      } else {
+        fg_var <- "density_species_dominant"
+      }
+    }
+    fg_choices <-
+      var_thes %>%
+      dplyr::filter(
+        var_id == fg_var,
+        var_table %in% tables_to_look_at()
+      ) %>%
+      dplyr::select(var_id, var_table, var_type) %>%
+      dplyr::distinct() %>%
+      dplyr::left_join(categorical_thes, by = c('var_id', 'var_table')) %>%
+      tidyr::unnest() %>%
+      dplyr::pull(var_values) %>%
+      stringr::str_sort()
+
+
+
+
+    if (
+      desglossament %in% c('species', 'simpspecies', 'genus', 'dec', 'bc') |
+      isTRUE(group_by_dom)
+    ) {
+      # show and enable
+      shinyjs::enable('viz_functional_group_value')
+      shinyjs::show('viz_functional_group_value')
+    } else {
+      shinyjs::reset('viz_functional_group_value')
+      shinyjs::disable('viz_functional_group_value')
+      shinyjs::hide('viz_functional_group_value')
+    }
+
+
+
+  })
+
+
+
+
+  # return the viz inputs
+  viz_reactives <- shiny::reactiveValues()
+
+  shiny::observe({
+    viz_reactives$viz_color <- input$viz_color
+    viz_reactives$viz_size <- input$viz_size
+    viz_reactives$viz_statistic <- input$viz_statistic
+    viz_reactives$viz_functional_group_value <- input$viz_functional_group_value
+    viz_reactives$viz_diamclass <- input$viz_diamclass
+    viz_reactives$viz_pal_config <- input$viz_pal_config
+    viz_reactives$viz_reverse_pal <- input$viz_reverse_pal
+  })
+
+  return(viz_reactives)
 
 }

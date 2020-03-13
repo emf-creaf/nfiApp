@@ -5,7 +5,8 @@
 \title{mod_viz server function}
 \usage{
 mod_viz(input, output, session, data_reactives, filter_reactives,
-  main_data_reactives, nfidb, var_thes, texts_thes, numerical_thes, lang)
+  main_data_reactives, nfidb, var_thes, texts_thes, numerical_thes,
+  categorical_thes, lang)
 }
 \arguments{
 \item{input}{internal}
