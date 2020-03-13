@@ -137,7 +137,7 @@ mod_dataTable <- function(
           shinyWidgets::pickerInput(
             ns('col_vis_selector'),
             # label_getter(nfidb, 'esp', 'col_vis_selector_label'),
-            label = 'Choose the variables to show',
+            label = text_translate('col_vis_selector_input', lang, texts_thes),
             choices = col_vis_selector_choices,
             multiple = TRUE,
             selected = col_vis_selected,

@@ -77,17 +77,19 @@ mod_viz <- function(
       ]
     }
 
-    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
-    dominant_group <- shiny::isolate(data_reactives$dominant_group)
-    dominant_criteria <- shiny::isolate(data_reactives$dominant_criteria)
-    dominant_nfi <- shiny::isolate(data_reactives$dominant_nfi)
+    group_by_div <- data_reactives$group_by_div
+    group_by_dom <- data_reactives$group_by_dom
+    dominant_group <- data_reactives$dominant_group
+    dominant_criteria <- data_reactives$dominant_criteria
+    dominant_nfi <- data_reactives$dominant_nfi
+    desglossament <- data_reactives$desglossament
 
-    if (data_reactives$desglossament %in% c(
+    if (desglossament %in% c(
       'species', 'simpspecies', 'genus', 'dec', 'bc'
     )) {
-      fg_var <- glue::glue("{data_reactives$desglossament}_id")
+      fg_var <- glue::glue("{desglossament}_id")
     } else {
-      if (isTRUE(shiny::isolate(data_reactives$group_by_dom))) {
+      if (isTRUE(group_by_dom)) {
         if (data_reactives$nfi %in% c('nfi_2_nfi_3', 'nfi_3_nfi_4')) {
           fg_var <- glue::glue(
             "{dominant_criteria}_{dominant_group}_dominant_{dominant_nfi}"
@@ -140,41 +142,62 @@ mod_viz <- function(
             )
           ),
 
-          # size
-          shinyWidgets::pickerInput(
-            ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
-            choices = size_choices %>%
-              var_inputs_aggregator(lang, texts_thes),
-            selected = '',
-            options = list(
-              `size` = 10,
-              `live-search` = TRUE,
-              `action-box` = FALSE
+          # size and statistics
+          if (any(group_by_div, group_by_dom)) {
+            shiny::tagList(
+              shinyjs::hidden(
+                shinyWidgets::pickerInput(
+                  ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
+                  choices = size_choices %>%
+                    var_inputs_aggregator(lang, texts_thes),
+                  selected = '',
+                  options = list(
+                    `size` = 10,
+                    `live-search` = TRUE,
+                    `action-box` = FALSE
+                  )
+                )
+              ),
+              shinyWidgets::pickerInput(
+                ns('viz_statistic'),
+                text_translate('viz_statistic_input', lang, texts_thes),
+                choices = statistic_choices
+              )
             )
-          ),
-
-          # statistic
-          shinyjs::hidden(
-            shinyWidgets::pickerInput(
-              ns('viz_statistic'),
-              text_translate('viz_statistic_input', lang, texts_thes),
-              choices = statistic_choices
+          } else {
+            shiny::tagList(
+              shinyWidgets::pickerInput(
+                ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
+                choices = size_choices %>%
+                  var_inputs_aggregator(lang, texts_thes),
+                selected = '',
+                options = list(
+                  `size` = 10,
+                  `live-search` = TRUE,
+                  `action-box` = FALSE
+                )
+              ),
+              shinyjs::hidden(
+                shinyWidgets::pickerInput(
+                  ns('viz_statistic'),
+                  text_translate('viz_statistic_input', lang, texts_thes),
+                  choices = statistic_choices
+                )
+              )
             )
-          ),
+          },
 
           # functional group value
           {
             if (any(
-              data_reactives$desglossament %in% c(
+              desglossament %in% c(
                 'species', 'simpspecies', 'genus', 'dec', 'bc'
               ),
-              isTRUE(data_reactives$group_by_dom)
+              isTRUE(group_by_dom)
             )) {
               shinyWidgets::pickerInput(
                 ns('viz_functional_group_value'),
-                # glue::glue(text_translate(
-                #   'viz_functional_group_value_input', lang, texts_thes
-                # )),
+                text_translate('functional_group_viz_input', lang, texts_thes),
                 choices = fg_choices,
                 options = list(
                   `size` = 10,
@@ -186,9 +209,7 @@ mod_viz <- function(
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
                   ns('viz_functional_group_value'),
-                  # glue::glue(text_translate(
-                  #   'viz_functional_group_value_input', lang, texts_thes
-                  # )),
+                  text_translate('functional_group_viz_input', lang, texts_thes),
                   choices = fg_choices,
                   options = list(
                     `size` = 10,
@@ -301,38 +322,38 @@ mod_viz <- function(
   # observers ####
   # here we update the viz inputs based on the data available
   # size input updater
-  shiny::observe({
-
-    group_by_div <- data_reactives$group_by_div
-    group_by_dom <- data_reactives$group_by_dom
-    # the logic here is that if there is summary, hide this, if not show it and
-    # update it
-    if (any(group_by_div, group_by_dom)) {
-      shinyjs::reset('viz_size')
-      shinyjs::disable('viz_size')
-      shinyjs::hide('viz_size')
-    } else {
-      # show and enable
-      shinyjs::enable('viz_size')
-      shinyjs::show('viz_size')
-    }
-  }) # end of size updater
+  # shiny::observe({
+  #
+  #   group_by_div <- data_reactives$group_by_div
+  #   group_by_dom <- data_reactives$group_by_dom
+  #   # the logic here is that if there is summary, hide this, if not show it and
+  #   # update it
+  #   if (any(group_by_div, group_by_dom)) {
+  #     shinyjs::reset('viz_size')
+  #     shinyjs::disable('viz_size')
+  #     shinyjs::hide('viz_size')
+  #   } else {
+  #     # show and enable
+  #     shinyjs::enable('viz_size')
+  #     shinyjs::show('viz_size')
+  #   }
+  # }) # end of size updater
 
   # statistic input updater
-  shiny::observe({
-    group_by_div <- data_reactives$group_by_div
-    group_by_dom <- data_reactives$group_by_dom
-    # the logic here is that if there is summary, show this, if not hide it
-    if (any(group_by_div, group_by_dom)) {
-      # show and enable
-      shinyjs::enable('viz_statistic')
-      shinyjs::show('viz_statistic')
-    } else {
-      shinyjs::reset('viz_statistic')
-      shinyjs::disable('viz_statistic')
-      shinyjs::hide('viz_statistic')
-    }
-  }) # end of statistic updater
+  # shiny::observe({
+  #   group_by_div <- data_reactives$group_by_div
+  #   group_by_dom <- data_reactives$group_by_dom
+  #   # the logic here is that if there is summary, show this, if not hide it
+  #   if (any(group_by_div, group_by_dom)) {
+  #     # show and enable
+  #     shinyjs::enable('viz_statistic')
+  #     shinyjs::show('viz_statistic')
+  #   } else {
+  #     shinyjs::reset('viz_statistic')
+  #     shinyjs::disable('viz_statistic')
+  #     shinyjs::hide('viz_statistic')
+  #   }
+  # }) # end of statistic updater
 
   # updaters for fg and dc are inside the renderUI to avoid conflicts and
   # circular dependencies
