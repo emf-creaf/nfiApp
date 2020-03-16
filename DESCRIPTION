@@ -18,4 +18,6 @@ Imports:
     shinyWidgets,
     tidyr,
     stringr,
-    magrittr
+    magrittr,
+    leaflet,
+    leaflet.extras

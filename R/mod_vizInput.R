@@ -254,8 +254,8 @@ mod_viz <- function(
           ),
           # reverse palette
           shinyWidgets::awesomeCheckbox(
-            ns('viz_reverse_pal'),
-            label = text_translate('viz_reverse_pal_input', lang, texts_thes),
+            ns('viz_pal_reverse'),
+            label = text_translate('viz_pal_reverse_input', lang, texts_thes),
             value = FALSE, status = 'info'
           )
         )
@@ -368,7 +368,7 @@ mod_viz <- function(
     viz_reactives$viz_functional_group_value <- input$viz_functional_group_value
     viz_reactives$viz_diamclass <- input$viz_diamclass
     viz_reactives$viz_pal_config <- input$viz_pal_config
-    viz_reactives$viz_reverse_pal <- input$viz_reverse_pal
+    viz_reactives$viz_pal_reverse <- input$viz_reverse_pal
   })
 
   return(viz_reactives)

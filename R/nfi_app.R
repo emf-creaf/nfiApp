@@ -133,8 +133,8 @@ nfi_app <- function() {
               id = 'main_panel_tabset', type = 'pills',
               shiny::tabPanel(
                 title = 'map',
-                value = 'map_panel'
-                # mod_mapOutput('mod_mapOutput')
+                value = 'map_panel',
+                mod_mapOutput('mod_mapOutput')
               ),
               shiny::tabPanel(
                 title = 'table',
@@ -196,6 +196,13 @@ nfi_app <- function() {
       mod_dataTable, 'mod_dataTableOutput',
       main_data_reactives, data_reactives, viz_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, lang()
+    )
+    # map
+    shiny::callModule(
+      mod_map, 'mod_mapOutput',
+      data_reactives, viz_reactives, main_data_reactives,
+      nfidb, lang(),
+      var_thes, texts_thes, numerical_thes
     )
 
     # first time observer

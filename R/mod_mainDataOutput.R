@@ -91,7 +91,8 @@ mod_mainData <- function(
           {list(as.matrix(.))} %>%
           sf::st_polygon() %>%
           sf::st_sfc() %>%
-          sf::st_sf(crs = 4326)
+          sf::st_sf(crs = 4326) %>%
+          dplyr::mutate(poly_id = 'drawn_poly')
         return(res)
       }
     }
@@ -287,6 +288,7 @@ mod_mainData <- function(
   main_data_reactives <- shiny::reactiveValues()
   shiny::observe({
     main_data_reactives$main_data <- main_data()
+    main_data_reactives$custom_polygon <- custom_polygon()
   })
   return(main_data_reactives)
 }
