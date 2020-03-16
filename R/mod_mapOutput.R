@@ -87,6 +87,8 @@ mod_map <- function(
   # points and polygons. The logic is as follows:
   #   - get the data and the viz inputs
   #   - if summary is on, color is a composition of color and statistic
+  #   - dont forget to check if the data has the viz color (useful when
+  #     changing data origin)
   #   - pull the color vector, build the pal function
   #   - depending on class of vector, a legend class
   aesthetics_builder <- shiny::reactive({
@@ -111,6 +113,16 @@ mod_map <- function(
         aesthetics_data$pal(aesthetics_data$color_vector)
       )
     }
+
+    # we need to check if the color variable is in the data. When applying
+    # without navigating to viz tab this can happen if the data has not the
+    # old variables
+    shiny::validate(
+      shiny::need(
+        viz_color %in% names(main_data_reactives$main_data$requested_data),
+        text_translate('apply_warning', lang, texts_thes)
+      )
+    )
 
     color_vector <-
       main_data_reactives$main_data$requested_data %>%
@@ -162,7 +174,6 @@ mod_map <- function(
     shiny::validate(
       shiny::need(main_data_reactives$main_data, 'no data yet')
     )
-    # browser()
     # inputs for translating and other stuff
     nfi <- shiny::isolate(data_reactives$nfi)
     desglossament <- shiny::isolate(data_reactives$desglossament)
