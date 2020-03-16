@@ -121,6 +121,8 @@ mod_dataTable <- function(
         )
       )
 
+    browser()
+
     if (sum(!new_data_vars %in% old_data_vars) > 1) {
       res <- shiny::tagList(
         shiny::fluidRow(

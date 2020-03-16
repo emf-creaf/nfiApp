@@ -9,8 +9,7 @@
 mod_mapOutput <- function(id) {
   # ns
   ns <- shiny::NS(id)
-  # ui output
-  shiny::uiOutput(ns('map_panel'))
+  shiny::uiOutput(ns('map_container'))
 }
 
 #' mod_map server function
@@ -34,27 +33,21 @@ mod_map <- function(
 ) {
 
   ## renderUI ####
-  output$map_panel <- shiny::renderUI({
+  output$map_container <- shiny::renderUI({
 
     # ns
     ns <- session$ns
-
-    # browser()
-
-    # tagList
     shiny::tagList(
-      shiny::fluidRow(
-        leaflet::leafletOutput(ns('map'), height = 'auto'),
-        shiny::tags$div(
-          id = 'cite',
-          text_translate('cite_div', lang, texts_thes)
-        )
+      leaflet::leafletOutput(ns('nfi_map'), height = 400),
+      shiny::tags$div(
+        id = 'cite',
+        text_translate('cite_div', lang, texts_thes)
       )
     )
   }) # end of renderUI
 
   ## leaflet output (empty map) ####
-  output$map <- leaflet::renderLeaflet({
+  output$nfi_map <- leaflet::renderLeaflet({
 
     # we need data, and we need color var at least
     leaflet::leaflet() %>%
@@ -86,28 +79,37 @@ mod_map <- function(
         ),
         singleFeature = TRUE
       )
-  }) # end of leaflet ouput (empty map)
+  }) # end of leaflet output (empty map)
 
   ## reactives ####
-  # legend builder
+  # aesthetics builder
   # The idea is to abstract the legend building, as al we need is common to
   # points and polygons. The logic is as follows:
   #   - get the data and the viz inputs
   #   - if summary is on, color is a composition of color and statistic
   #   - pull the color vector, build the pal function
   #   - depending on class of vector, a legend class
-  legend_map_builder <- shiny::reactive({
+  aesthetics_builder <- shiny::reactive({
     # inputs
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
     viz_color <- viz_reactives$viz_color
-    viz_statistic <- viz_statisitc$viz_statistic
-    viz_pal_config <- viz_statistic$viz_pal_config
-    viz_pal_reverse <- viz_statistic$viz_pal_reverse
+    viz_statistic <- viz_reactives$viz_statistic
+    viz_pal_config <- viz_reactives$viz_pal_config
+    viz_pal_reverse <- viz_reactives$viz_pal_reverse
+
+    # validate color
+    shiny::validate(shiny::need(viz_color, 'no color yet'))
+
+    # fillColor default
+    fill_color <- '#6C7A8900'
 
     # summarised polygons?
     if (any(group_by_div, group_by_dom)) {
       viz_color <- glue::glue("{viz_color}{viz_statistic}")
+      fill_color <- rlang::expr(
+        aesthetics_data$pal(aesthetics_data$color_vector)
+      )
     }
 
     color_vector <-
@@ -144,7 +146,9 @@ mod_map <- function(
     return(list(
       color_vector = color_vector,
       pal = pal,
-      legend_class = legend_clas
+      legend_class = legend_class,
+      viz_color = viz_color,
+      fill_color = fill_color
     ))
   })
 
@@ -153,15 +157,17 @@ mod_map <- function(
   #   - if summarised data, get the summarised data, join the polygon object
   #     and proxy update the map.
   #   - if not, get the polygon object and update the map
-  shiny::observer({
-
+  shiny::observe({
+    # validation
+    shiny::validate(
+      shiny::need(main_data_reactives$main_data, 'no data yet')
+    )
+    # browser()
     # inputs for translating and other stuff
     nfi <- shiny::isolate(data_reactives$nfi)
     desglossament <- shiny::isolate(data_reactives$desglossament)
     diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
     admin_div <- shiny::isolate(data_reactives$admin_div)
-    viz_color <- viz_reactives$viz_color
-    viz_statistic <- viz_reactives$viz_statistic
     # are we drawing summary data?
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
@@ -180,25 +186,32 @@ mod_map <- function(
       polygon_label <- as.formula(glue::glue("~admin_{admin_div}"))
       polygon_join_var <- glue::glue("admin_{admin_div}")
       polygon_join_data_expr <- rlang::quo(
-        !! rlang::sym(polygon_join_var)
-      )
-    }
-
-    # data
-    if (any(group_by_div, group_by_dom)) {
-      polygon_data <-  main_data_reactives$main_data$requested_data %>%
-        dplyr::left_join(!! polygon_join_data_expr, by = polygon_join_var)
-    } else {
-      polygon_data <- rlang::eval_tidy(
         !! rlang::sym(glue::glue("{admin_div}_polygons"))
       )
     }
 
-    # legend
-    legend_data <- legend_map_builder()
+    # data for polygons. if summ, then polygon data is requested data with the
+    # polygons joined, if not, is just the polygons object.
+    if (any(group_by_div, group_by_dom)) {
+      polygon_data <-  main_data_reactives$main_data$requested_data %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(-geometry) %>%
+        dplyr::left_join(
+          rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
+        ) %>%
+        sf::st_as_sf(sf_column_name = 'geometry')
+      # browser()
+    } else {
+      polygon_data <- rlang::eval_tidy(
+        rlang::sym(glue::glue("{admin_div}_polygons"))
+      )
+    }
+
+    # aesthetics (mainly for legend, but also for filling the polygons)
+    aesthetics_data <- aesthetics_builder()
 
     # update the map
-    leaflet::leafletProxy('map') %>%
+    leaflet::leafletProxy('nfi_map') %>%
       leaflet::clearGroup('aut_community') %>%
       leaflet::clearGroup('province') %>%
       leaflet::clearGroup('vegueria') %>%
@@ -218,7 +231,7 @@ mod_map <- function(
         weight = 1, smoothFactor = 1,
         opacity = 1.0, fill = TRUE,
         color = '#6C7A89FF',
-        fillColor = legend_data$pal(legend_data$color_vector),
+        fillColor = rlang::eval_tidy(aesthetics_data$fill_color),
         fillOpacity = 0.7,
         highlightOptions = leaflet::highlightOptions(
           color = "#CF000F", weight = 2,
@@ -233,16 +246,17 @@ mod_map <- function(
         if (any(group_by_div, group_by_dom)) {
           temp %>%
             leaflet::addLegend(
-              position = 'bottomright', pal = lengend_data$pal,
-              values = legend_data$color_vector,
+              position = 'bottomright', pal = aesthetics_data$pal,
+              values = aesthetics_data$color_vector,
               title = names(
                 translate_var(
-                  viz_color, tables_to_look_at, lang, var_thes, numerical_thes,
-                  texts_thes, is_summary = TRUE, need.order = FALSE
+                  aesthetics_data$viz_color,
+                  tables_to_look_at, lang, var_thes, numerical_thes,
+                  texts_thes, is_summary = TRUE, need_order = FALSE
                 )
               ),
               layerId = 'color_legend', opacity = 1,
-              na.label = '', className = legend_data$legend_class
+              na.label = '', className = aesthetics_data$legend_class
             )
         } else {
           temp

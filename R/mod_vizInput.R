@@ -287,8 +287,8 @@ mod_viz <- function(
   # we need the vars in the data to be able to show the names in the color and size inputs
   vars_to_viz_by <- shiny::reactive({
 
-    group_by_div <- shiny::isolate(data_reactives$group_by_div)
-    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+    group_by_div <- data_reactives$group_by_div
+    group_by_dom <- data_reactives$group_by_dom
 
     all_variables <- var_thes %>%
       dplyr::filter(
@@ -368,7 +368,7 @@ mod_viz <- function(
     viz_reactives$viz_functional_group_value <- input$viz_functional_group_value
     viz_reactives$viz_diamclass <- input$viz_diamclass
     viz_reactives$viz_pal_config <- input$viz_pal_config
-    viz_reactives$viz_pal_reverse <- input$viz_reverse_pal
+    viz_reactives$viz_pal_reverse <- input$viz_pal_reverse
   })
 
   return(viz_reactives)
