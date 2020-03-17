@@ -212,8 +212,8 @@ mod_dataTable <- function(
     }
 
     main_data_reactives$main_data$requested_data %>%
-      dplyr::as_tibble() %>%
-      dplyr::select(-geometry) %>%
+      # dplyr::as_tibble() %>%
+      # dplyr::select(-geometry) %>%
       dplyr::select(dplyr::one_of(c(
         # inputs selected
         input$col_vis_selector

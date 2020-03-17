@@ -75,10 +75,10 @@ mod_mainData <- function(
     }
 
     if (admin_div == 'drawn_poly') {
-      # When removing the features (custom polygon) the input$map_draw_new_feature
-      # is not cleared, so is always filtering the sites, even after removing. For
-      # that we need to control when the removed feature equals the new, that's it,
-      # when we removed the last one
+      # When removing the features (custom polygon) the
+      # input$map_draw_new_feature is not cleared, so is always filtering the
+      # sites, even after removing. For that we need to control when the removed
+      # feature equals the new, that's it, when we removed the last one
       drawn_polygon <- map_reactives$map_draw_all_features
       if (is.null(drawn_polygon) || length(drawn_polygon[['features']]) == 0) {
         return(NULL)
@@ -137,8 +137,6 @@ mod_mainData <- function(
         ancillary_tables_to_look_at(nfi)
       )
 
-      message(as.character(filter_reactives$filter_expressions))
-
       progress$set(value = 5)
 
       # get data, join it
@@ -163,8 +161,12 @@ mod_mainData <- function(
       if (nrow(main_data_table) < 1) {
         shinyWidgets::sendSweetAlert(
           session = session,
-          title = text_translate('sweet_alert_returned_data_title', lang, texts_thes),
-          text = text_translate('sweet_alert_returned_data_text', lang, texts_thes)
+          title = text_translate(
+            'sweet_alert_returned_data_title', lang, texts_thes
+          ),
+          text = text_translate(
+            'sweet_alert_returned_data_text', lang, texts_thes
+          )
         )
       }
 
@@ -235,6 +237,8 @@ mod_mainData <- function(
         dominant_criteria, dominant_nfi, desglossament
       )
       general_summary <- raw_main_data %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(-geometry) %>%
         dplyr::group_by(!!! group_by_general) %>%
         dplyr::summarise_if(
           .predicate = is.numeric,
@@ -259,6 +263,8 @@ mod_mainData <- function(
         } else {
           requested_data <-
             raw_main_data %>%
+            dplyr::as_tibble() %>%
+            dplyr::select(-geometry) %>%
             dplyr::group_by(!!! group_by_general[2]) %>%
             dplyr::summarise_if(
               .predicate = is.numeric,

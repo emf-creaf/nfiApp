@@ -182,8 +182,8 @@ mod_map <- function(
       )
       # data
       polygon_data <-  main_data_reactives$main_data$requested_data %>%
-        dplyr::as_tibble() %>%
-        dplyr::select(-geometry) %>%
+        # dplyr::as_tibble() %>%
+        # dplyr::select(-geometry) %>%
         dplyr::left_join(
           rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
         ) %>%

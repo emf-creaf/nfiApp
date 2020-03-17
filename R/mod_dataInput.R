@@ -252,14 +252,16 @@ mod_data <- function(
               selected = 'plot', width = '100%'
             )
           ),
-          shiny::column(
-            width = 6, align = 'center',
-            shinyWidgets::awesomeCheckbox(
-              ns('diameter_classes'),
-              label = text_translate(
-                'diameter_classes_input', lang, texts_thes
-              ),
-              status = 'info'
+          shinyjs::hidden(
+            shiny::column(
+              width = 6, align = 'center',
+              shinyWidgets::awesomeCheckbox(
+                ns('diameter_classes'),
+                label = text_translate(
+                  'diameter_classes_input', lang, texts_thes
+                ),
+                status = 'info'
+              )
             )
           )
         ) # end of desglossament row
