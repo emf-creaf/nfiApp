@@ -83,51 +83,141 @@ mod_map <- function(
 
   ## reactives ####
   # aesthetics builder
-  # The idea is to abstract the legend building, as al we need is common to
-  # points and polygons. The logic is as follows:
+  # The idea is to abstract the needed objects to create the polygons,
+  # as all we need is common to points and polygons. The logic is as follows:
   #   - get the data and the viz inputs
   #   - if summary is on, color is a composition of color and statistic
   #   - dont forget to check if the data has the viz color (useful when
   #     changing data origin)
   #   - pull the color vector, build the pal function
   #   - depending on class of vector, a legend class
+  # We also get the data and polygons labels
   aesthetics_builder <- shiny::reactive({
     # inputs
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+    dominant_criteria <- shiny::isolate(data_reactives$dominant_criteria)
+    dominant_nfi <- shiny::isolate(data_reactives$dominant_nfi)
+    dominant_group <- shiny::isolate(data_reactives$dominant_group)
     viz_color <- viz_reactives$viz_color
     viz_statistic <- viz_reactives$viz_statistic
     viz_pal_config <- viz_reactives$viz_pal_config
     viz_pal_reverse <- viz_reactives$viz_pal_reverse
+    viz_diamclass <- viz_reactives$viz_diamclass
+    viz_functional_group_value <- viz_reactives$viz_functional_group_value
+    nfi <- shiny::isolate(data_reactives$nfi)
+    desglossament <- shiny::isolate(data_reactives$desglossament)
+    diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
+    admin_div <- shiny::isolate(data_reactives$admin_div)
+
+    # polygon labels, join vars for data and join data expression for data
+    if (admin_div %in% c('file', 'drawn_poly')) {
+      polygon_label <- as.formula('~poly_id')
+      polygon_join_var <- 'poly_id'
+      polygon_join_data_expr <- rlang::expr(main_data_reactives$custom_polygon)
+    } else {
+      polygon_label <- as.formula(glue::glue("~admin_{admin_div}"))
+      polygon_join_var <- glue::glue("admin_{admin_div}")
+      polygon_join_data_expr <- rlang::expr(
+        !! rlang::sym(glue::glue("{admin_div}_polygons"))
+      )
+    }
 
     # validate color
     shiny::validate(shiny::need(viz_color, 'no color yet'))
-
     # fillColor default
     fill_color <- '#6C7A8900'
 
+    # desglossament or dominancy filters values
+    fg_var <- NULL
+    dc_var <- NULL
+    filter_expressions <- rlang::exprs()
+
+    if (desglossament %in% c(
+      'species', 'simpspecies', 'genus', 'dec', 'bc'
+    )) {
+      fg_var <- glue::glue("{desglossament}_id")
+    } else {
+      if (isTRUE(shiny::isolate(group_by_dom))) {
+        if (nfi %in% c('nfi_2_nfi_3', 'nfi_3_nfi_4')) {
+          fg_var <- glue::glue(
+            "{dominant_criteria}_{dominant_group}_dominant_{dominant_nfi}"
+          )
+        } else {
+          fg_var <- glue::glue(
+            "{dominant_criteria}_{dominant_group}_dominant"
+          )
+        }
+      }
+    }
+    if (isTRUE(diameter_classes)) {
+      dc_var <- 'diamclass_id'
+    }
+
+    # build filter expressions if any
+    if (!is.null(fg_var)) {
+      fg_filter_expression <-
+        rlang::expr(!!rlang::sym(fg_var) == !!viz_functional_group_value)
+    } else {
+      fg_filter_expression <- rlang::expr(TRUE)
+    }
+
+    if (!is.null(dc_var)) {
+      dc_filter_expression <-
+        rlang::expr(!!rlang::sym(dc_var) == !!viz_diamclass)
+    } else {
+      dc_filter_expression <- rlang::expr(TRUE)
+    }
+
+
     # summarised polygons?
-    if (any(group_by_div, group_by_dom)) {
+    if (isTRUE(group_by_div)) {
+      # color
       viz_color <- glue::glue("{viz_color}{viz_statistic}")
       fill_color <- rlang::expr(
         aesthetics_data$pal(aesthetics_data$color_vector)
       )
+      # data
+      browser()
+      polygon_data <-  main_data_reactives$main_data$requested_data %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(-geometry) %>%
+        dplyr::left_join(
+          rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
+        ) %>%
+        sf::st_as_sf(sf_column_name = 'geometry') %>%
+        dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
+      # validation
+      shiny::validate(shiny::need(
+        viz_color %in% names(polygon_data),
+        text_translate('apply_warning', lang, texts_thes)
+      ))
+      # color vector
+      color_vector <-
+        polygon_data %>%
+        dplyr::pull(!! rlang::sym(viz_color))
+    } else {
+      # data, color is already set in this case
+      polygon_data <- rlang::eval_tidy(
+        rlang::sym(glue::glue("{admin_div}_polygons"))
+      )
+      # validation
+      shiny::validate(shiny::need(
+        viz_color %in% names(main_data_reactives$main_data$requested_data),
+        text_translate('apply_warning', lang, texts_thes)
+      ))
+      # color vector
+      color_vector <-
+        main_data_reactives$main_data$requested_data %>%
+        dplyr::pull(!! rlang::sym(viz_color))
     }
 
     # we need to check if the color variable is in the data. When applying
     # without navigating to viz tab this can happen if the data has not the
     # old variables
-    shiny::validate(
-      shiny::need(
-        viz_color %in% names(main_data_reactives$main_data$requested_data),
-        text_translate('apply_warning', lang, texts_thes)
-      )
-    )
+    shiny::validate(shiny::need(nrow(polygon_data) > 0, 'no polygon data'))
 
-    color_vector <-
-      main_data_reactives$main_data$requested_data %>%
-      dplyr::pull(!! rlang::sym(viz_color))
-
+    # palette and legend class
     if (is.numeric(color_vector)) {
       pal <- switch(
         viz_pal_config,
@@ -156,11 +246,15 @@ mod_map <- function(
     }
 
     return(list(
+      # color
       color_vector = color_vector,
       pal = pal,
       legend_class = legend_class,
       viz_color = viz_color,
-      fill_color = fill_color
+      fill_color = fill_color,
+      polygon_label = polygon_label,
+      polygon_join_var = polygon_join_var,
+      polygon_data = polygon_data
     ))
   })
 
@@ -189,34 +283,34 @@ mod_map <- function(
     )
 
     # polygon labels, join vars for data and join data expression for data
-    if (admin_div %in% c('file', 'drawn_poly')) {
-      polygon_label <- as.formula('~poly_id')
-      polygon_join_var <- 'poly_id'
-      polygon_join_data_expr <- rlang::quo(main_data_reactives$custom_polygon)
-    } else {
-      polygon_label <- as.formula(glue::glue("~admin_{admin_div}"))
-      polygon_join_var <- glue::glue("admin_{admin_div}")
-      polygon_join_data_expr <- rlang::quo(
-        !! rlang::sym(glue::glue("{admin_div}_polygons"))
-      )
-    }
-
-    # data for polygons. if summ, then polygon data is requested data with the
-    # polygons joined, if not, is just the polygons object.
-    if (any(group_by_div, group_by_dom)) {
-      polygon_data <-  main_data_reactives$main_data$requested_data %>%
-        dplyr::as_tibble() %>%
-        dplyr::select(-geometry) %>%
-        dplyr::left_join(
-          rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
-        ) %>%
-        sf::st_as_sf(sf_column_name = 'geometry')
-      # browser()
-    } else {
-      polygon_data <- rlang::eval_tidy(
-        rlang::sym(glue::glue("{admin_div}_polygons"))
-      )
-    }
+    # if (admin_div %in% c('file', 'drawn_poly')) {
+    #   polygon_label <- as.formula('~poly_id')
+    #   polygon_join_var <- 'poly_id'
+    #   polygon_join_data_expr <- rlang::expr(main_data_reactives$custom_polygon)
+    # } else {
+    #   polygon_label <- as.formula(glue::glue("~admin_{admin_div}"))
+    #   polygon_join_var <- glue::glue("admin_{admin_div}")
+    #   polygon_join_data_expr <- rlang::expr(
+    #     !! rlang::sym(glue::glue("{admin_div}_polygons"))
+    #   )
+    # }
+    #
+    # # data for polygons. if summ, then polygon data is requested data with the
+    # # polygons joined, if not, is just the polygons object.
+    # if (any(group_by_div, group_by_dom)) {
+    #   polygon_data <-  main_data_reactives$main_data$requested_data %>%
+    #     dplyr::as_tibble() %>%
+    #     dplyr::select(-geometry) %>%
+    #     dplyr::left_join(
+    #       rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
+    #     ) %>%
+    #     sf::st_as_sf(sf_column_name = 'geometry')
+    #   # browser()
+    # } else {
+    #   polygon_data <- rlang::eval_tidy(
+    #     rlang::sym(glue::glue("{admin_div}_polygons"))
+    #   )
+    # }
 
     # aesthetics (mainly for legend, but also for filling the polygons)
     aesthetics_data <- aesthetics_builder()
@@ -235,10 +329,10 @@ mod_map <- function(
       leaflet::clearGroup('drawn_poly') %>%
       leaflet::clearGroup('plots') %>%
       leaflet::addPolygons(
-        data = polygon_data,
+        data = aesthetics_data$polygon_data,
         group = admin_div,
-        label = polygon_label,
-        layerId = polygon_label,
+        label = aesthetics_data$polygon_label,
+        layerId = aesthetics_data$polygon_label,
         weight = 1, smoothFactor = 1,
         opacity = 1.0, fill = TRUE,
         color = '#6C7A89FF',
