@@ -93,6 +93,7 @@ mod_map <- function(
   #   - depending on class of vector, a legend class
   # We also get the data and polygons labels
   aesthetics_builder <- shiny::reactive({
+    # browser()
     # inputs
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
@@ -125,7 +126,10 @@ mod_map <- function(
     }
 
     # validate color
-    shiny::validate(shiny::need(viz_color, 'no color yet'))
+    shiny::validate(
+      shiny::need(viz_color, 'no color yet'),
+      shiny::need(viz_functional_group_value, 'no fg yet')
+    )
     # fillColor default
     fill_color <- '#6C7A8900'
 
