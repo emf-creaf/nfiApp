@@ -38,7 +38,7 @@ mod_map <- function(
     # ns
     ns <- session$ns
     shiny::tagList(
-      leaflet::leafletOutput(ns('nfi_map'), height = 400),
+      leaflet::leafletOutput(ns('nfi_map'), height = 600),
       shiny::tags$div(
         id = 'cite',
         text_translate('cite_div', lang, texts_thes)
@@ -51,7 +51,7 @@ mod_map <- function(
 
     # we need data, and we need color var at least
     leaflet::leaflet() %>%
-      leaflet::setView(0.74, 41.70, zoom = 8) %>%
+      leaflet::setView(1.1, 41.70, zoom = 8) %>%
       leaflet::addProviderTiles(
         leaflet::providers$Esri.WorldShadedRelief, group = 'Relief'
       ) %>%
