@@ -122,7 +122,6 @@ mod_viz <- function(
       fg_choices <- fg_choices[fg_choices %in% fg_filter_vals]
     }
 
-
     # tagList ####
     shiny::tagList(
       # color & palette settings

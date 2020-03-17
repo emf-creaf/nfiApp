@@ -100,6 +100,7 @@ mod_map <- function(
     dominant_nfi <- shiny::isolate(data_reactives$dominant_nfi)
     dominant_group <- shiny::isolate(data_reactives$dominant_group)
     viz_color <- viz_reactives$viz_color
+    viz_size <- viz_reactives$viz_size
     viz_statistic <- viz_reactives$viz_statistic
     viz_pal_config <- viz_reactives$viz_pal_config
     viz_pal_reverse <- viz_reactives$viz_pal_reverse
@@ -138,7 +139,7 @@ mod_map <- function(
     )) {
       fg_var <- glue::glue("{desglossament}_id")
     } else {
-      if (isTRUE(shiny::isolate(group_by_dom))) {
+      if (isTRUE(group_by_dom)) {
         if (nfi %in% c('nfi_2_nfi_3', 'nfi_3_nfi_4')) {
           fg_var <- glue::glue(
             "{dominant_criteria}_{dominant_group}_dominant_{dominant_nfi}"
@@ -169,6 +170,8 @@ mod_map <- function(
       dc_filter_expression <- rlang::expr(TRUE)
     }
 
+    # plot data
+    plot_data <- NULL
 
     # summarised polygons?
     if (isTRUE(group_by_div)) {
@@ -178,7 +181,6 @@ mod_map <- function(
         aesthetics_data$pal(aesthetics_data$color_vector)
       )
       # data
-      browser()
       polygon_data <-  main_data_reactives$main_data$requested_data %>%
         dplyr::as_tibble() %>%
         dplyr::select(-geometry) %>%
@@ -188,28 +190,63 @@ mod_map <- function(
         sf::st_as_sf(sf_column_name = 'geometry') %>%
         dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
       # validation
-      shiny::validate(shiny::need(
-        viz_color %in% names(polygon_data),
-        text_translate('apply_warning', lang, texts_thes)
-      ))
+      shiny::validate(
+        shiny::need(
+          viz_color %in% names(polygon_data),
+          text_translate('apply_warning', lang, texts_thes)
+        )
+      )
       # color vector
       color_vector <-
         polygon_data %>%
         dplyr::pull(!! rlang::sym(viz_color))
+      # size vector
+      size_vector <- NULL
     } else {
       # data, color is already set in this case
       polygon_data <- rlang::eval_tidy(
         rlang::sym(glue::glue("{admin_div}_polygons"))
       )
+      # plot data
+      if (isTRUE(group_by_dom)) {
+        plot_data <-
+          main_data_reactives$main_data$main_data %>%
+          dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
+      } else {
+        plot_data <-
+          main_data_reactives$main_data$requested_data %>%
+          dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
+      }
       # validation
-      shiny::validate(shiny::need(
-        viz_color %in% names(main_data_reactives$main_data$requested_data),
-        text_translate('apply_warning', lang, texts_thes)
-      ))
+      shiny::validate(
+        shiny::need(
+          viz_color %in% names(plot_data),
+          text_translate('apply_warning', lang, texts_thes)
+        ),
+        shiny::need(nrow(plot_data) > 0, 'no plot data')
+      )
       # color vector
       color_vector <-
-        main_data_reactives$main_data$requested_data %>%
+        plot_data %>%
         dplyr::pull(!! rlang::sym(viz_color))
+      # size vector
+      if (is.null(viz_size) || rlang::is_empty(viz_size) || viz_size == '') {
+        size_vector <- rep(750, nrow(plot_data))
+      } else {
+        size_vector_pre <- plot_data %>%
+          dplyr::pull(!! rlang::sym(viz_size))
+
+        if (is.numeric(size_vector_pre)) {
+          size_vector <-
+            ((size_vector_pre/max(size_vector_pre, na.rm = TRUE)) * 1500) + 750
+        } else {
+          size_vector <-
+            ((as.numeric(as.factor(size_vector_pre)) /
+                max(as.numeric(as.factor(size_vector_pre)), na.rm = TRUE))
+             * 1500) + 750
+        }
+      }
+      size_vector[is.na(color_vector)] <- 500
     }
 
     # we need to check if the color variable is in the data. When applying
@@ -248,13 +285,15 @@ mod_map <- function(
     return(list(
       # color
       color_vector = color_vector,
+      size_vector = size_vector,
       pal = pal,
       legend_class = legend_class,
       viz_color = viz_color,
       fill_color = fill_color,
       polygon_label = polygon_label,
       polygon_join_var = polygon_join_var,
-      polygon_data = polygon_data
+      polygon_data = polygon_data,
+      plot_data = plot_data
     ))
   })
 
@@ -282,37 +321,7 @@ mod_map <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-    # polygon labels, join vars for data and join data expression for data
-    # if (admin_div %in% c('file', 'drawn_poly')) {
-    #   polygon_label <- as.formula('~poly_id')
-    #   polygon_join_var <- 'poly_id'
-    #   polygon_join_data_expr <- rlang::expr(main_data_reactives$custom_polygon)
-    # } else {
-    #   polygon_label <- as.formula(glue::glue("~admin_{admin_div}"))
-    #   polygon_join_var <- glue::glue("admin_{admin_div}")
-    #   polygon_join_data_expr <- rlang::expr(
-    #     !! rlang::sym(glue::glue("{admin_div}_polygons"))
-    #   )
-    # }
-    #
-    # # data for polygons. if summ, then polygon data is requested data with the
-    # # polygons joined, if not, is just the polygons object.
-    # if (any(group_by_div, group_by_dom)) {
-    #   polygon_data <-  main_data_reactives$main_data$requested_data %>%
-    #     dplyr::as_tibble() %>%
-    #     dplyr::select(-geometry) %>%
-    #     dplyr::left_join(
-    #       rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
-    #     ) %>%
-    #     sf::st_as_sf(sf_column_name = 'geometry')
-    #   # browser()
-    # } else {
-    #   polygon_data <- rlang::eval_tidy(
-    #     rlang::sym(glue::glue("{admin_div}_polygons"))
-    #   )
-    # }
-
-    # aesthetics (mainly for legend, but also for filling the polygons)
+    # aesthetics (mainly for legend, but also for filling the polygons or plots)
     aesthetics_data <- aesthetics_builder()
 
     # update the map
@@ -327,7 +336,7 @@ mod_map <- function(
       leaflet::clearGroup('natura_network_2000') %>%
       leaflet::clearGroup('file') %>%
       leaflet::clearGroup('drawn_poly') %>%
-      leaflet::clearGroup('plots') %>%
+      # leaflet::clearGroup('plots') %>%
       leaflet::addPolygons(
         data = aesthetics_data$polygon_data,
         group = admin_div,
@@ -367,5 +376,60 @@ mod_map <- function(
           temp
         }
       }
+  }) # end of polygon observer
+
+  # observer to plot plots
+  shiny::observe({
+    # validation
+    shiny::validate(
+      shiny::need(main_data_reactives$main_data, 'no data yet')
+    )
+    # inputs for translating and other stuff
+    nfi <- shiny::isolate(data_reactives$nfi)
+    desglossament <- shiny::isolate(data_reactives$desglossament)
+    diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
+    admin_div <- shiny::isolate(data_reactives$admin_div)
+    # are we drawing summary data?
+    group_by_div <- shiny::isolate(data_reactives$group_by_div)
+    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+
+    tables_to_look_at <- c(
+      main_table_to_look_at(nfi, desglossament, diameter_classes),
+      ancillary_tables_to_look_at(nfi)
+    )
+
+    # aesthetics (mainly for legend, but also for filling the polygons or plots)
+    aesthetics_data <- aesthetics_builder()
+
+    if (!isTRUE(group_by_div)) {
+      # update the map
+      leaflet::leafletProxy('nfi_map') %>%
+        leaflet::clearGroup('plots') %>%
+        leaflet::addCircles(
+          data = aesthetics_data$plot_data,
+          group = 'plots', label = ~plot_id, layerId = ~plot_id,
+          stroke = FALSE, fillOpacity = 0.7,
+          fillColor = aesthetics_data$pal(aesthetics_data$color_vector),
+          radius = aesthetics_data$size_vector,
+          options = leaflet::pathOptions(pane = 'plots')
+        ) %>%
+        leaflet::addLegend(
+          position = 'bottomright', pal = aesthetics_data$pal,
+          values = aesthetics_data$color_vector,
+          title = names(
+            translate_var(
+              aesthetics_data$viz_color,
+              tables_to_look_at, lang, var_thes, numerical_thes,
+              texts_thes, is_summary = TRUE, need_order = FALSE
+            )
+          ),
+          layerId = 'color_legend', opacity = 1,
+          na.label = '', className = aesthetics_data$legend_class
+        )
+    } else {
+      # update the map
+      leaflet::leafletProxy('nfi_map') %>%
+        leaflet::clearGroup('plots')
+    }
   })
 }
