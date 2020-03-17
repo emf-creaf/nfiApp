@@ -127,8 +127,8 @@ mod_map <- function(
 
     # validate color
     shiny::validate(
-      shiny::need(viz_color, 'no color yet'),
-      shiny::need(viz_functional_group_value, 'no fg yet')
+      shiny::need(viz_color, 'no color yet')
+
     )
     # fillColor default
     fill_color <- '#6C7A8900'
@@ -161,6 +161,8 @@ mod_map <- function(
 
     # build filter expressions if any
     if (!is.null(fg_var)) {
+      # we need to be sure that there is a value before building the expression
+      shiny::validate(shiny::need(viz_functional_group_value, 'no fg yet'))
       fg_filter_expression <-
         rlang::expr(!!rlang::sym(fg_var) == !!viz_functional_group_value)
     } else {
