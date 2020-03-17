@@ -162,10 +162,10 @@ mod_mainData <- function(
         shinyWidgets::sendSweetAlert(
           session = session,
           title = text_translate(
-            'sweet_alert_returned_data_title', lang, texts_thes
+            'sweet_alert_returned_data_title', lang(), texts_thes
           ),
           text = text_translate(
-            'sweet_alert_returned_data_text', lang, texts_thes
+            'sweet_alert_returned_data_text', lang(), texts_thes
           )
         )
       }

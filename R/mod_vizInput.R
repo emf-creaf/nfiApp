@@ -45,11 +45,11 @@ mod_viz <- function(
     ## precalculated choices
     statistic_choices <- c('_mean', '_se', '_min', '_max', '_n') %>%
       magrittr::set_names(c(
-        text_translate('mean_stat', lang, texts_thes),
-        text_translate('se_stat', lang, texts_thes),
-        text_translate('min_stat', lang, texts_thes),
-        text_translate('max_stat', lang, texts_thes),
-        text_translate('n_stat', lang, texts_thes)
+        text_translate('mean_stat', lang(), texts_thes),
+        text_translate('se_stat', lang(), texts_thes),
+        text_translate('min_stat', lang(), texts_thes),
+        text_translate('max_stat', lang(), texts_thes),
+        text_translate('n_stat', lang(), texts_thes)
       ))
 
     color_choices <- vars_to_viz_by()
@@ -130,9 +130,9 @@ mod_viz <- function(
           8,
           shinyWidgets::pickerInput(
             ns('viz_color'),
-            text_translate('viz_color_input', lang, texts_thes),
+            text_translate('viz_color_input', lang(), texts_thes),
             choices = color_choices %>%
-              var_inputs_aggregator(lang, texts_thes),
+              var_inputs_aggregator(lang(), texts_thes),
             selected = selected_col,
             options = list(
               `size` = 10,
@@ -146,9 +146,9 @@ mod_viz <- function(
             shiny::tagList(
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
-                  ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
+                  ns('viz_size'), text_translate('viz_size_input', lang(), texts_thes),
                   choices = size_choices %>%
-                    var_inputs_aggregator(lang, texts_thes),
+                    var_inputs_aggregator(lang(), texts_thes),
                   selected = '',
                   options = list(
                     `size` = 10,
@@ -159,16 +159,16 @@ mod_viz <- function(
               ),
               shinyWidgets::pickerInput(
                 ns('viz_statistic'),
-                text_translate('viz_statistic_input', lang, texts_thes),
+                text_translate('viz_statistic_input', lang(), texts_thes),
                 choices = statistic_choices
               )
             )
           } else {
             shiny::tagList(
               shinyWidgets::pickerInput(
-                ns('viz_size'), text_translate('viz_size_input', lang, texts_thes),
+                ns('viz_size'), text_translate('viz_size_input', lang(), texts_thes),
                 choices = size_choices %>%
-                  var_inputs_aggregator(lang, texts_thes),
+                  var_inputs_aggregator(lang(), texts_thes),
                 selected = '',
                 options = list(
                   `size` = 10,
@@ -179,7 +179,7 @@ mod_viz <- function(
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
                   ns('viz_statistic'),
-                  text_translate('viz_statistic_input', lang, texts_thes),
+                  text_translate('viz_statistic_input', lang(), texts_thes),
                   choices = statistic_choices
                 )
               )
@@ -196,7 +196,7 @@ mod_viz <- function(
             )) {
               shinyWidgets::pickerInput(
                 ns('viz_functional_group_value'),
-                text_translate('functional_group_viz_input', lang, texts_thes),
+                text_translate('functional_group_viz_input', lang(), texts_thes),
                 choices = fg_choices,
                 options = list(
                   `size` = 10,
@@ -208,7 +208,7 @@ mod_viz <- function(
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
                   ns('viz_functional_group_value'),
-                  text_translate('functional_group_viz_input', lang, texts_thes),
+                  text_translate('functional_group_viz_input', lang(), texts_thes),
                   choices = fg_choices,
                   options = list(
                     `size` = 10,
@@ -224,13 +224,13 @@ mod_viz <- function(
           {
             if (data_reactives$diameter_classes) {
               shinyWidgets::pickerInput(
-                ns('viz_diamclass'), text_translate('viz_diamclass_input', lang, texts_thes),
+                ns('viz_diamclass'), text_translate('viz_diamclass_input', lang(), texts_thes),
                 choices = diameter_classes_choices
               )
             } else {
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
-                  ns('viz_diamclass'), text_translate('viz_diamclass_input', lang, texts_thes),
+                  ns('viz_diamclass'), text_translate('viz_diamclass_input', lang(), texts_thes),
                   choices = diameter_classes_choices
                 )
               )
@@ -242,19 +242,19 @@ mod_viz <- function(
           # low, normal or high palette
           shinyWidgets::radioGroupButtons(
             ns('viz_pal_config'),
-            text_translate('viz_pal_config_input', lang, texts_thes),, size = 'sm',
+            text_translate('viz_pal_config_input', lang(), texts_thes),, size = 'sm',
             choices = c('low', 'normal', 'high') %>%
               magrittr::set_names(c(
-                text_translate('pal_low', lang, texts_thes),
-                text_translate('pal_normal', lang, texts_thes),
-                text_translate('pal_high', lang, texts_thes)
+                text_translate('pal_low', lang(), texts_thes),
+                text_translate('pal_normal', lang(), texts_thes),
+                text_translate('pal_high', lang(), texts_thes)
               )),
             selected = 'normal', direction = 'vertical', status = 'lfc_radiogroupbuttons'
           ),
           # reverse palette
           shinyWidgets::awesomeCheckbox(
             ns('viz_pal_reverse'),
-            label = text_translate('viz_pal_reverse_input', lang, texts_thes),
+            label = text_translate('viz_pal_reverse_input', lang(), texts_thes),
             value = FALSE, status = 'info'
           )
         )
@@ -298,7 +298,7 @@ mod_viz <- function(
       ) %>%
       dplyr::pull(var_id) %>%
       translate_var(
-        tables_to_look_at(), lang, var_thes, numerical_thes,
+        tables_to_look_at(), lang(), var_thes, numerical_thes,
         texts_thes, need_order = TRUE
       )
     numeric_variables <- numerical_thes %>%
@@ -307,7 +307,7 @@ mod_viz <- function(
       ) %>%
       dplyr::pull(var_id) %>%
       translate_var(
-        tables_to_look_at(), lang, var_thes, numerical_thes,
+        tables_to_look_at(), lang(), var_thes, numerical_thes,
         texts_thes, need_order = TRUE
       )
 

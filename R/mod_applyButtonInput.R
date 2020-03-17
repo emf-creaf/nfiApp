@@ -61,9 +61,9 @@ mod_applyButton <- function(
 
     filter_vars <- filter_reactives$filter_vars
     glue::glue(
-      "{text_translate('filter_warning', lang, texts_thes)} ",
+      "{text_translate('filter_warning', lang(), texts_thes)} ",
       "{names(translate_var(
-        filter_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
+        filter_vars, tables_to_look_at, lang(), var_thes, numerical_thes, texts_thes
       ))}"
     )
   })
@@ -76,7 +76,7 @@ mod_applyButton <- function(
     shiny::fluidRow(
       shiny::actionButton(
         ns('apply'),
-        text_translate('apply', lang, texts_thes),
+        text_translate('apply', lang(), texts_thes),
         icon = shiny::icon('check-circle')
       )
     )

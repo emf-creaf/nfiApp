@@ -51,17 +51,17 @@ mod_data <- function(
       'nfi_2_regen', 'nfi_3_regen', 'nfi_4_regen'
     ) %>%
       magrittr::set_names(c(
-        text_translate('nfi_2', lang, texts_thes),
-        text_translate('nfi_3', lang, texts_thes),
-        text_translate('nfi_4', lang, texts_thes),
-        text_translate('nfi_2_nfi_3', lang, texts_thes),
-        text_translate('nfi_3_nfi_4', lang, texts_thes),
-        text_translate('nfi_2_shrub', lang, texts_thes),
-        text_translate('nfi_3_shrub', lang, texts_thes),
-        text_translate('nfi_4_shrub', lang, texts_thes),
-        text_translate('nfi_2_regen', lang, texts_thes),
-        text_translate('nfi_3_regen', lang, texts_thes),
-        text_translate('nfi_4_regen', lang, texts_thes)
+        text_translate('nfi_2', lang(), texts_thes),
+        text_translate('nfi_3', lang(), texts_thes),
+        text_translate('nfi_4', lang(), texts_thes),
+        text_translate('nfi_2_nfi_3', lang(), texts_thes),
+        text_translate('nfi_3_nfi_4', lang(), texts_thes),
+        text_translate('nfi_2_shrub', lang(), texts_thes),
+        text_translate('nfi_3_shrub', lang(), texts_thes),
+        text_translate('nfi_4_shrub', lang(), texts_thes),
+        text_translate('nfi_2_regen', lang(), texts_thes),
+        text_translate('nfi_3_regen', lang(), texts_thes),
+        text_translate('nfi_4_regen', lang(), texts_thes)
       ))
 
     admin_div_choices <- c(
@@ -70,34 +70,34 @@ mod_data <- function(
       'natura_network_2000', 'file'
     ) %>%
       magrittr::set_names(c(
-        text_translate('aut_community', lang, texts_thes),
-        text_translate('province', lang, texts_thes),
-        text_translate('vegueria', lang, texts_thes),
-        text_translate('region', lang, texts_thes),
-        text_translate('municipality', lang, texts_thes),
-        text_translate('natural_interest_area', lang, texts_thes),
-        text_translate('special_protection_natural_area', lang, texts_thes),
-        text_translate('natura_network_2000', lang, texts_thes),
-        text_translate('file', lang, texts_thes)
+        text_translate('aut_community', lang(), texts_thes),
+        text_translate('province', lang(), texts_thes),
+        text_translate('vegueria', lang(), texts_thes),
+        text_translate('region', lang(), texts_thes),
+        text_translate('municipality', lang(), texts_thes),
+        text_translate('natural_interest_area', lang(), texts_thes),
+        text_translate('special_protection_natural_area', lang(), texts_thes),
+        text_translate('natura_network_2000', lang(), texts_thes),
+        text_translate('file', lang(), texts_thes)
       ))
 
     desglossament_choices <- c(
       'plot', 'species', 'simpspecies', 'genus', 'dec', 'bc'
     ) %>%
       magrittr::set_names(c(
-        text_translate('fg_plot', lang, texts_thes),
-        text_translate('fg_species', lang, texts_thes),
-        text_translate('fg_simpspecies', lang, texts_thes),
-        text_translate('fg_genus', lang, texts_thes),
-        text_translate('fg_dec', lang, texts_thes),
-        text_translate('fg_bc', lang, texts_thes)
+        text_translate('fg_plot', lang(), texts_thes),
+        text_translate('fg_species', lang(), texts_thes),
+        text_translate('fg_simpspecies', lang(), texts_thes),
+        text_translate('fg_genus', lang(), texts_thes),
+        text_translate('fg_dec', lang(), texts_thes),
+        text_translate('fg_bc', lang(), texts_thes)
       ))
 
     agrupament_choices <- c('none', 'polygon', 'dom') %>%
       magrittr::set_names(c(
-        text_translate('none', lang, texts_thes),
-        text_translate('polygon', lang, texts_thes),
-        text_translate('dom', lang, texts_thes)
+        text_translate('none', lang(), texts_thes),
+        text_translate('polygon', lang(), texts_thes),
+        text_translate('dom', lang(), texts_thes)
       ))
 
     dominant_group_choices <- c(
@@ -105,26 +105,26 @@ mod_data <- function(
       'species', 'simpspecies', 'genus', 'dec', 'bc'
     ) %>%
       magrittr::set_names(c(
-        # text_translate('none', lang, texts_thes),
-        text_translate('species', lang, texts_thes),
-        text_translate('simpspecies', lang, texts_thes),
-        text_translate('genus', lang, texts_thes),
-        text_translate('dec', lang, texts_thes),
-        text_translate('bc', lang, texts_thes)
+        # text_translate('none', lang(), texts_thes),
+        text_translate('species', lang(), texts_thes),
+        text_translate('simpspecies', lang(), texts_thes),
+        text_translate('genus', lang(), texts_thes),
+        text_translate('dec', lang(), texts_thes),
+        text_translate('bc', lang(), texts_thes)
       ))
 
     dominant_criteria_choices <- c('density', 'basal_area') %>%
       magrittr::set_names(c(
-        text_translate('dominant_criteria_density', lang, texts_thes),
-        text_translate('dominant_criteria_basal_area', lang, texts_thes)
+        text_translate('dominant_criteria_density', lang(), texts_thes),
+        text_translate('dominant_criteria_basal_area', lang(), texts_thes)
       ))
 
     dominant_nfi_choices <- c('none', 'nfi2', 'nfi3', 'nfi4') %>%
       magrittr::set_names(c(
-        text_translate('none', lang, texts_thes),
-        text_translate('nfi2', lang, texts_thes),
-        text_translate('nfi3', lang, texts_thes),
-        text_translate('nfi4', lang, texts_thes)
+        text_translate('none', lang(), texts_thes),
+        text_translate('nfi2', lang(), texts_thes),
+        text_translate('nfi3', lang(), texts_thes),
+        text_translate('nfi4', lang(), texts_thes)
       ))
 
     # tagList
@@ -135,7 +135,7 @@ mod_data <- function(
           width = 6,
           shinyWidgets::pickerInput(
             ns('nfi'),
-            label = text_translate('data_version', lang, texts_thes),
+            label = text_translate('data_version', lang(), texts_thes),
             choices = nfi_choices,
             selected = 'nfi_4'
           )
@@ -143,7 +143,7 @@ mod_data <- function(
         shiny::column(
           6,
           shinyWidgets::pickerInput(
-            ns('admin_div'), text_translate('divisions', lang, texts_thes),
+            ns('admin_div'), text_translate('divisions', lang(), texts_thes),
             admin_div_choices, selected = 'region'
           )
         )
@@ -157,31 +157,31 @@ mod_data <- function(
               7, align = 'center',
               shiny::fileInput(
                 ns('user_file_sel'),
-                text_translate('user_file_sel_label', lang, texts_thes),
+                text_translate('user_file_sel_label', lang(), texts_thes),
                 accept = c('zip', 'gpkg'),
                 buttonLabel = text_translate(
-                  'user_file_sel_buttonLabel', lang, texts_thes
+                  'user_file_sel_buttonLabel', lang(), texts_thes
                 ),
                 placeholder = text_translate(
-                  'user_file_sel_placeholder', lang, texts_thes
+                  'user_file_sel_placeholder', lang(), texts_thes
                 )
               )
             ),
             shiny::column(
               5, align = 'center',
-              shiny::p(text_translate('file_text', lang, texts_thes))
+              shiny::p(text_translate('file_text', lang(), texts_thes))
             )
           )
         )
       ), # end of file selector row
       # agrupament row
-      shiny::h4(text_translate('h4_agrupament', lang, texts_thes)),
+      shiny::h4(text_translate('h4_agrupament', lang(), texts_thes)),
       shiny::fluidRow(
         shiny::column(
           width = 6, align = 'center',
           shinyWidgets::prettyCheckbox(
             ns('group_by_div'),
-            text_translate('group_by_div_input', lang, texts_thes),
+            text_translate('group_by_div_input', lang(), texts_thes),
             status = 'success', shape = 'curve', fill = TRUE
           )
 
@@ -190,7 +190,7 @@ mod_data <- function(
           width = 6, align = 'center',
           shinyWidgets::prettyCheckbox(
             ns('group_by_dom'),
-            text_translate('group_by_dom_input', lang, texts_thes),
+            text_translate('group_by_dom_input', lang(), texts_thes),
             status = 'success', shape = 'curve', fill = TRUE
           )
 
@@ -247,7 +247,7 @@ mod_data <- function(
             width = 6, align = 'left',
             shinyWidgets::pickerInput(
               ns('desglossament'),
-              text_translate('desglossament_input', lang, texts_thes),
+              text_translate('desglossament_input', lang(), texts_thes),
               choices = desglossament_choices,
               selected = 'plot', width = '100%'
             )
@@ -258,7 +258,7 @@ mod_data <- function(
               shinyWidgets::awesomeCheckbox(
                 ns('diameter_classes'),
                 label = text_translate(
-                  'diameter_classes_input', lang, texts_thes
+                  'diameter_classes_input', lang(), texts_thes
                 ),
                 status = 'info'
               )
@@ -344,14 +344,14 @@ mod_data <- function(
       if (nfi == 'nfi_2_nfi_3') {
         dominant_nfi_choices <- c('nfi2', 'nfi3') %>%
           magrittr::set_names(c(
-            text_translate('nfi2', lang, texts_thes),
-            text_translate('nfi3', lang, texts_thes)
+            text_translate('nfi2', lang(), texts_thes),
+            text_translate('nfi3', lang(), texts_thes)
           ))
       } else {
         dominant_nfi_choices <- c('nfi3', 'nfi4') %>%
           magrittr::set_names(c(
-            text_translate('nfi3', lang, texts_thes),
-            text_translate('nfi4', lang, texts_thes)
+            text_translate('nfi3', lang(), texts_thes),
+            text_translate('nfi4', lang(), texts_thes)
           ))
       }
       shinyWidgets::updatePrettyRadioButtons(
@@ -413,11 +413,11 @@ mod_data <- function(
 
       desglossament_choices <- c('species') %>%
         magrittr::set_names(c(
-          text_translate('fg_species', lang, texts_thes)
+          text_translate('fg_species', lang(), texts_thes)
         ))
       shinyWidgets::updatePickerInput(
         session, 'desglossament',
-        label = text_translate('desglossament_input', lang, texts_thes),
+        label = text_translate('desglossament_input', lang(), texts_thes),
         choices = desglossament_choices, selected = desglossament_choices[1]
       )
     } else {
@@ -426,16 +426,16 @@ mod_data <- function(
         'plot', 'species', 'simpspecies', 'genus', 'dec', 'bc'
       ) %>%
         magrittr::set_names(c(
-          text_translate('fg_plot', lang, texts_thes),
-          text_translate('fg_species', lang, texts_thes),
-          text_translate('fg_simpspecies', lang, texts_thes),
-          text_translate('fg_genus', lang, texts_thes),
-          text_translate('fg_dec', lang, texts_thes),
-          text_translate('fg_bc', lang, texts_thes)
+          text_translate('fg_plot', lang(), texts_thes),
+          text_translate('fg_species', lang(), texts_thes),
+          text_translate('fg_simpspecies', lang(), texts_thes),
+          text_translate('fg_genus', lang(), texts_thes),
+          text_translate('fg_dec', lang(), texts_thes),
+          text_translate('fg_bc', lang(), texts_thes)
         ))
       shinyWidgets::updatePickerInput(
         session, 'desglossament',
-        label = text_translate('desglossament_input', lang, texts_thes),
+        label = text_translate('desglossament_input', lang(), texts_thes),
         choices = desglossament_choices, selected = desglossament_choices[1]
       )
     }

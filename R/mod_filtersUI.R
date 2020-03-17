@@ -93,13 +93,13 @@ mod_filters <- function(
 
     return(list(
       res_vars = translate_var(
-        res_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
+        res_vars, tables_to_look_at, lang(), var_thes, numerical_thes, texts_thes
       ),
       clim_vars = translate_var(
-        clim_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
+        clim_vars, tables_to_look_at, lang(), var_thes, numerical_thes, texts_thes
       ),
       plot_vars = translate_var(
-        plot_vars, tables_to_look_at, lang, var_thes, numerical_thes, texts_thes
+        plot_vars, tables_to_look_at, lang(), var_thes, numerical_thes, texts_thes
       )
     ))
   })
@@ -120,20 +120,20 @@ mod_filters <- function(
           4,
           shinyWidgets::pickerInput(
             ns('fil_res_vars'),
-            text_translate('fil_res_vars_input', lang, texts_thes),
+            text_translate('fil_res_vars_input', lang(), texts_thes),
             choices = fil_res_vars_choices,
             multiple = TRUE,
             options = list(
               `actions-box` = FALSE,
               `deselect-all-text` = text_translate(
-                'deselect-all-text', lang, texts_thes
+                'deselect-all-text', lang(), texts_thes
               ),
               `select-all-text` = text_translate(
-                'select-all-text', lang, texts_thes
+                'select-all-text', lang(), texts_thes
               ),
               `selected-text-format` = 'count > 3',
               `count-selected-text` = text_translate(
-                'count-selected-text-var', lang, texts_thes
+                'count-selected-text-var', lang(), texts_thes
               ),
               `size` = 10,
               `live-search` = TRUE,
@@ -145,20 +145,20 @@ mod_filters <- function(
           4,
           shinyWidgets::pickerInput(
             ns('fil_clim_vars'),
-            text_translate('fil_clim_vars_input', lang, texts_thes),
+            text_translate('fil_clim_vars_input', lang(), texts_thes),
             choices = fil_clim_vars_choices,
             multiple = TRUE,
             options = list(
               `actions-box` = FALSE,
               `deselect-all-text` = text_translate(
-                'deselect-all-text', lang, texts_thes
+                'deselect-all-text', lang(), texts_thes
               ),
               `select-all-text` = text_translate(
-                'select-all-text', lang, texts_thes
+                'select-all-text', lang(), texts_thes
               ),
               `selected-text-format` = 'count > 3',
               `count-selected-text` = text_translate(
-                'count-selected-text-var', lang, texts_thes
+                'count-selected-text-var', lang(), texts_thes
               ),
               `size` = 10,
               `live-search` = TRUE,
@@ -170,20 +170,20 @@ mod_filters <- function(
           4,
           shinyWidgets::pickerInput(
             ns('fil_plot_vars'),
-            text_translate('fil_plot_vars_input', lang, texts_thes),
+            text_translate('fil_plot_vars_input', lang(), texts_thes),
             choices = fil_plot_vars_choices,
             multiple = TRUE,
             options = list(
               `actions-box` = FALSE,
               `deselect-all-text` = text_translate(
-                'deselect-all-text', lang, texts_thes
+                'deselect-all-text', lang(), texts_thes
               ),
               `select-all-text` = text_translate(
-                'select-all-text', lang, texts_thes
+                'select-all-text', lang(), texts_thes
               ),
               `selected-text-format` = 'count > 3',
               `count-selected-text` = text_translate(
-                'count-selected-text-var', lang, texts_thes
+                'count-selected-text-var', lang(), texts_thes
               ),
               `size` = 10,
               `live-search` = TRUE,
@@ -236,7 +236,7 @@ mod_filters <- function(
           filter_inputs_builder_helper, tables = tables_to_look_at,
           var_thes = var_thes, texts_thes = texts_thes,
           numerical_thes = numerical_thes, categorical_thes = categorical_thes,
-          lang = lang, ns = ns, cache = cache
+          lang = lang(), ns = ns, cache = cache
         )
     }
   )
@@ -250,7 +250,7 @@ mod_filters <- function(
     # tagList
     shiny::tagList(
       shiny::hr(),
-      shiny::tags$strong(text_translate('filter_the_data', lang, texts_thes)),
+      shiny::tags$strong(text_translate('filter_the_data', lang(), texts_thes)),
       shiny::br(), shiny::br(),
       filter_inputs_builder()
     )

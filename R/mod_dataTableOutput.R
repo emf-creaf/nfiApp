@@ -105,7 +105,7 @@ mod_dataTable <- function(
           c(viz_color, glue::glue("{viz_color}{viz_statistic}")) %in%
             names(main_data_reactives$main_data$requested_data)
         ),
-        text_translate('apply_warning', lang, texts_thes)
+        text_translate('apply_warning', lang(), texts_thes)
       )
     )
 
@@ -118,7 +118,7 @@ mod_dataTable <- function(
         )
       ) %>%
       translate_var(
-        tables_to_look_at, lang, var_thes, numerical_thes,
+        tables_to_look_at, lang(), var_thes, numerical_thes,
         texts_thes, is_summary = summary_on, need_order = FALSE
       )
     # selected_choices
@@ -146,7 +146,7 @@ mod_dataTable <- function(
           shinyWidgets::pickerInput(
             ns('col_vis_selector'),
             # label_getter(nfidb, 'esp', 'col_vis_selector_label'),
-            label = text_translate('col_vis_selector_input', lang, texts_thes),
+            label = text_translate('col_vis_selector_input', lang(), texts_thes),
             choices = col_vis_selector_choices,
             multiple = TRUE,
             selected = col_vis_selected,
@@ -235,7 +235,7 @@ mod_dataTable <- function(
         rownames = FALSE,
         colnames = names(
           translate_var(
-            names(.), tables_to_look_at, lang, var_thes, numerical_thes,
+            names(.), tables_to_look_at, lang(), var_thes, numerical_thes,
             texts_thes, is_summary = summary_on, need_order = FALSE
           )
         ),

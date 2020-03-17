@@ -41,7 +41,7 @@ mod_map <- function(
       leaflet::leafletOutput(ns('nfi_map'), height = 600),
       shiny::tags$div(
         id = 'cite',
-        text_translate('cite_div', lang, texts_thes)
+        text_translate('cite_div', lang(), texts_thes)
       )
     )
   }) # end of renderUI
@@ -63,22 +63,22 @@ mod_map <- function(
       leaflet::addLayersControl(
         baseGroups = c('Relief', 'Imaginery'),
         options = leaflet::layersControlOptions(collapsed = TRUE)
-      ) %>%
+      ) #%>%
       # leaflet.extras plugins
-      leaflet.extras::addDrawToolbar(
-        targetGroup = 'custom_polygon',
-        position = 'topleft',
-        polylineOptions = FALSE, circleOptions = FALSE,
-        rectangleOptions = FALSE, markerOptions = FALSE,
-        circleMarkerOptions = FALSE,
-        polygonOptions = leaflet.extras::drawPolygonOptions(
-          shapeOptions = leaflet.extras::drawShapeOptions()
-        ),
-        editOptions = leaflet.extras::editToolbarOptions(
-          edit = TRUE, remove = TRUE
-        ),
-        singleFeature = TRUE
-      )
+      # leaflet.extras::addDrawToolbar(
+      #   targetGroup = 'custom_polygon',
+      #   position = 'topleft',
+      #   polylineOptions = FALSE, circleOptions = FALSE,
+      #   rectangleOptions = FALSE, markerOptions = FALSE,
+      #   circleMarkerOptions = FALSE,
+      #   polygonOptions = leaflet.extras::drawPolygonOptions(
+      #     shapeOptions = leaflet.extras::drawShapeOptions()
+      #   ),
+      #   editOptions = leaflet.extras::editToolbarOptions(
+      #     edit = TRUE, remove = TRUE
+      #   ),
+      #   singleFeature = TRUE
+      # )
   }) # end of leaflet output (empty map)
 
   ## reactives ####
@@ -199,7 +199,7 @@ mod_map <- function(
       shiny::validate(
         shiny::need(
           viz_color %in% names(polygon_data),
-          text_translate('apply_warning', lang, texts_thes)
+          text_translate('apply_warning', lang(), texts_thes)
         )
       )
       # color vector
@@ -227,7 +227,7 @@ mod_map <- function(
       shiny::validate(
         shiny::need(
           viz_color %in% names(plot_data),
-          text_translate('apply_warning', lang, texts_thes)
+          text_translate('apply_warning', lang(), texts_thes)
         ),
         shiny::need(nrow(plot_data) > 0, 'no plot data')
       )
@@ -314,6 +314,7 @@ mod_map <- function(
       shiny::need(main_data_reactives$main_data, 'no data yet')
     )
     # inputs for translating and other stuff
+    lang_sel <- lang()
     nfi <- shiny::isolate(data_reactives$nfi)
     desglossament <- shiny::isolate(data_reactives$desglossament)
     diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
@@ -371,7 +372,7 @@ mod_map <- function(
               title = names(
                 translate_var(
                   aesthetics_data$viz_color,
-                  tables_to_look_at, lang, var_thes, numerical_thes,
+                  tables_to_look_at, lang_sel, var_thes, numerical_thes,
                   texts_thes, is_summary = TRUE, need_order = FALSE
                 )
               ),
@@ -391,6 +392,7 @@ mod_map <- function(
       shiny::need(main_data_reactives$main_data, 'no data yet')
     )
     # inputs for translating and other stuff
+    lang_sel <- lang()
     nfi <- shiny::isolate(data_reactives$nfi)
     desglossament <- shiny::isolate(data_reactives$desglossament)
     diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
@@ -425,7 +427,7 @@ mod_map <- function(
           title = names(
             translate_var(
               aesthetics_data$viz_color,
-              tables_to_look_at, lang, var_thes, numerical_thes,
+              tables_to_look_at, lang_sel, var_thes, numerical_thes,
               texts_thes, is_summary = TRUE, need_order = FALSE
             )
           ),
