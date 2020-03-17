@@ -66,10 +66,7 @@ mod_dataTable <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-    summary_on <- FALSE
-    if (any(group_by_div, group_by_dom)) {
-      summary_on <- TRUE
-    }
+    summary_on <- any(group_by_div, group_by_dom)
 
     # variables pre-selected
     admin_div_sel <- ''
@@ -187,7 +184,6 @@ mod_dataTable <- function(
   })
 
   table_preparation <- shiny::reactive({
-    # browser()
 
     shiny::validate(
       shiny::need(main_data_reactives$main_data, 'no data yet'),
@@ -206,14 +202,17 @@ mod_dataTable <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-    summary_on <- FALSE
-    if (any(group_by_div, group_by_dom)) {
-      summary_on <- TRUE
-    }
+    summary_on <- any(group_by_div, group_by_dom)
 
     main_data_reactives$main_data$requested_data %>%
-      # dplyr::as_tibble() %>%
-      # dplyr::select(-geometry) %>%
+      dplyr::as_tibble() %>% {
+        temp <- .
+        if ('geometry' %in% names(temp)) {
+          dplyr::select(temp, -geometry)
+        } else {
+          temp
+        }
+      } %>%
       dplyr::select(dplyr::one_of(c(
         # inputs selected
         input$col_vis_selector
