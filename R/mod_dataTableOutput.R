@@ -98,6 +98,17 @@ mod_dataTable <- function(
       }
     }
 
+    # validation
+    shiny::validate(
+      shiny::need(
+        any(
+          c(viz_color, glue::glue("{viz_color}{viz_statistic}")) %in%
+            names(main_data_reactives$main_data$requested_data)
+        ),
+        text_translate('apply_warning', lang, texts_thes)
+      )
+    )
+
     # choices
     col_vis_selector_choices <-
       names(main_data_reactives$main_data$requested_data) %>%
@@ -217,6 +228,9 @@ mod_dataTable <- function(
         # inputs selected
         input$col_vis_selector
       ))) %>%
+      dplyr::mutate_if(
+        is.numeric, round, digits = 2
+      ) %>%
       DT::datatable(
         rownames = FALSE,
         colnames = names(
