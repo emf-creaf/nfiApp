@@ -9,7 +9,10 @@
 mod_mapOutput <- function(id) {
   # ns
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns('map_container'))
+  shiny::tagList(
+    leaflet::leafletOutput(ns("nfi_map"), height = 600),
+    shiny::uiOutput(ns('map_container'))
+  )
 }
 
 #' mod_map server function
@@ -37,13 +40,13 @@ mod_map <- function(
 
     # ns
     ns <- session$ns
-    shiny::tagList(
-      leaflet::leafletOutput(ns('nfi_map'), height = 600),
+    # shiny::tagList(
+    #   leaflet::leafletOutput(ns('nfi_map'), height = 600),
       shiny::tags$div(
         id = 'cite',
         text_translate('cite_div', lang(), texts_thes)
       )
-    )
+  #   )
   }) # end of renderUI
 
   ## leaflet output (empty map) ####
