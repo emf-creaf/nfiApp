@@ -311,7 +311,8 @@ mod_map <- function(
       nfi = nfi,
       desglossament = desglossament,
       diameter_classes = diameter_classes,
-      group_by_dom = group_by_dom
+      group_by_dom = group_by_dom,
+      group_by_div = group_by_div
     ))
   })
 
