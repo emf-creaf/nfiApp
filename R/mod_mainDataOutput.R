@@ -150,10 +150,9 @@ mod_mainData <- function(
         dplyr::filter(
           !!! filter_reactives$filter_expressions
         ) %>%
-        dplyr::left_join(
+        dplyr::bind_cols(
           nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
-            dplyr::select(plot_id, geometry),
-          by = 'plot_id'
+            dplyr::select(geometry)
         ) %>%
         sf::st_as_sf(sf_column_name = 'geometry')
 
