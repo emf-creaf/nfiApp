@@ -185,12 +185,49 @@ mod_info <- function(
     #     filtering
     #   - plot has to be built always the same, so maybe this involves changing
     #     variable names
+    browser()
+    plot_data <- {
+      if (nfi_map_shape_click$group == 'plots') {
+        map_reactives$aesthetics$plot_data %>%
+          dplyr::as_tibble()
+      } else {
+        if (isTRUE(map_reactives$aesthetics$group_by_div)) {
+          map_reactives$aesthetics$polygon_data %>%
+            dplyr::as_tibble()
+        } else {
+          main_data_reactives$main_data$general_summary %>% {
+            temp <- .
+            if (!is.null(map_reactives$aesthetics$fg_var)) {
+              temp %>%
+                dplyr::filter(
+                  !! rlang::sym(map_reactives$aesthetics$fg_var) ==
+                    viz_reactives$viz_functional_group_value
+                )
+            } else {
+              temp
+            }
+          } %>% {
+            temp <- .
+            if (isTRUE(map_reactives$aesthetics$diameter_classes)) {
+              temp %>%
+                dplyr::filter(diamclass_id == viz_reactives$viz_diamclass)
+            } else {
+              temp
+            }
+          }
+        }
+      }
+    }
 
   })
 
   ## outputs ####
   output$info_table <- formattable::renderFormattable({
     info_table_data()
+  })
+
+  output$info_plot <- shiny::renderPlot({
+    info_plot_data()
   })
 
 }
