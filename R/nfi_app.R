@@ -198,11 +198,34 @@ nfi_app <- function() {
       nfidb, var_thes, texts_thes, numerical_thes, lang
     )
     # map
-    shiny::callModule(
+    map_reactives <- shiny::callModule(
       mod_map, 'mod_mapOutput',
       data_reactives, viz_reactives, main_data_reactives,
       nfidb, lang,
       var_thes, texts_thes, numerical_thes
+    )
+    # info
+    shiny::callModule(
+      mod_info, 'mod_infoUI',
+      map_reactives, main_data_reactives, viz_reactives,
+      nfidb, var_thes, texts_thes, numerical_thes, lang
+    )
+
+    ## observers ####
+    # modal observer
+    shiny::observeEvent(
+      eventExpr = map_reactives$nfi_map_shape_click,
+      handlerExpr = {
+        shiny::showModal(
+          shiny::modalDialog(
+            mod_infoUI('mod_infoUI'),
+            footer = shiny::modalButton(
+              text_translate('dismiss', lang(), texts_thes)
+            ),
+            size = 'm', easyClose = TRUE
+          )
+        )
+      }
     )
 
     # first time observer

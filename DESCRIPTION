@@ -20,4 +20,5 @@ Imports:
     stringr,
     magrittr,
     leaflet,
-    leaflet.extras
+    leaflet.extras,
+    formattable

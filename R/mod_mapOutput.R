@@ -115,6 +115,8 @@ mod_map <- function(
     diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
     admin_div <- shiny::isolate(data_reactives$admin_div)
 
+    shiny::validate(shiny::need(admin_div, 'no inputs yet'))
+
     # polygon labels, join vars for data and join data expression for data
     if (admin_div %in% c('file', 'drawn_poly')) {
       polygon_label <- as.formula('~poly_id')
@@ -298,11 +300,18 @@ mod_map <- function(
       pal = pal,
       legend_class = legend_class,
       viz_color = viz_color,
+      viz_size = viz_size,
+      viz_statistic = viz_statistic,
       fill_color = fill_color,
       polygon_label = polygon_label,
       polygon_join_var = polygon_join_var,
       polygon_data = polygon_data,
-      plot_data = plot_data
+      plot_data = plot_data,
+      fg_var = fg_var,
+      nfi = nfi,
+      desglossament = desglossament,
+      diameter_classes = diameter_classes,
+      group_by_dom = group_by_dom
     ))
   })
 
@@ -443,4 +452,11 @@ mod_map <- function(
         leaflet::clearGroup('plots')
     }
   })
+
+  map_reactives <- shiny::reactiveValues()
+  shiny::observe({
+    map_reactives$aesthetics <- aesthetics_builder()
+    map_reactives$nfi_map_shape_click <- input$nfi_map_shape_click
+  })
+  return(map_reactives)
 }
