@@ -139,8 +139,6 @@ mod_mainData <- function(
 
       progress$set(value = 5)
 
-      browser()
-
       # get data, join it
       main_data_table <-
         tables_to_look_at %>%
@@ -151,11 +149,15 @@ mod_mainData <- function(
         purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
         dplyr::filter(
           !!! filter_reactives$filter_expressions
-        ) %>%
-        dplyr::bind_cols(
-          nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
-            dplyr::select(geometry)
-        ) %>%
+        ) %>% {
+          temp <- .
+          dplyr::bind_cols(
+            temp,
+            nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
+              dplyr::filter(plot_id %in% temp[['plot_id']]) %>%
+              dplyr::select(geometry)
+          )
+        } %>%
         sf::st_as_sf(sf_column_name = 'geometry')
 
       # sweet alert for when no results are returned by the filters

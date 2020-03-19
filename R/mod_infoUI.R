@@ -283,9 +283,12 @@ mod_info <- function(
           )
         }
       } %>% {
-        shiny::validate(shiny::need(
-          nfi_map_shape_click$id %in% .[['label_var']], 'no data in clicked'
-        ))
+        shiny::validate(
+          shiny::need(
+            nfi_map_shape_click$id %in% .[['label_var']], 'no data in clicked'
+          ),
+          shiny::need(nrow(.) > 3, 'no enough data to safely create the plot')
+        )
         .
       } %>% {
         temp_data <- .
