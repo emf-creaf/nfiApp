@@ -144,13 +144,13 @@ mod_info <- function(
           Characteristics = formattable::formatter(
             "span", style = formattable::style(
               "font-family" = "Montserrat", color = "#c8cac8",
-              "font-size" = "14pt", "font-weight" = "normal"
+              "font-size" = "12pt", "font-weight" = "normal"
             )
           ),
           Value = formattable::formatter(
             "span", style = formattable::style(
               "font-family" = "Montserrat", color = "#c8cac8",
-              "font-size" = "16pt", "font-weight" = "bold"
+              "font-size" = "12pt", "font-weight" = "bold"
             )
           )
         ),
@@ -182,42 +182,158 @@ mod_info <- function(
     #     plots in map. That means requested data, no filtering, except if
     #     dom is TRUE that is raw data no filtering
     #   - if group is another one, then table info with general_summary no
-    #     filtering
+    #     filtering, expecpt for the unique case of character variables in
+    #     viz_color, in that case is plot data
     #   - plot has to be built always the same, so maybe this involves changing
     #     variable names
-    browser()
     plot_data <- {
       if (nfi_map_shape_click$group == 'plots') {
         map_reactives$aesthetics$plot_data %>%
-          dplyr::as_tibble()
+          dplyr::as_tibble() %>%
+          dplyr::rename(
+            label_var = plot_id
+          )
       } else {
         if (isTRUE(map_reactives$aesthetics$group_by_div)) {
           map_reactives$aesthetics$polygon_data %>%
-            dplyr::as_tibble()
+            dplyr::as_tibble() %>%
+            dplyr::rename(
+              label_var = !! rlang::sym(
+                map_reactives$aesthetics$polygon_join_var
+              )
+            )
         } else {
-          main_data_reactives$main_data$general_summary %>% {
-            temp <- .
-            if (!is.null(map_reactives$aesthetics$fg_var)) {
-              temp %>%
-                dplyr::filter(
-                  !! rlang::sym(map_reactives$aesthetics$fg_var) ==
-                    viz_reactives$viz_functional_group_value
-                )
-            } else {
-              temp
+
+          {if (!is.numeric(map_reactives$aesthetics$color_vector)) {
+            map_reactives$aesthetics$plot_data
+          } else {
+            main_data_reactives$main_data$general_summary
+          }} %>%
+            dplyr::as_tibble() %>%
+            dplyr::rename(
+              label_var = !! rlang::sym(
+                map_reactives$aesthetics$polygon_join_var
+              )
+            ) %>% {
+              temp <- .
+              if (!is.null(map_reactives$aesthetics$fg_var)) {
+                temp %>%
+                  dplyr::filter(
+                    !! rlang::sym(map_reactives$aesthetics$fg_var) ==
+                      viz_reactives$viz_functional_group_value
+                  )
+              } else {
+                temp
+              }
+            } %>% {
+              temp <- .
+              if (isTRUE(map_reactives$aesthetics$diameter_classes)) {
+                temp %>%
+                  dplyr::filter(diamclass_id == viz_reactives$viz_diamclass)
+              } else {
+                temp
+              }
             }
-          } %>% {
-            temp <- .
-            if (isTRUE(map_reactives$aesthetics$diameter_classes)) {
-              temp %>%
-                dplyr::filter(diamclass_id == viz_reactives$viz_diamclass)
-            } else {
-              temp
-            }
-          }
         }
       }
-    }
+    } %>%
+      # plot. Logic is as follows:
+      #   - violin plots
+      #   - if plots are clicked:
+      #     + we need to compare the clicked plot with the other plots in the
+      #       map.
+      #     + Variable is viz_color or {viz_color}{viz_statistic}
+      #     + Color is click id vs the other ones at plot_id
+      #     + If more than 50 points, don't make interactive all, only clicked,
+      #       and the 25 highest points and the 25 lowest points
+      #   - if polygons are clicked:
+      #     + we need to compare polygon clicked with the other polygons in the
+      #       map
+      #     + Variable is viz_color or {viz_color}{viz_statistic}
+      #     + Color is click id vs the other ones at polygon_join_var
+      #     + Always interactive
+      dplyr::select(dplyr::one_of(
+        'label_var',
+        map_reactives$aesthetics$polygon_join_var,
+        map_reactives$aesthetics$viz_color,
+        glue::glue(
+          "{map_reactives$aesthetics$viz_color}",
+          "{map_reactives$aesthetics$viz_statistic}"
+        ),
+        map_reactives$aesthetics$viz_size,
+        glue::glue(
+          "{map_reactives$aesthetics$viz_size}",
+          "{map_reactives$aesthetics$viz_statistic}"
+        )
+      )) %>% {
+        if (map_reactives$aesthetics$viz_color %in% names(.)) {
+          dplyr::rename(
+            .,
+            y_var = !! rlang::sym(map_reactives$aesthetics$viz_color)
+          )
+        } else {
+          dplyr::rename(
+            .,
+            y_var = !! rlang::sym(
+              glue::glue(
+                "{map_reactives$aesthetics$viz_color}",
+                "{map_reactives$aesthetics$viz_statistic}"
+              )
+            )
+          )
+        }
+      } %>% {
+        shiny::validate(shiny::need(
+          nfi_map_shape_click$id %in% .[['label_var']], 'no data in clicked'
+        ))
+        .
+      } %>% {
+        temp_data <- .
+        # if character
+        if (!is.numeric(map_reactives$aesthetics$color_vector)) {
+          # browser()
+          # if click poly
+          if (nfi_map_shape_click$group != 'plots') {
+            temp_data <- temp_data %>%
+              dplyr::filter(label_var == nfi_map_shape_click$id)
+            palette_colors <- rep('green', length(unique(temp_data[['y_var']]))) %>%
+              magrittr::set_names(stringr::str_sort(unique(temp_data[['y_var']])))
+          } else {
+            green_value <- temp_data %>%
+              dplyr::filter(label_var == nfi_map_shape_click$id) %>%
+              dplyr::pull(y_var)
+            palette_colors <- rep('gray', length(unique(temp_data[['y_var']]))) %>%
+              magrittr::set_names(stringr::str_sort(unique(temp_data[['y_var']])))
+            palette_colors[[green_value]] <- 'green'
+          }
+          temp_plot <-
+            temp_data %>%
+            ggplot2::ggplot(
+              ggplot2::aes(x = y_var, fill = y_var, colour = y_var)
+            ) +
+            ggplot2::geom_bar(show.legend = FALSE) +
+            ggplot2::scale_fill_manual(values = palette_colors) +
+            ggplot2::scale_colour_manual(values = palette_colors)
+        } else {
+          temp_plot <-
+            temp_data %>%
+            ggplot2::ggplot(ggplot2::aes(x = '', y = y_var)) +
+            ggplot2::geom_violin(fill = 'transparent') +
+            ggplot2::geom_point(
+              data = ~ dplyr::filter(.x, label_var != nfi_map_shape_click$id),
+              colour = 'gray', size = 4, alpha = 0.5,
+              position = ggplot2::position_jitter(width = .2, height = 0, seed = 25)
+            ) +
+            ggplot2::geom_point(
+              data = ~ dplyr::filter(.x, label_var == nfi_map_shape_click$id),
+              colour = 'green', size = 6
+            )
+        }
+        return(temp_plot)
+      }
+
+
+    return(plot_data)
 
   })
 

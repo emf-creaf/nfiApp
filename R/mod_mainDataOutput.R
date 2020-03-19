@@ -139,6 +139,8 @@ mod_mainData <- function(
 
       progress$set(value = 5)
 
+      browser()
+
       # get data, join it
       main_data_table <-
         tables_to_look_at %>%
