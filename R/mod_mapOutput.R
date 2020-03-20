@@ -96,6 +96,7 @@ mod_map <- function(
   #   - depending on class of vector, a legend class
   # We also get the data and polygons labels
   aesthetics_builder <- shiny::reactive({
+    # browser()
     # inputs
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
@@ -452,7 +453,7 @@ mod_map <- function(
   })
 
   map_reactives <- shiny::reactiveValues()
-  sh2iny::observe({
+  shiny::observe({
     map_reactives$aesthetics <- aesthetics_builder()
     map_reactives$nfi_map_shape_click <- input$nfi_map_shape_click
     map_reactives$nfi_map_draw_all_features <- input$nfi_map_draw_all_features

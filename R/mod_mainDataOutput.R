@@ -110,9 +110,9 @@ mod_mainData <- function(
     eventExpr = apply_reactives$apply_button,
     valueExpr = {
 
-      shiny::updateTabsetPanel(
-        parent_session, 'sidebar_tabset', selected = 'viz_panel'
-      )
+      # shiny::updateTabsetPanel(
+      #   parent_session, 'sidebar_tabset', selected = 'viz_panel'
+      # )
 
       # set a progress
       progress <- shiny::Progress$new(session, min = 0, max = 100)
@@ -294,6 +294,17 @@ mod_mainData <- function(
       )
 
       return(res)
+    }
+  )
+
+  # observers to update tab and update viz_fg
+  shiny::observeEvent(
+    eventExpr = main_data(),
+    handlerExpr = {
+      # update tab
+      shiny::updateTabsetPanel(
+        parent_session, 'sidebar_tabset', selected = 'viz_panel'
+      )
     }
   )
 

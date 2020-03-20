@@ -321,12 +321,12 @@ mod_info <- function(
           temp_plot <-
             temp_data %>%
             ggplot2::ggplot(ggplot2::aes(x = '', y = y_var)) +
-            ggplot2::geom_violin(fill = 'transparent') +
             ggplot2::geom_point(
               data = ~ dplyr::filter(.x, label_var != nfi_map_shape_click$id),
               colour = 'gray', size = 4, alpha = 0.5,
               position = ggplot2::position_jitter(width = .2, height = 0, seed = 25)
             ) +
+            ggplot2::geom_violin(fill = 'transparent') +
             ggplot2::geom_point(
               data = ~ dplyr::filter(.x, label_var == nfi_map_shape_click$id),
               colour = 'green', size = 6
