@@ -96,7 +96,6 @@ mod_map <- function(
   #   - depending on class of vector, a legend class
   # We also get the data and polygons labels
   aesthetics_builder <- shiny::reactive({
-    # browser()
     # inputs
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
@@ -215,9 +214,7 @@ mod_map <- function(
       size_vector <- NULL
     } else {
       # data, color is already set in this case
-      polygon_data <- rlang::eval_tidy(
-        rlang::sym(glue::glue("{admin_div}_polygons"))
-      )
+      polygon_data <- rlang::eval_tidy(rlang::eval_tidy(polygon_join_data_expr))
       # plot data
       if (isTRUE(group_by_dom)) {
         plot_data <-

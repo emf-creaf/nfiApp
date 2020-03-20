@@ -125,7 +125,7 @@ div.table_container {
 
 /* modal lg size refactoring */
 .modal-body {
-  min-height: 800px;
+  min-height: 600px;
 }
 
 #download_table_modal > #shiny-modal > .modal-dialog > .modal-content > .modal-body {
