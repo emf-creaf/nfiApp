@@ -10,6 +10,7 @@ mod_viz(
   session,
   data_reactives,
   filter_reactives,
+  main_data_reactives,
   nfidb,
   var_thes,
   texts_thes,
@@ -25,8 +26,7 @@ mod_viz(
 
 \item{session}{internal}
 
-\item{data_reactives, filter_reactives}{reactives from
-other modules}
+\item{data_reactives, filter_reactives, main_data_reactives, }{reactives needed}
 
 \item{nfidb}{pool object to access nfi db}
 

@@ -21,8 +21,7 @@ mod_vizInput <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param data_reactives,filter_reactives reactives from
-#'   other modules
+#' @param data_reactives,filter_reactives,main_data_reactives, reactives needed
 #' @param nfidb pool object to access nfi db
 #' @param var_thes,texts_thes,numerical_thes thesauruses
 #' @param lang lang value
@@ -32,7 +31,7 @@ mod_vizInput <- function(id) {
 #' @rdname mod_vizUI
 mod_viz <- function(
   input, output, session,
-  data_reactives, filter_reactives,
+  data_reactives, filter_reactives, main_data_reactives,
   nfidb, var_thes, texts_thes, numerical_thes, categorical_thes, lang
 ) {
 
@@ -120,6 +119,14 @@ mod_viz <- function(
     fg_filter_vals <- filter_reactives$otf_filter_inputs[[fg_var]]
     if (!is.null(fg_filter_vals)) {
       fg_choices <- fg_choices[fg_choices %in% fg_filter_vals]
+    }
+
+    # update fg_choices with the fg_var in the data if this exists.
+    if(!is.null(main_data_reactives[['main_data']][['main_data']])){
+      data_fg_choices <-
+        main_data_reactives[['main_data']][['main_data']][[fg_var]]
+
+      fg_choices <- fg_choices[fg_choices %in% data_fg_choices]
     }
 
     # tagList ####
