@@ -13,11 +13,12 @@ mod_applyButtonInput <- function(id) {
   shiny::tagList(
     shiny::fluidRow(
       shiny::column(
-        6, align = 'left',
-        shiny::verbatimTextOutput(ns('filter_warning'))
+        9, align = 'left',
+        # data requested summary
+        shiny::uiOutput(ns('data_requested_info'))
       ),
       shiny::column(
-        6, align = 'center',
+        3, align = 'center',
         shiny::uiOutput(ns("apply_panel"))
       )
     )
@@ -31,7 +32,8 @@ mod_applyButtonInput <- function(id) {
 #' @param output internal
 #' @param session internal
 #' @param lang language selected
-#' @param texts_thes thesauruses
+#' @param texts_thes,var_thes,numerical_thes thesauruses
+#' @param data_reactives,filter_reactives reactives needed
 #'
 #' @export
 #'
@@ -42,11 +44,11 @@ mod_applyButton <- function(
   data_reactives, filter_reactives
 ) {
 
-  # filter_warning ####
-  output$filter_warning <- shiny::renderPrint({
+  # data_requested_info ####
+  output$data_requested_info <- shiny::renderUI({
 
     shiny::validate(
-      shiny::need(filter_reactives$filter_vars, '')
+      shiny::need(data_reactives$nfi, 'no inputs yet')
     )
 
     # tables to look at for translations
@@ -54,17 +56,73 @@ mod_applyButton <- function(
     desglossament <- data_reactives$desglossament
     diameter_classes <- data_reactives$diameter_classes
 
+    # grouping
+    group_by_div <- data_reactives$group_by_div
+    group_by_dom <- data_reactives$group_by_dom
+
+    group_paragraph <- shiny::tagList(
+      text_translate("dri_group_by_div", lang(), texts_thes),
+      text_translate("dri_group_by_dom", lang(), texts_thes)
+    )
+
     tables_to_look_at <- c(
       main_table_to_look_at(nfi, desglossament, diameter_classes),
       ancillary_tables_to_look_at(nfi)
     )
 
     filter_vars <- filter_reactives$filter_vars
-    glue::glue(
-      "{text_translate('filter_warning', lang(), texts_thes)} ",
-      "{names(translate_var(
-        filter_vars, tables_to_look_at, lang(), var_thes, numerical_thes, texts_thes
-      ))}"
+
+    shiny::tagList(
+      shiny::h4(text_translate("dri_title", lang(), texts_thes)),
+      # nfi info
+      shiny::p(
+        shiny::strong(text_translate("dri_nfi", lang(), texts_thes), ": "),
+        text_translate(nfi, lang(), texts_thes)
+      ),
+      # agrupament info
+      shiny::p(
+        shiny::strong(
+          text_translate("dri_agrupament", lang(), texts_thes), ": "
+        ),
+        {
+          if (!any(group_by_dom, group_by_div)) {
+            text_translate("dri_none", lang(), texts_thes)
+          } else {
+            group_paragraph[c(group_by_div, group_by_dom)]
+          }
+        }
+      ),
+      # desglossament
+      shiny::p(
+        shiny::strong(
+          text_translate("dri_desglossament", lang(), texts_thes), ": "
+        ),
+        {
+          if (desglossament == 'plot') {
+            text_translate("dri_none", lang(), texts_thes)
+          } else {
+            text_translate(desglossament, lang(), texts_thes)
+          }
+        }
+      ),
+      # filters
+      shiny::p(
+        shiny::strong(
+          text_translate("dri_filters", lang(), texts_thes), ": "
+        ),
+        {
+          if (is.null(filter_vars)) {
+            text_translate("dri_none", lang(), texts_thes)
+          } else {
+            shiny::tagList(
+              purrr::map(filter_vars, ~ names(translate_var(
+                .x, tables_to_look_at, lang(),
+                var_thes, numerical_thes, texts_thes
+              )))
+            )
+          }
+        }
+      )
     )
   })
 

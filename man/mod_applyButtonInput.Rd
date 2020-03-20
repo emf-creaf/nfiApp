@@ -30,7 +30,9 @@ mod_applyButton(
 
 \item{lang}{language selected}
 
-\item{texts_thes}{thesauruses}
+\item{texts_thes, var_thes, numerical_thes}{thesauruses}
+
+\item{data_reactives, filter_reactives}{reactives needed}
 }
 \description{
 A shiny module to create and populate the buttons inputs

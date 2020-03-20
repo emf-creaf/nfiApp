@@ -280,6 +280,11 @@ filter_inputs_builder_helper <- function(
       max = variable_description %>% dplyr::pull(var_max)
     )
 
+    ## TODO remove this when db fixed with percentage variables
+    if (all(is.na(input_choices))) {
+      input_choices <- c(min = 0, max = 100)
+    }
+
     # check the cache to look if there was set before
     if (cache$exists(stringr::str_remove_all(variable, '_'))) {
       previous_value <- cache$get(stringr::str_remove_all(variable, '_'))
