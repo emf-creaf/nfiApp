@@ -16,7 +16,8 @@ mod_mainDataOutput <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param data_reactives,filter_reactives,apply_reactives reactives from modules
+#' @param data_reactives,filter_reactives,apply_reactives,map_reactives
+#'   reactives from modules
 #' @param nfidb object to access the nfi db
 #' @param lang lang selected
 #' @param texts_thes thesaurus
@@ -30,7 +31,7 @@ mod_mainDataOutput <- function(id) {
 #' @rdname mod_mainDataOuput
 mod_mainData <- function(
   input, output, session,
-  data_reactives, filter_reactives, apply_reactives,
+  data_reactives, filter_reactives, apply_reactives, map_reactives,
   nfidb, lang, texts_thes, parent_session
 ) {
 
@@ -75,11 +76,13 @@ mod_mainData <- function(
     }
 
     if (admin_div == 'drawn_poly') {
+      # validation
+      shiny::need(map_reactives$map_draw_all_features, 'no draw polys yet')
       # When removing the features (custom polygon) the
       # input$map_draw_new_feature is not cleared, so is always filtering the
       # sites, even after removing. For that we need to control when the removed
       # feature equals the new, that's it, when we removed the last one
-      drawn_polygon <- map_reactives$map_draw_all_features
+      drawn_polygon <- map_reactives$nfi_map_draw_all_features
       if (is.null(drawn_polygon) || length(drawn_polygon[['features']]) == 0) {
         return(NULL)
       } else {
@@ -206,6 +209,7 @@ mod_mainData <- function(
       if (admin_div %in% c('file', 'drawn_poly')) {
         # get the custom polygon with the reactive
         custom_poly <- custom_polygon()
+        shiny::validate(shiny::need(custom_poly, 'no custom poly'))
 
         # get only the plots inside the polygons supplied
         # The logic is as follows:

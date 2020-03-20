@@ -181,7 +181,7 @@ nfi_app <- function() {
     # main data
     main_data_reactives <- shiny::callModule(
       mod_mainData, 'mod_mainDataOutput',
-      data_reactives, filter_reactives, apply_reactives,
+      data_reactives, filter_reactives, apply_reactives, map_reactives,
       nfidb, lang, texts_thes, session
     )
     # viz

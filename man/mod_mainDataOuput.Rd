@@ -11,6 +11,7 @@ mod_mainData(
   data_reactives,
   filter_reactives,
   apply_reactives,
+  map_reactives,
   nfidb,
   lang,
   texts_thes,
@@ -24,7 +25,7 @@ mod_mainData(
 
 \item{session}{internal}
 
-\item{data_reactives, filter_reactives, apply_reactives}{reactives from modules}
+\item{data_reactives, filter_reactives, apply_reactives, map_reactives}{reactives from modules}
 
 \item{nfidb}{object to access the nfi db}
 

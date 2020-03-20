@@ -66,22 +66,22 @@ mod_map <- function(
       leaflet::addLayersControl(
         baseGroups = c('Relief', 'Imaginery'),
         options = leaflet::layersControlOptions(collapsed = TRUE)
-      ) #%>%
+      ) %>%
       # leaflet.extras plugins
-      # leaflet.extras::addDrawToolbar(
-      #   targetGroup = 'custom_polygon',
-      #   position = 'topleft',
-      #   polylineOptions = FALSE, circleOptions = FALSE,
-      #   rectangleOptions = FALSE, markerOptions = FALSE,
-      #   circleMarkerOptions = FALSE,
-      #   polygonOptions = leaflet.extras::drawPolygonOptions(
-      #     shapeOptions = leaflet.extras::drawShapeOptions()
-      #   ),
-      #   editOptions = leaflet.extras::editToolbarOptions(
-      #     edit = TRUE, remove = TRUE
-      #   ),
-      #   singleFeature = TRUE
-      # )
+      leaflet.extras::addDrawToolbar(
+        targetGroup = 'drawn_poly',
+        position = 'topleft',
+        polylineOptions = FALSE, circleOptions = FALSE,
+        rectangleOptions = FALSE, markerOptions = FALSE,
+        circleMarkerOptions = FALSE,
+        polygonOptions = leaflet.extras::drawPolygonOptions(
+          shapeOptions = leaflet.extras::drawShapeOptions()
+        ),
+        editOptions = leaflet.extras::editToolbarOptions(
+          edit = TRUE, remove = TRUE
+        ),
+        singleFeature = TRUE
+      )
   }) # end of leaflet output (empty map)
 
   ## reactives ####
@@ -214,7 +214,7 @@ mod_map <- function(
       size_vector <- NULL
     } else {
       # data, color is already set in this case
-      polygon_data <- rlang::eval_tidy(rlang::eval_tidy(polygon_join_data_expr))
+      polygon_data <- rlang::eval_tidy(polygon_join_data_expr)
       # plot data
       if (isTRUE(group_by_dom)) {
         plot_data <-
@@ -452,9 +452,10 @@ mod_map <- function(
   })
 
   map_reactives <- shiny::reactiveValues()
-  shiny::observe({
+  sh2iny::observe({
     map_reactives$aesthetics <- aesthetics_builder()
     map_reactives$nfi_map_shape_click <- input$nfi_map_shape_click
+    map_reactives$nfi_map_draw_all_features <- input$nfi_map_draw_all_features
   })
   return(map_reactives)
 }

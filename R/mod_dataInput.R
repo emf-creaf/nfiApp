@@ -67,7 +67,7 @@ mod_data <- function(
     admin_div_choices <- c(
       'aut_community', 'province', 'vegueria', 'region', 'municipality',
       'natural_interest_area', 'special_protection_natural_area',
-      'natura_network_2000', 'file'
+      'natura_network_2000', 'file', 'drawn_poly'
     ) %>%
       magrittr::set_names(c(
         text_translate('aut_community', lang(), texts_thes),
@@ -78,7 +78,8 @@ mod_data <- function(
         text_translate('natural_interest_area', lang(), texts_thes),
         text_translate('special_protection_natural_area', lang(), texts_thes),
         text_translate('natura_network_2000', lang(), texts_thes),
-        text_translate('file', lang(), texts_thes)
+        text_translate('file', lang(), texts_thes),
+        text_translate('drawn_poly', lang(), texts_thes)
       ))
 
     desglossament_choices <- c(
