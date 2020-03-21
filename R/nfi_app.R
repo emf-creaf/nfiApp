@@ -123,12 +123,12 @@ nfi_app <- function() {
                 title = 'viz',
                 value = 'viz_panel',
                 mod_vizInput('mod_vizInput')
-              )#, # end of viz tab
-              # shiny::tabPanel(
-              #   title = 'save',
-              #   value = 'save_panel',
-              #   mod_saveUI('mod_saveUI')
-              # ) # end fo save panel
+              ), # end of viz tab
+              shiny::tabPanel(
+                title = 'save',
+                value = 'save_panel',
+                mod_saveUI('mod_saveUI')
+              ) # end fo save panel
             ) # end of sidebar tabsetPanel
           ),
           ## main panel
@@ -214,11 +214,11 @@ nfi_app <- function() {
       var_thes, texts_thes, numerical_thes, lang
     )
     # save
-    # shiny::callModule(
-    #   mod_save, 'mode_saveUI',
-    #   map_reactives, table_reactives,
-    #   nfidb, var_thes, texts_thes, numerical_thes, lang
-    # )
+    shiny::callModule(
+      mod_save, 'mode_saveUI',
+      map_reactives, table_reactives,
+      var_thes, texts_thes, numerical_thes, lang
+    )
 
     ## observers ####
     # modal observer
