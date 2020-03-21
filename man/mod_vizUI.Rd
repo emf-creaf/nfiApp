@@ -11,7 +11,6 @@ mod_viz(
   data_reactives,
   filter_reactives,
   main_data_reactives,
-  nfidb,
   var_thes,
   texts_thes,
   numerical_thes,
@@ -27,8 +26,6 @@ mod_viz(
 \item{session}{internal}
 
 \item{data_reactives, filter_reactives, main_data_reactives, }{reactives needed}
-
-\item{nfidb}{pool object to access nfi db}
 
 \item{var_thes, texts_thes, numerical_thes}{thesauruses}
 

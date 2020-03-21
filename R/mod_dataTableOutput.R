@@ -22,9 +22,7 @@ mod_dataTableOutput <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param data_reactives reactives from
-#'   other modules
-#' @param nfidb pool object to access nfi db
+#' @param data_reactives reactives from other modules
 #' @param var_thes,texts_thes,numerical_thes thesauruses
 #' @param lang lang value
 #'
@@ -34,9 +32,8 @@ mod_dataTableOutput <- function(id) {
 mod_dataTable <- function(
   input, output, session,
   main_data_reactives, data_reactives, viz_reactives,
-  nfidb, var_thes, texts_thes, numerical_thes, lang
+  var_thes, texts_thes, numerical_thes, lang
 ) {
-
   ## renderUI for the input
   output$table_vars_selector_panel <- shiny::renderUI({
 
@@ -145,7 +142,6 @@ mod_dataTable <- function(
           # shiny::br(),
           shinyWidgets::pickerInput(
             ns('col_vis_selector'),
-            # label_getter(nfidb, 'esp', 'col_vis_selector_label'),
             label = text_translate('col_vis_selector_input', lang(), texts_thes),
             choices = col_vis_selector_choices,
             multiple = TRUE,

@@ -14,7 +14,6 @@ mod_dataTable(
   main_data_reactives,
   data_reactives,
   viz_reactives,
-  nfidb,
   var_thes,
   texts_thes,
   numerical_thes,
@@ -30,10 +29,7 @@ mod_dataTable(
 
 \item{session}{internal}
 
-\item{data_reactives}{reactives from
-other modules}
-
-\item{nfidb}{pool object to access nfi db}
+\item{data_reactives}{reactives from other modules}
 
 \item{var_thes, texts_thes, numerical_thes}{thesauruses}
 

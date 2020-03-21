@@ -22,7 +22,6 @@ mod_filtersUI <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param nfidb object to access the nfi db
 #' @param lang lang reactive value
 #' @param data_reactives reactives from the dataInput module
 #' @param cache memoryCache to store the filters values
@@ -47,8 +46,7 @@ mod_filtersUI <- function(id) {
 #' @rdname mod_filtersUI
 mod_filters <- function(
   input, output, session,
-  nfidb, lang,
-  data_reactives, cache,
+  lang, data_reactives, cache,
   var_thes, numerical_thes, texts_thes, categorical_thes
 ) {
 

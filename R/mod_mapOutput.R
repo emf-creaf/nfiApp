@@ -3,7 +3,6 @@
 #' @description Shiny module to generate the map
 #'
 #' @param id shiny id
-#' @param nfidb pool object to access the database
 #'
 #' @export
 mod_mapOutput <- function(id) {
@@ -21,7 +20,6 @@ mod_mapOutput <- function(id) {
 #' @param session internal
 #'
 #' @param data_reactives,viz_reactives,main_data_reactives reactives
-#' @param nfidb database connection object
 #' @param lang lang selected
 #' @param var_thes,texts_thes,numerical_thes thesauruses
 #'
@@ -31,8 +29,7 @@ mod_mapOutput <- function(id) {
 mod_map <- function(
   input, output, session,
   data_reactives, viz_reactives, main_data_reactives,
-  nfidb, lang,
-  var_thes, texts_thes, numerical_thes
+  lang, var_thes, texts_thes, numerical_thes
 ) {
 
   ## renderUI ####

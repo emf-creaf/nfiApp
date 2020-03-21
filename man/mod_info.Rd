@@ -11,7 +11,6 @@ mod_info(
   map_reactives,
   main_data_reactives,
   viz_reactives,
-  nfidb,
   var_thes,
   texts_thes,
   numerical_thes,
@@ -26,8 +25,6 @@ mod_info(
 \item{session}{internal}
 
 \item{map_reactives, main_data_reactives, viz_reactives}{reactives}
-
-\item{nfidb}{object with the db connection}
 
 \item{var_thes, texts_thes, numerical_thes}{thesauruses}
 

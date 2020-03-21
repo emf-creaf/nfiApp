@@ -123,7 +123,12 @@ nfi_app <- function() {
                 title = 'viz',
                 value = 'viz_panel',
                 mod_vizInput('mod_vizInput')
-              ) # end of viz tab
+              )#, # end of viz tab
+              # shiny::tabPanel(
+              #   title = 'save',
+              #   value = 'save_panel',
+              #   mod_saveUI('mod_saveUI')
+              # ) # end fo save panel
             ) # end of sidebar tabsetPanel
           ),
           ## main panel
@@ -163,12 +168,12 @@ nfi_app <- function() {
     # modules ####
     # data inputs
     data_reactives <- shiny::callModule(
-      mod_data, 'mod_dataInput', nfidb, lang,
+      mod_data, 'mod_dataInput', lang,
       var_thes, numerical_thes, texts_thes
     )
     # filters
     filter_reactives <- shiny::callModule(
-      mod_filters, 'mod_filtersUI', nfidb, lang,
+      mod_filters, 'mod_filtersUI', lang,
       data_reactives, filters_cache,
       var_thes, numerical_thes, texts_thes, categorical_thes
     )
@@ -188,28 +193,32 @@ nfi_app <- function() {
     viz_reactives <- shiny::callModule(
       mod_viz, 'mod_vizInput',
       data_reactives, filter_reactives, main_data_reactives,
-      nfidb, var_thes, texts_thes, numerical_thes, categorical_thes,
-      lang
+      var_thes, texts_thes, numerical_thes, categorical_thes, lang
     )
     # table
-    shiny::callModule(
+    table_reactives <- shiny::callModule(
       mod_dataTable, 'mod_dataTableOutput',
       main_data_reactives, data_reactives, viz_reactives,
-      nfidb, var_thes, texts_thes, numerical_thes, lang
+      var_thes, texts_thes, numerical_thes, lang
     )
     # map
     map_reactives <- shiny::callModule(
       mod_map, 'mod_mapOutput',
       data_reactives, viz_reactives, main_data_reactives,
-      nfidb, lang,
-      var_thes, texts_thes, numerical_thes
+      lang, var_thes, texts_thes, numerical_thes
     )
     # info
     shiny::callModule(
       mod_info, 'mod_infoUI',
       map_reactives, main_data_reactives, viz_reactives,
-      nfidb, var_thes, texts_thes, numerical_thes, lang
+      var_thes, texts_thes, numerical_thes, lang
     )
+    # save
+    # shiny::callModule(
+    #   mod_save, 'mode_saveUI',
+    #   map_reactives, table_reactives,
+    #   nfidb, var_thes, texts_thes, numerical_thes, lang
+    # )
 
     ## observers ####
     # modal observer

@@ -24,14 +24,13 @@ mod_dataInput <- function(id) {
 #' @param output internal
 #' @param session internal
 #'
-#' @param nfidb lfcdata::lfcNFI object to access the nfi db
 #' @param lang lang reactive
 #' @param var_thes,numerical_thes,texts_thes thesauruses
 #'
 #' @export
 mod_data <- function(
   input, output, session,
-  nfidb, lang, var_thes, numerical_thes, texts_thes
+  lang, var_thes, numerical_thes, texts_thes
 ) {
 
   # renderUI ####

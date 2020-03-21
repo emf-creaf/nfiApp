@@ -14,7 +14,6 @@ mod_map(
   data_reactives,
   viz_reactives,
   main_data_reactives,
-  nfidb,
   lang,
   var_thes,
   texts_thes,
@@ -31,8 +30,6 @@ mod_map(
 \item{session}{internal}
 
 \item{data_reactives, viz_reactives, main_data_reactives}{reactives}
-
-\item{nfidb}{database connection object}
 
 \item{lang}{lang selected}
 

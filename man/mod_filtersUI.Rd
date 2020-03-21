@@ -11,7 +11,6 @@ mod_filters(
   input,
   output,
   session,
-  nfidb,
   lang,
   data_reactives,
   cache,
@@ -29,8 +28,6 @@ mod_filters(
 \item{output}{internal}
 
 \item{session}{internal}
-
-\item{nfidb}{object to access the nfi db}
 
 \item{lang}{lang reactive value}
 

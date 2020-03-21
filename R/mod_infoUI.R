@@ -28,7 +28,6 @@ mod_infoUI <- function(id) {
 #' @param session internal
 #'
 #' @param map_reactives,main_data_reactives,viz_reactives reactives
-#' @param nfidb object with the db connection
 #' @param var_thes,texts_thes,numerical_thes thesauruses
 #' @param lang lang reactive
 #'
@@ -36,7 +35,7 @@ mod_infoUI <- function(id) {
 mod_info <- function(
   input, output, session,
   map_reactives, main_data_reactives, viz_reactives,
-  nfidb, var_thes, texts_thes, numerical_thes, lang
+  var_thes, texts_thes, numerical_thes, lang
 ) {
 
   ## reactives ####
