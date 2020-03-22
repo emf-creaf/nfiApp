@@ -22,4 +22,6 @@ Imports:
     leaflet,
     leaflet.extras,
     formattable,
-    ggplot2
+    ggplot2,
+    readr,
+    writexl
