@@ -17,7 +17,7 @@ mod_saveUI <- function(id) {
 #' @param output internal
 #' @param session internal
 #' @param map_reactives,table_reactives,main_data_reactives reactives needed
-#' @param var_thes,texts_thes,numerical_thes thesauruses
+#' @param texts_thes thesauruses
 #' @param lang language selected
 #'
 #' @export
@@ -26,7 +26,7 @@ mod_saveUI <- function(id) {
 mod_save <- function(
   input, output, session,
   map_reactives, table_reactives, main_data_reactives,
-  var_thes, texts_thes, numerical_thes, lang
+  texts_thes, lang
 ) {
 
   # renderUI ####

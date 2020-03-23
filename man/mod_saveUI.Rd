@@ -14,9 +14,7 @@ mod_save(
   map_reactives,
   table_reactives,
   main_data_reactives,
-  var_thes,
   texts_thes,
-  numerical_thes,
   lang
 )
 }
@@ -31,7 +29,7 @@ mod_save(
 
 \item{map_reactives, table_reactives, main_data_reactives}{reactives needed}
 
-\item{var_thes, texts_thes, numerical_thes}{thesauruses}
+\item{texts_thes}{thesauruses}
 
 \item{lang}{language selected}
 }

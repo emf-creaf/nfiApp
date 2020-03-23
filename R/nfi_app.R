@@ -128,7 +128,13 @@ nfi_app <- function() {
                 title = 'save',
                 value = 'save_panel',
                 mod_saveUI('mod_saveUI')
-              ) # end fo save panel
+              ), # end fo save panel
+              # help panel
+              shiny::tabPanel(
+                title = 'help',
+                value = 'help_panel',
+                mod_helpUI('mod_helpUI')
+              )
             ) # end of sidebar tabsetPanel
           ),
           ## main panel
@@ -217,7 +223,13 @@ nfi_app <- function() {
     shiny::callModule(
       mod_save, 'mod_saveUI',
       map_reactives, table_reactives, main_data_reactives,
-      var_thes, texts_thes, numerical_thes, lang
+      texts_thes, lang
+    )
+    # help
+    shiny::callModule(
+      mod_help, 'mod_helpUI',
+      data_reactives,
+      nfidb, var_thes, texts_thes, numerical_thes, lang
     )
 
     ## observers ####
