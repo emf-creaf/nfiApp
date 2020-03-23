@@ -16,7 +16,7 @@ mod_saveUI <- function(id) {
 #' @param input internal
 #' @param output internal
 #' @param session internal
-#' @param map_reactives,table_reactives reactives needed
+#' @param map_reactives,table_reactives,main_data_reactives reactives needed
 #' @param var_thes,texts_thes,numerical_thes thesauruses
 #' @param lang language selected
 #'
@@ -25,7 +25,7 @@ mod_saveUI <- function(id) {
 #' @rdname mod_saveUI
 mod_save <- function(
   input, output, session,
-  map_reactives, table_reactives,
+  map_reactives, table_reactives, main_data_reactives,
   var_thes, texts_thes, numerical_thes, lang
 ) {
 
@@ -33,6 +33,7 @@ mod_save <- function(
   output$save_container <- shiny::renderUI({
     ns <- session$ns
     shiny::tagList(
+      shiny::br(),
       shiny::fluidRow(
         shiny::column(
           6, align = 'center',
@@ -49,6 +50,7 @@ mod_save <- function(
           )
         )
       ), # end of buttons row
+      shiny::br(),
       shiny::fluidRow(
         shiny::column(
           6, offset = 6, align = 'center',
@@ -96,15 +98,20 @@ mod_save <- function(
     filename = function() {
       glue::glue(
         "{stringr::str_remove_all(Sys.Date(), '-')}_nfi_data.",
-        "{input$data_output_options}"
+        "{input$table_output_options}"
       )
     },
     content = function(filename) {
-      browser()
-      if (input$table_output_options == 'csv') {
-        readr::write_csv(table_reactives$table_data, filename)
+      if (input$table_length_options == 'all') {
+        data_to_write <- main_data_reactives$main_data$requested_data
       } else {
-        writexl::write_xlsx(table_reactives$table_data, filename)
+        data_to_write <- table_reactives$table_data
+      }
+
+      if (input$table_output_options == 'csv') {
+        readr::write_csv(data_to_write, filename)
+      } else {
+        writexl::write_xlsx(data_to_write, filename)
       }
     }
   )

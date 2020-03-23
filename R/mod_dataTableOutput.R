@@ -190,8 +190,27 @@ mod_dataTable <- function(
     )
   })
 
-  table_preparation <- shiny::reactive({
+  table_data <- shiny::reactive({
 
+    main_data_reactives$main_data$requested_data %>%
+      dplyr::as_tibble() %>% {
+        temp <- .
+        if ('geometry' %in% names(temp)) {
+          dplyr::select(temp, -geometry)
+        } else {
+          temp
+        }
+      } %>%
+      dplyr::select(dplyr::one_of(c(
+        # inputs selected
+        input$col_vis_selector
+      ))) %>%
+      dplyr::mutate_if(
+        is.numeric, round, digits = 2
+      )
+  })
+
+  output$main_table <- DT::renderDT({
     shiny::validate(
       shiny::need(main_data_reactives$main_data, 'no data yet'),
       shiny::need(input$col_vis_selector, 'no selected vars')
@@ -211,22 +230,8 @@ mod_dataTable <- function(
 
     summary_on <- any(group_by_div, group_by_dom)
 
-    main_data_reactives$main_data$requested_data %>%
-      dplyr::as_tibble() %>% {
-        temp <- .
-        if ('geometry' %in% names(temp)) {
-          dplyr::select(temp, -geometry)
-        } else {
-          temp
-        }
-      } %>%
-      dplyr::select(dplyr::one_of(c(
-        # inputs selected
-        input$col_vis_selector
-      ))) %>%
-      dplyr::mutate_if(
-        is.numeric, round, digits = 2
-      ) %>%
+    # DT
+    table_data() %>%
       DT::datatable(
         rownames = FALSE,
         colnames = names(
@@ -250,15 +255,14 @@ mod_dataTable <- function(
             "}"
           )
         )
-      )# %>%
-    # DT::formatRound(
-    #   columns = numeric_vars,
-    #   digits = 2
-    # )
-  })
-
-  output$main_table <- DT::renderDT({
-      table_preparation()
+      )
     })
+
+  # reactives to return
+  table_reactives <- shiny::reactiveValues()
+  shiny::observe({
+    table_reactives$table_data <- table_data()
+  })
+  return(table_reactives)
 
 }

@@ -13,6 +13,7 @@ mod_save(
   session,
   map_reactives,
   table_reactives,
+  main_data_reactives,
   var_thes,
   texts_thes,
   numerical_thes,
@@ -28,7 +29,7 @@ mod_save(
 
 \item{session}{internal}
 
-\item{map_reactives, table_reactives}{reactives needed}
+\item{map_reactives, table_reactives, main_data_reactives}{reactives needed}
 
 \item{var_thes, texts_thes, numerical_thes}{thesauruses}
 

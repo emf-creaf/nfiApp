@@ -216,7 +216,7 @@ nfi_app <- function() {
     # save
     shiny::callModule(
       mod_save, 'mod_saveUI',
-      map_reactives, table_reactives,
+      map_reactives, table_reactives, main_data_reactives,
       var_thes, texts_thes, numerical_thes, lang
     )
 
