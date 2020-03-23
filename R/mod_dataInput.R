@@ -254,12 +254,12 @@ mod_data <- function(
           ),
           shiny::column(
             width = 6, align = 'center',
-            shinyWidgets::awesomeCheckbox(
+            shinyWidgets::prettyCheckbox(
               ns('diameter_classes'),
               label = text_translate(
                 'diameter_classes_input', lang(), texts_thes
               ),
-              status = 'info'
+              status = 'success', shape = 'curve', fill = TRUE
             )
           )
         ) # end of desglossament row

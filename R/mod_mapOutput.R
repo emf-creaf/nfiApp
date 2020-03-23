@@ -96,7 +96,7 @@ mod_map <- function(
 
     size_transformed <- 750 + ((10 - current_zoom) * 250)
 
-    return(750)
+    return(size_transformed)
   })
 
   # aesthetics builder
