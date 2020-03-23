@@ -160,31 +160,6 @@ mod_dataTable <- function(
               `tick-icon` = 'glyphicon-tree-deciduous'
             )
           )
-        ),
-        # shiny::column(
-        #   2, offset = 2, align = 'center',
-        #   # shiny::br(),
-        #   # shiny::p('Data info'),
-        #   shiny::actionButton(
-        #     ns('show_hri'),
-        #     'Query info',
-        #     icon = shiny::icon('info-circle')
-        #   ),
-        #   shiny::br(),
-        #   shiny::br(),
-        #   # shiny::br(),
-        #   shiny::actionButton(
-        #     ns('show_glossary'),
-        #     'Variables glossary',
-        #     icon = shiny::icon('question-circle')
-        #   )
-        # ),
-        shiny::column(
-          2, offset = 4,
-          shiny::br(),
-          shiny::actionButton(
-            ns('save_data_table'), icon = shiny::icon('download'), label = ''
-          )
         )
       )
     )

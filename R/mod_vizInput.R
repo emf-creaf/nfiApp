@@ -22,7 +22,7 @@ mod_vizInput <- function(id) {
 #' @param session internal
 #'
 #' @param data_reactives,filter_reactives,main_data_reactives, reactives needed
-#' @param var_thes,texts_thes,numerical_thes thesauruses
+#' @param var_thes,texts_thes,numerical_thes,categorical_thes thesauruses
 #' @param lang lang value
 #'
 #' @export
@@ -30,7 +30,9 @@ mod_vizInput <- function(id) {
 #' @rdname mod_vizUI
 mod_viz <- function(
   input, output, session,
-  data_reactives, filter_reactives, main_data_reactives,var_thes, texts_thes, numerical_thes, categorical_thes, lang
+  data_reactives, filter_reactives, main_data_reactives,
+  var_thes, texts_thes, numerical_thes, categorical_thes,
+  lang
 ) {
 
   # static UI, later we populate the inputs with updaters

@@ -27,7 +27,7 @@ mod_viz(
 
 \item{data_reactives, filter_reactives, main_data_reactives, }{reactives needed}
 
-\item{var_thes, texts_thes, numerical_thes}{thesauruses}
+\item{var_thes, texts_thes, numerical_thes, categorical_thes}{thesauruses}
 
 \item{lang}{lang value}
 }

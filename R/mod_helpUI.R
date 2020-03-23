@@ -50,7 +50,7 @@ mod_help <- function(
       translate_var(
         tables_to_look_at, lang(),
         var_thes, numerical_thes, texts_thes,
-        is_summary = FALSE, need_order = FALSE
+        is_summary = FALSE, need_order = TRUE
       )
 
     # tagList
@@ -62,7 +62,12 @@ mod_help <- function(
           shinyWidgets::pickerInput(
             ns('glossary_var'),
             text_translate('glossary_var_input', lang(), texts_thes),
-            choices = var_choices, width = '100%'
+            choices = var_choices, width = '100%',
+            options = list(
+              `size` = 10,
+              `live-search` = TRUE,
+              `action-box` = FALSE
+            )
           ),
           shiny::br(),
           shiny::textOutput(ns('var_description_panel')),
