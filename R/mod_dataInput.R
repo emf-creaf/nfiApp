@@ -130,6 +130,7 @@ mod_data <- function(
     # tagList
     shiny::tagList(
       # data version and admin row
+      shiny::h4(text_translate('h4_data_version', lang(), texts_thes)),
       shiny::fluidRow(
         shiny::column(
           width = 6,
@@ -205,7 +206,10 @@ mod_data <- function(
               5, offset = 1,
               # inputs
               shinyWidgets::prettyRadioButtons(
-                ns('dominant_group'), label = 'Dominant group to group by',
+                ns('dominant_group'),
+                label = text_translate(
+                  'dominant_group_input', lang(), texts_thes
+                ),
                 choices = dominant_group_choices,
                 selected = 'species',
                 status = 'success',
@@ -217,7 +221,9 @@ mod_data <- function(
               5, offset = 1,
               shinyWidgets::prettyRadioButtons(
                 ns('dominant_criteria'),
-                label = 'Dominant criteria to group by',
+                label = text_translate(
+                  'dominant_criteria_input', lang(), texts_thes
+                ),
                 choices = dominant_criteria_choices,
                 selected = 'density',
                 status = 'success',
@@ -227,7 +233,9 @@ mod_data <- function(
               shinyjs::hidden(
                 shinyWidgets::prettyRadioButtons(
                   ns('dominant_nfi'),
-                  label = 'Dominant NFI version',
+                  label = text_translate(
+                    'dominant_nfi_input', lang(), texts_thes
+                  ),
                   choices = dominant_nfi_choices,
                   selected = 'none',
                   status = 'success',
@@ -242,6 +250,7 @@ mod_data <- function(
       # desglossament row
       shiny::div(
         id = ns('desglossament_panel'),
+        shiny::h4(text_translate('h4_desglossament', lang(), texts_thes)),
         shiny::fluidRow(
           shiny::column(
             width = 6, align = 'left',
@@ -254,6 +263,7 @@ mod_data <- function(
           ),
           shiny::column(
             width = 6, align = 'center',
+            shiny::br(), shiny::br(),
             shinyWidgets::prettyCheckbox(
               ns('diameter_classes'),
               label = text_translate(
