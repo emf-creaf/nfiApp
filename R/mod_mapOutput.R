@@ -82,6 +82,23 @@ mod_map <- function(
   }) # end of leaflet output (empty map)
 
   ## reactives ####
+  # zoom-size transformation. Logic is as follows:
+  #   - In closer zooms (10) go to the base size of 750. In far zooms increase
+  #     accordingly, until zoom 7 and further, with a max size of 1500
+  base_size <- shiny::reactive({
+    current_zoom <- input$nfi_map_zoom
+    if (current_zoom <= 7) {
+      current_zoom <- 7
+    }
+    if (current_zoom >= 10) {
+      current_zoom <- 10
+    }
+
+    size_transformed <- 750 + ((10 - current_zoom) * 250)
+
+    return(750)
+  })
+
   # aesthetics builder
   # The idea is to abstract the needed objects to create the polygons,
   # as all we need is common to points and polygons. The logic is as follows:
@@ -237,19 +254,19 @@ mod_map <- function(
         dplyr::pull(!! rlang::sym(viz_color))
       # size vector
       if (is.null(viz_size) || rlang::is_empty(viz_size) || viz_size == '') {
-        size_vector <- rep(750, nrow(plot_data))
+        size_vector <- rep(base_size(), nrow(plot_data))
       } else {
         size_vector_pre <- plot_data %>%
           dplyr::pull(!! rlang::sym(viz_size))
 
         if (is.numeric(size_vector_pre)) {
           size_vector <-
-            ((size_vector_pre/max(size_vector_pre, na.rm = TRUE)) * 1500) + 750
+            ((size_vector_pre/max(size_vector_pre, na.rm = TRUE)) * 1500) + base_size()
         } else {
           size_vector <-
             ((as.numeric(as.factor(size_vector_pre)) /
                 max(as.numeric(as.factor(size_vector_pre)), na.rm = TRUE))
-             * 1500) + 750
+             * 1500) + base_size()
         }
       }
       size_vector[is.na(color_vector)] <- 500
@@ -280,9 +297,32 @@ mod_map <- function(
           'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
         )
       )
+      # as we need to reverse the legend values (low at bottom) we need an
+      # alternative palette for the legend with the reversed values
+      pal_legend <- switch(
+        viz_pal_config,
+        "low" = leaflet::colorNumeric(
+          scales::gradient_n_pal(
+            viridis::plasma(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
+          ),
+          color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+        ),
+        "high" = leaflet::colorNumeric(
+          scales::gradient_n_pal(
+            viridis::plasma(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
+          ),
+          color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+        ),
+        "normal" = leaflet::colorNumeric(
+          'plasma', color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+        )
+      )
       legend_class <- 'info legend na_out'
     } else {
       pal <- leaflet::colorFactor(
+        'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
+      )
+      pal_legend <- leaflet::colorFactor(
         'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
       )
       legend_class <- 'info legend'
@@ -293,6 +333,7 @@ mod_map <- function(
       color_vector = color_vector,
       size_vector = size_vector,
       pal = pal,
+      pal_legend = pal_legend,
       legend_class = legend_class,
       viz_color = viz_color,
       viz_size = viz_size,
@@ -375,7 +416,7 @@ mod_map <- function(
         if (any(group_by_div, group_by_dom)) {
           temp %>%
             leaflet::addLegend(
-              position = 'bottomright', pal = aesthetics_data$pal,
+              position = 'bottomright', pal = aesthetics_data$pal_legend,
               values = aesthetics_data$color_vector,
               title = names(
                 translate_var(
@@ -385,7 +426,10 @@ mod_map <- function(
                 )
               ),
               layerId = 'color_legend', opacity = 1,
-              na.label = '', className = aesthetics_data$legend_class
+              na.label = '', className = aesthetics_data$legend_class,
+              labFormat = leaflet::labelFormat(
+                transform = function(x) {sort(x, decreasing = TRUE)}
+              )
             )
         } else {
           temp
@@ -430,7 +474,7 @@ mod_map <- function(
           options = leaflet::pathOptions(pane = 'plots')
         ) %>%
         leaflet::addLegend(
-          position = 'bottomright', pal = aesthetics_data$pal,
+          position = 'bottomright', pal = aesthetics_data$pal_legend,
           values = aesthetics_data$color_vector,
           title = names(
             translate_var(
@@ -440,7 +484,10 @@ mod_map <- function(
             )
           ),
           layerId = 'color_legend', opacity = 1,
-          na.label = '', className = aesthetics_data$legend_class
+          na.label = '', className = aesthetics_data$legend_class,
+          labFormat = leaflet::labelFormat(
+            transform = function(x) {sort(x, decreasing = TRUE)}
+          )
         )
     } else {
       # update the map
