@@ -60,7 +60,7 @@ mod_save <- function(
             choices = c('visible', 'all') %>%
               magrittr::set_names(c(
                 text_translate('visible', lang(), texts_thes),
-                text_translate('all', lang(), texts_thes)
+                text_translate('all_columns', lang(), texts_thes)
               )),
             status = 'success', fill = TRUE, shape = 'round'
           ),

@@ -11,7 +11,7 @@ nfi_app <- function() {
   ### thesauruses ##############################################################
   var_thes <- nfidb$get_data('variables_thesaurus')
   numerical_thes <- nfidb$get_data('variables_numerical')
-  texts_thes <- nfidb$get_data('texts_thesaurus')
+  # texts_thes <- nfidb$get_data('texts_thesaurus')
   categorical_thes <- nfidb$get_data('variables_categorical') %>%
     dplyr::select(-dummy_id) %>%
     tidyr::nest(var_values = c(var_values))

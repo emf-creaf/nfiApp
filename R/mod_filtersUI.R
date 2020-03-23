@@ -121,21 +121,19 @@ mod_filters <- function(
             text_translate('fil_res_vars_input', lang(), texts_thes),
             choices = fil_res_vars_choices,
             multiple = TRUE,
-            options = list(
-              `actions-box` = FALSE,
-              `deselect-all-text` = text_translate(
+            options = shinyWidgets::pickerOptions(
+              actionsBox = FALSE,
+              noneSelectedText = text_translate(
                 'deselect-all-text', lang(), texts_thes
               ),
-              `select-all-text` = text_translate(
-                'select-all-text', lang(), texts_thes
+              selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+              selectedTextFormat =  'count',
+              countSelectedText =  text_translate(
+                'count-selected-text-value', lang(), texts_thes
               ),
-              `selected-text-format` = 'count > 3',
-              `count-selected-text` = text_translate(
-                'count-selected-text-var', lang(), texts_thes
-              ),
-              `size` = 10,
-              `live-search` = TRUE,
-              `tick-icon` = 'glyphicon-tree-deciduous'
+              size = 10,
+              liveSearch = TRUE,
+              tickIcon = 'glyphicon-tree-deciduous'
             )
           )
         ),
@@ -146,21 +144,19 @@ mod_filters <- function(
             text_translate('fil_clim_vars_input', lang(), texts_thes),
             choices = fil_clim_vars_choices,
             multiple = TRUE,
-            options = list(
-              `actions-box` = FALSE,
-              `deselect-all-text` = text_translate(
+            options = shinyWidgets::pickerOptions(
+              actionsBox = FALSE,
+              noneSelectedText = text_translate(
                 'deselect-all-text', lang(), texts_thes
               ),
-              `select-all-text` = text_translate(
-                'select-all-text', lang(), texts_thes
+              selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+              selectedTextFormat =  'count',
+              countSelectedText =  text_translate(
+                'count-selected-text-value', lang(), texts_thes
               ),
-              `selected-text-format` = 'count > 3',
-              `count-selected-text` = text_translate(
-                'count-selected-text-var', lang(), texts_thes
-              ),
-              `size` = 10,
-              `live-search` = TRUE,
-              `tick-icon` = 'glyphicon-tree-deciduous'
+              size = 10,
+              liveSearch = TRUE,
+              tickIcon = 'glyphicon-tree-deciduous'
             )
           )
         ),
@@ -171,21 +167,19 @@ mod_filters <- function(
             text_translate('fil_plot_vars_input', lang(), texts_thes),
             choices = fil_plot_vars_choices,
             multiple = TRUE,
-            options = list(
-              `actions-box` = FALSE,
-              `deselect-all-text` = text_translate(
+            options = shinyWidgets::pickerOptions(
+              actionsBox = FALSE,
+              noneSelectedText = text_translate(
                 'deselect-all-text', lang(), texts_thes
               ),
-              `select-all-text` = text_translate(
-                'select-all-text', lang(), texts_thes
+              selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+              selectedTextFormat =  'count',
+              countSelectedText =  text_translate(
+                'count-selected-text-value', lang(), texts_thes
               ),
-              `selected-text-format` = 'count > 3',
-              `count-selected-text` = text_translate(
-                'count-selected-text-var', lang(), texts_thes
-              ),
-              `size` = 10,
-              `live-search` = TRUE,
-              `tick-icon` = 'glyphicon-tree-deciduous'
+              size = 10,
+              liveSearch = TRUE,
+              tickIcon = 'glyphicon-tree-deciduous'
             )
           )
         )

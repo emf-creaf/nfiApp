@@ -141,10 +141,19 @@ mod_viz <- function(
             choices = color_choices %>%
               var_inputs_aggregator(lang(), texts_thes),
             selected = selected_col,
-            options = list(
-              `size` = 10,
-              `live-search` = TRUE,
-              `action-box` = FALSE
+            options = shinyWidgets::pickerOptions(
+              actionsBox = FALSE,
+              noneSelectedText = text_translate(
+                'deselect-all-text', lang(), texts_thes
+              ),
+              selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+              selectedTextFormat =  'count',
+              countSelectedText =  text_translate(
+                'count-selected-text-value', lang(), texts_thes
+              ),
+              size = 10,
+              liveSearch = TRUE,
+              tickIcon = 'glyphicon-tree-deciduous'
             )
           ),
 
@@ -157,17 +166,32 @@ mod_viz <- function(
                   choices = size_choices %>%
                     var_inputs_aggregator(lang(), texts_thes),
                   selected = '',
-                  options = list(
-                    `size` = 10,
-                    `live-search` = TRUE,
-                    `action-box` = FALSE
+                  options = shinyWidgets::pickerOptions(
+                    actionsBox = FALSE,
+                    noneSelectedText = text_translate(
+                      'deselect-all-text', lang(), texts_thes
+                    ),
+                    selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+                    selectedTextFormat =  'count',
+                    countSelectedText =  text_translate(
+                      'count-selected-text-value', lang(), texts_thes
+                    ),
+                    size = 10,
+                    liveSearch = TRUE,
+                    tickIcon = 'glyphicon-tree-deciduous'
                   )
                 )
               ),
               shinyWidgets::pickerInput(
                 ns('viz_statistic'),
                 text_translate('viz_statistic_input', lang(), texts_thes),
-                choices = statistic_choices
+                choices = statistic_choices,
+                shinyWidgets::pickerOptions(
+                  actionsBox = FALSE,
+                  size = 10,
+                  liveSearch = TRUE,
+                  tickIcon = 'glyphicon-tree-deciduous'
+                )
               )
             )
           } else {
@@ -177,17 +201,24 @@ mod_viz <- function(
                 choices = size_choices %>%
                   var_inputs_aggregator(lang(), texts_thes),
                 selected = '',
-                options = list(
-                  `size` = 10,
-                  `live-search` = TRUE,
-                  `action-box` = FALSE
+                options = shinyWidgets::pickerOptions(
+                  actionsBox = FALSE,
+                  size = 10,
+                  liveSearch = TRUE,
+                  tickIcon = 'glyphicon-tree-deciduous'
                 )
               ),
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
                   ns('viz_statistic'),
                   text_translate('viz_statistic_input', lang(), texts_thes),
-                  choices = statistic_choices
+                  choices = statistic_choices,
+                  shinyWidgets::pickerOptions(
+                    actionsBox = FALSE,
+                    size = 10,
+                    liveSearch = TRUE,
+                    tickIcon = 'glyphicon-tree-deciduous'
+                  )
                 )
               )
             )
@@ -205,10 +236,11 @@ mod_viz <- function(
                 ns('viz_functional_group_value'),
                 text_translate('functional_group_viz_input', lang(), texts_thes),
                 choices = fg_choices,
-                options = list(
-                  `size` = 10,
-                  `live-search` = TRUE,
-                  `action-box` = FALSE
+                options = shinyWidgets::pickerOptions(
+                  actionsBox = FALSE,
+                  size = 10,
+                  liveSearch = TRUE,
+                  tickIcon = 'glyphicon-tree-deciduous'
                 )
               )
             } else {
@@ -217,10 +249,11 @@ mod_viz <- function(
                   ns('viz_functional_group_value'),
                   text_translate('functional_group_viz_input', lang(), texts_thes),
                   choices = fg_choices,
-                  options = list(
-                    `size` = 10,
-                    `live-search` = TRUE,
-                    `action-box` = FALSE
+                  options = shinyWidgets::pickerOptions(
+                    actionsBox = FALSE,
+                    size = 10,
+                    liveSearch = TRUE,
+                    tickIcon = 'glyphicon-tree-deciduous'
                   )
                 )
               )
@@ -232,13 +265,25 @@ mod_viz <- function(
             if (data_reactives$diameter_classes) {
               shinyWidgets::pickerInput(
                 ns('viz_diamclass'), text_translate('viz_diamclass_input', lang(), texts_thes),
-                choices = diameter_classes_choices
+                choices = diameter_classes_choices,
+                shinyWidgets::pickerOptions(
+                  actionsBox = FALSE,
+                  size = 10,
+                  liveSearch = TRUE,
+                  tickIcon = 'glyphicon-tree-deciduous'
+                )
               )
             } else {
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
                   ns('viz_diamclass'), text_translate('viz_diamclass_input', lang(), texts_thes),
-                  choices = diameter_classes_choices
+                  choices = diameter_classes_choices,
+                  shinyWidgets::pickerOptions(
+                    actionsBox = FALSE,
+                    size = 10,
+                    liveSearch = TRUE,
+                    tickIcon = 'glyphicon-tree-deciduous'
+                  )
                 )
               )
             }

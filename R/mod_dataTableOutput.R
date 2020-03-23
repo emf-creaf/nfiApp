@@ -147,17 +147,21 @@ mod_dataTable <- function(
             multiple = TRUE,
             selected = col_vis_selected,
             width = '90%',
-            options = list(
-              `actions-box` = FALSE,
-              `deselect-all-text` = 'None selected...',
-              `select-all-text` = 'All selected',
-              `selected-text-format` = 'count',
-              `count-selected-text` = "{0} variables selected (of {1})",
-              `size` = 15,
-              `max-options` = 50,
-              `max-options-text` = 'Select limit reached (50)',
-              `live-search` = TRUE,
-              `tick-icon` = 'glyphicon-tree-deciduous'
+            options = shinyWidgets::pickerOptions(
+              actionsBox = FALSE,
+              noneSelectedText = text_translate(
+                'deselect-all-text', lang(), texts_thes
+              ),
+              selectAllText = text_translate('select-all-text', lang(), texts_thes),
+              selectedTextFormat =  'count',
+              countSelectedText =  text_translate(
+                'count-selected-text-value', lang(), texts_thes
+              ),
+              size = 15,
+              maxOptions = 50,
+              maxOptionsText = text_translate('max-options-text', lang(), texts_thes),
+              liveSearch = TRUE,
+              tickIcon = 'glyphicon-tree-deciduous'
             )
           )
         )

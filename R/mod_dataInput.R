@@ -93,13 +93,6 @@ mod_data <- function(
         text_translate('fg_bc', lang(), texts_thes)
       ))
 
-    agrupament_choices <- c('none', 'polygon', 'dom') %>%
-      magrittr::set_names(c(
-        text_translate('none', lang(), texts_thes),
-        text_translate('polygon', lang(), texts_thes),
-        text_translate('dom', lang(), texts_thes)
-      ))
-
     dominant_group_choices <- c(
       # 'none',
       'species', 'simpspecies', 'genus', 'dec', 'bc'

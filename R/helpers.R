@@ -255,19 +255,19 @@ filter_inputs_builder_helper <- function(
       choices = input_choices,
       selected = previous_value,
       multiple = TRUE,
-      options = list(
-        `actions-box` = FALSE,
-        `deselect-all-text` = text_translate(
+      options = shinyWidgets::pickerOptions(
+        actionsBox = FALSE,
+        noneSelectedText = text_translate(
           'deselect-all-text', lang, texts_thes
         ),
-        `select-all-text` = text_translate('select-all-text', lang, texts_thes),
-        `selected-text-format` = 'count',
-        `count-selected-text` = text_translate(
+        selectAllText = text_translate('select-all-text', lang, texts_thes),
+        selectedTextFormat = 'count',
+        countSelectedText = text_translate(
           'count-selected-text-value', lang, texts_thes
         ),
-        `size` = 10,
-        `live-search` = TRUE,
-        `tick-icon` = 'glyphicon-tree-deciduous'
+        size = 10,
+        liveSearch = TRUE,
+        tickIcon = 'glyphicon-tree-deciduous'
       )
     )
     return(res)
@@ -326,19 +326,19 @@ filter_inputs_builder_helper <- function(
       choices = input_choices,
       selected = previous_value,
       multiple = TRUE,
-      options = list(
-        `actions-box` = FALSE,
-        `deselect-all-text` = text_translate(
+      options = shinyWidgets::pickerOptions(
+        actionsBox = FALSE,
+        noneSelectedText = text_translate(
           'deselect-all-text', lang, texts_thes
         ),
-        `select-all-text` = text_translate('select-all-text', lang, texts_thes),
-        `selected-text-format` = 'count',
-        `count-selected-text` = text_translate(
+        selectAllText = text_translate('select-all-text', lang, texts_thes),
+        selectedTextFormat = 'count',
+        countSelectedText = text_translate(
           'count-selected-text-value', lang, texts_thes
         ),
-        `size` = 10,
-        `live-search` = TRUE,
-        `tick-icon` = 'glyphicon-tree-deciduous'
+        size = 10,
+        liveSearch = TRUE,
+        tickIcon = 'glyphicon-tree-deciduous'
       )
     )
     return(res)
