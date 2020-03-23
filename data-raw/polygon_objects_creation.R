@@ -129,6 +129,7 @@ texts_thes <- tibble::tribble(
   "dri_none", "None", "Ninguno", "Cap",
   "dri_desglossament", "Breakdown by", "Desglosado por", "Desglossat per",
   "dri_filters", "Active filters", "Filtros activos", "Filtres actius",
+  "dri_diameter_classes", "by diameter classes", "por clases diamétricas", "per classes diamètriques",
   "fg_bc", "Breakdown by broadleaf-conifer", "Desglosado por planifolia-conífera", "Desglossat per planifòlia-conífera",
   "fg_dec", "Breakdown by decidious-esclerophyl-conifer", "Desglosado por caducifolia-esclerófila-conífera", "Desglossat per caducifòlia-esclerofil·le-conífera",
   "fg_genus", "Breakdown by genus", "Desglosado por género", "Desglossat per gènere",

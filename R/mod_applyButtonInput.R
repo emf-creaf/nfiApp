@@ -99,9 +99,20 @@ mod_applyButton <- function(
         ),
         {
           if (desglossament == 'plot') {
-            text_translate("dri_none", lang(), texts_thes)
+            if (isTRUE(diameter_classes)) {
+              text_translate("dri_diameter_classes", lang(), texts_thes)
+            } else {
+              text_translate("dri_none", lang(), texts_thes)
+            }
           } else {
-            text_translate(desglossament, lang(), texts_thes)
+            if (isTRUE(diameter_classes)) {
+              shiny::tagList(
+                text_translate(desglossament, lang(), texts_thes),
+                text_translate("dri_diameter_classes", lang(), texts_thes)
+              )
+            } else {
+              text_translate(desglossament, lang(), texts_thes)
+            }
           }
         }
       ),
