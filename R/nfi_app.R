@@ -108,30 +108,35 @@ nfi_app <- function() {
               # TODO transform titles in ui's for translations
               # data tab
               shiny::tabPanel(
-                title = 'data',
+                title = mod_tab_translateOutput('data_translation'),
+                  # 'data',
                 value = 'data_inputs_panel',
                 mod_dataInput('mod_dataInput')
               ), # end of data tab
               # filter tab
               shiny::tabPanel(
-                title = 'filters',
+                title = mod_tab_translateOutput('filters_translation'),
+                  # 'filters',
                 value = 'filters_panel',
                 mod_filtersUI('mod_filtersUI')
               ), # end of filter tab
               # viz tab
               shiny::tabPanel(
-                title = 'viz',
+                title = mod_tab_translateOutput('viz_translation'),
+                  # 'viz',
                 value = 'viz_panel',
                 mod_vizInput('mod_vizInput')
               ), # end of viz tab
               shiny::tabPanel(
-                title = 'save',
+                title = mod_tab_translateOutput('save_translation'),
+                  # 'save',
                 value = 'save_panel',
                 mod_saveUI('mod_saveUI')
               ), # end fo save panel
               # help panel
               shiny::tabPanel(
-                title = 'help',
+                title = mod_tab_translateOutput('help_translation'),
+                  # 'help',
                 value = 'help_panel',
                 mod_helpUI('mod_helpUI')
               )
@@ -143,12 +148,14 @@ nfi_app <- function() {
             shiny::tabsetPanel(
               id = 'main_panel_tabset', type = 'pills',
               shiny::tabPanel(
-                title = 'map',
+                title = mod_tab_translateOutput('map_translation'),
+                  # 'map',
                 value = 'map_panel',
                 mod_mapOutput('mod_mapOutput')
               ),
               shiny::tabPanel(
-                title = 'table',
+                title = mod_tab_translateOutput('table_translation'),
+                  # 'table',
                 value = 'table_panel',
                 mod_dataTableOutput('mod_dataTableOutput')
               )
@@ -230,6 +237,36 @@ nfi_app <- function() {
       mod_help, 'mod_helpUI',
       data_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, lang
+    )
+
+    ## tab translations ####
+    shiny::callModule(
+      mod_tab_translate, 'data_translation',
+      'data_translation', lang, texts_thes
+    )
+    shiny::callModule(
+      mod_tab_translate, 'filters_translation',
+      'filters_translation', lang, texts_thes
+    )
+    shiny::callModule(
+      mod_tab_translate, 'viz_translation',
+      'viz_translation', lang, texts_thes
+    )
+    shiny::callModule(
+      mod_tab_translate, 'save_translation',
+      'save_translation', lang, texts_thes
+    )
+    shiny::callModule(
+      mod_tab_translate, 'help_translation',
+      'help_translation', lang, texts_thes
+    )
+    shiny::callModule(
+      mod_tab_translate, 'map_translation',
+      'map_translation', lang, texts_thes
+    )
+    shiny::callModule(
+      mod_tab_translate, 'table_translation',
+      'table_translation', lang, texts_thes
     )
 
     ## observers ####
