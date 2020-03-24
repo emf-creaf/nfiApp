@@ -24,7 +24,10 @@ Imports:
     formattable,
     ggplot2,
     readr,
-    writexl
+    writexl,
+    lfcdata (>= 0.0.4.9000)
 Suggests: 
     testthat (>= 2.1.0),
     shinytest
+Remotes:  
+    MalditoBarbudo/lfcdata
