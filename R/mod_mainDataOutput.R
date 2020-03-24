@@ -23,7 +23,6 @@ mod_mainDataOutput <- function(id) {
 #' @param texts_thes thesaurus
 #' @param parent_session parent session to be able to update tabset panel
 #'
-#' @import tidyNFI
 #' @importFrom dplyr n
 #'
 #' @export

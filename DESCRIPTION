@@ -25,9 +25,16 @@ Imports:
     ggplot2,
     readr,
     writexl,
-    lfcdata (>= 0.0.4.9000)
+    lfcdata (>= 0.0.4.9000),
+    DT,
+    htmltools,
+    purrr,
+    rlang,
+    scales,
+    sf,
+    viridis
 Suggests: 
     testthat (>= 2.1.0),
     shinytest
-Remotes:  
+Remotes: 
     MalditoBarbudo/lfcdata
