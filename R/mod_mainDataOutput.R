@@ -142,26 +142,38 @@ mod_mainData <- function(
 
       progress$set(value = 5)
 
+      # browser()
+
       # get data, join it
-      main_data_table <-
-        tables_to_look_at %>%
+      first_table <-
+        main_table_to_look_at(nfi, desglossament, diameter_classes) %>%
+        nfidb$get_data(spatial = TRUE)
+
+      progress$set(value = 15)
+
+      ancillary_tables <-
+        ancillary_tables_to_look_at(nfi) %>%
         purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
-        purrr::walk(
-          ~ progress$set(value = 15)
-        ) %>%
-        purrr::reduce(dplyr::left_join, by = c('plot_id')) %>%
+        purrr::reduce(dplyr::left_join, by = c('plot_id'))
+
+      main_data_pre <- dplyr::left_join(
+        first_table, ancillary_tables, by = 'plot_id'
+      )
+
+      progress$set(value = 35)
+
+      if (!all(filter_reactives$filter_vars %in% names(main_data_pre))) {
+        ##TODO add sweet alarm
+        shiny::validate(
+          shiny::need(FALSE, 'filters active not in data')
+        )
+      }
+
+      main_data_table <-
+        main_data_pre %>%
         dplyr::filter(
           !!! filter_reactives$filter_expressions
-        ) %>% {
-          temp <- .
-          dplyr::bind_cols(
-            temp,
-            nfidb$get_data(tables_to_look_at[1], spatial = TRUE) %>%
-              dplyr::filter(plot_id %in% temp[['plot_id']]) %>%
-              dplyr::select(geometry)
-          )
-        } %>%
-        sf::st_as_sf(sf_column_name = 'geometry')
+        )
 
       # sweet alert for when no results are returned by the filters
       if (nrow(main_data_table) < 1) {
