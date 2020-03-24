@@ -216,7 +216,11 @@ texts_thes <- tibble::tribble(
   'save_map_btn', "Save the map", "Guarda el mapa", "Guarda el map",
   'save_table_btn', "Save the table", "Guarda la tabla", "Guarda la taula",
   "max-options-text", "Select limit reached (50)", "Alcanzado el límite de selección (50)", "Assolit el límit de selecció (50)",
-  "active_filters_warning", "Active filters not present in data. Not applying them", "Los filtros activos no están presentes en los datos. No se aplicarán", "Els filtres actius no estan presents en les dades. No s'aplicaran"
+  "active_filters_warning", "Active filters not present in data. Not applying them", "Los filtros activos no están presentes en los datos. No se aplicarán", "Els filtres actius no estan presents en les dades. No s'aplicaran",
+  "progress_message", "Obtaining data...", "Obteniendo datos...", "Obtenció de dades...",
+  "progress_detail_initial", "Querying database", "Consultando base de datos", "Consultant la base de dades",
+  "progress_detail_tables", "Applying filters", "Aplicando filtros", "Aplicant filtres",
+  "progress_detail_calc", "Data processing", "Procesando datos", "Processar les dades"
 
   # "aut_communities", "Catalonia", "Cataluña", "Catalunya",
   # "close", "Close", "Cerrar", "Tancar",

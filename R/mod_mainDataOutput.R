@@ -118,8 +118,10 @@ mod_mainData <- function(
       progress <- shiny::Progress$new(session, min = 0, max = 100)
       on.exit(progress$close())
       progress$set(
-        message = 'Calculation in progress',
-        detail = 'This may take a while...'
+        message = text_translate("progress_message", lang(), texts_thes),
+          # 'Calculation in progress',
+        detail = text_translate("progress_detail_initial", lang(), texts_thes)
+          # 'This may take a while...'
       )
 
       # tables to look at
@@ -154,11 +156,15 @@ mod_mainData <- function(
         purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
         purrr::reduce(dplyr::left_join, by = c('plot_id'))
 
+      progress$set(
+        value = 35,
+        detail = text_translate("progress_detail_tables", lang(), texts_thes)
+      )
+
       main_data_pre <- dplyr::left_join(
         first_table, ancillary_tables
       )
 
-      progress$set(value = 35)
 
       if (!all(filter_reactives$filter_vars %in% names(main_data_pre))) {
         ##TODO add sweet alarm
@@ -186,11 +192,14 @@ mod_mainData <- function(
         )
       }
 
-      progress$set(value = 45)
-
       # validate to see if we can continue
       shiny::validate(
         shiny::need(nrow(main_data_table) > 0, 'filters too restrictive')
+      )
+
+      progress$set(
+        value = 45,
+        detail = text_translate("progress_detail_calc", lang(), texts_thes)
       )
 
       # processed_data
