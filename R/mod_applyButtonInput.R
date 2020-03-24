@@ -70,7 +70,22 @@ mod_applyButton <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
+    # browser()
+
     filter_vars <- filter_reactives$filter_vars
+    translated_filter_vars <-
+      purrr::map(filter_vars, ~ names(translate_var(
+        .x, tables_to_look_at, lang(),
+        var_thes, numerical_thes, texts_thes
+      )))
+    any_empty <- translated_filter_vars %>%
+      purrr::map_lgl(rlang::is_empty) %>%
+      any()
+
+    if (isTRUE(any_empty)) {
+      translated_filter_vars <-
+        text_translate("active_filters_warning", lang(), texts_thes)
+    }
 
     shiny::tagList(
       shiny::h4(text_translate("dri_title", lang(), texts_thes)),
@@ -126,10 +141,7 @@ mod_applyButton <- function(
             text_translate("dri_none", lang(), texts_thes)
           } else {
             shiny::tagList(
-              purrr::map(filter_vars, ~ names(translate_var(
-                .x, tables_to_look_at, lang(),
-                var_thes, numerical_thes, texts_thes
-              )))
+              translated_filter_vars
             )
           }
         }

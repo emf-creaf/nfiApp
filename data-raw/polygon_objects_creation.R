@@ -197,7 +197,6 @@ texts_thes <- tibble::tribble(
   "se_stat", "SE", "ES", "ES",
   "viz_color_input", "Color:", "Color:", "Color:",
   "viz_diamclass_input", "Diameter class to visualize:", "Clase diamétrica a visualizar:", "Classe diamètrica a visualitzar:",
-  # "functional_group_viz_input", "{text_translate(functional_group, lang(), texts_thes)} to visualize:", "{text_translate(functional_group, lang(), texts_thes)} a visualizar:", "{text_translate(functional_group, lang(), texts_thes)} a visualitzar:",
   "functional_group_viz_input", "Funtional group value to visualize", "Grupo funcional a visualizar", "Grup funcional a visualitzar:",
   "viz_pal_config_input", "Config palette", "Configurar paleta", "Configurar paleta",
   "viz_pal_reverse_input", "Reverse the palette?", "¿Invertir la paleta?", "Invertir la paleta?",
@@ -217,6 +216,7 @@ texts_thes <- tibble::tribble(
   'save_map_btn', "Save the map", "Guarda el mapa", "Guarda el map",
   'save_table_btn', "Save the table", "Guarda la tabla", "Guarda la taula",
   "max-options-text", "Select limit reached (50)", "Alcanzado el límite de selección (50)", "Assolit el límit de selecció (50)",
+  "active_filters_warning", "Active filters not present in data. Not applying them", "Los filtros activos no están presentes en los datos. No se aplicarán", "Els filtres actius no estan presents en les dades. No s'aplicaran"
 
   # "aut_communities", "Catalonia", "Cataluña", "Catalunya",
   # "close", "Close", "Cerrar", "Tancar",
