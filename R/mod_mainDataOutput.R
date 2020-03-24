@@ -168,16 +168,25 @@ mod_mainData <- function(
 
       if (!all(filter_reactives$filter_vars %in% names(main_data_pre))) {
         ##TODO add sweet alarm
-        shiny::validate(
-          shiny::need(FALSE, 'filters active not in data')
+        # shiny::validate(
+        #   shiny::need(FALSE, 'filters active not in data')
+        # )
+        shinyWidgets::sendSweetAlert(
+          session = session,
+          title = text_translate(
+            'active_filters_warning_title', lang(), texts_thes
+          ),
+          text = text_translate(
+            'active_filters_warning', lang(), texts_thes
+          )
         )
+        main_data_table <- main_data_pre
+      } else {
+        main_data_table <- main_data_pre %>%
+          dplyr::filter(
+            !!! filter_reactives$filter_expressions
+          )
       }
-
-      main_data_table <-
-        main_data_pre %>%
-        dplyr::filter(
-          !!! filter_reactives$filter_expressions
-        )
 
       # sweet alert for when no results are returned by the filters
       if (nrow(main_data_table) < 1) {
