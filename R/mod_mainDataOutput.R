@@ -142,8 +142,6 @@ mod_mainData <- function(
 
       progress$set(value = 5)
 
-      # browser()
-
       # get data, join it
       first_table <-
         main_table_to_look_at(nfi, desglossament, diameter_classes) %>%
@@ -157,7 +155,7 @@ mod_mainData <- function(
         purrr::reduce(dplyr::left_join, by = c('plot_id'))
 
       main_data_pre <- dplyr::left_join(
-        first_table, ancillary_tables, by = 'plot_id'
+        first_table, ancillary_tables
       )
 
       progress$set(value = 35)
