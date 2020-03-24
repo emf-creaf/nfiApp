@@ -164,6 +164,8 @@ mod_mainData <- function(
         first_table, ancillary_tables
       )
 
+      browser()
+
 
       if (!all(filter_reactives$filter_vars %in% names(main_data_pre))) {
         ##TODO add sweet alarm
@@ -256,9 +258,22 @@ mod_mainData <- function(
           ) %>%
           dplyr::filter(!is.na(poly_id))
         # check if raw data has data
-        shiny::validate(shiny::need(
-          nrow(raw_main_data) > 0, 'polygon contains no plots'
-        ))
+        # sweet alert for when no results are returned by the filters
+        if (nrow(raw_main_data) < 1) {
+          shinyWidgets::sendSweetAlert(
+            session = session,
+            title = text_translate(
+              'sweet_alert_polygon_title', lang(), texts_thes
+            ),
+            text = text_translate(
+              'sweet_alert_polygon_text', lang(), texts_thes
+            )
+          )
+
+          shiny::validate(shiny::need(
+            nrow(raw_main_data) > 0, 'polygon contains no plots'
+          ))
+        }
         progress$set(value = 55)
       } else {
         raw_main_data <- main_data_table

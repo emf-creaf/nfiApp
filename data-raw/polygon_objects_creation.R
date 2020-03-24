@@ -78,6 +78,8 @@ texts_thes <- tibble::tribble(
   ~text_id, ~text_eng, ~text_spa, ~text_cat,
   "sweet_alert_returned_data_title", "No data can be retrieved with the actual filters", "Con los filtros actuales no se pueden obtener datos", "Amb els filtres actuals no es poden obtenir dades",
   "sweet_alert_returned_data_text", "Please choose another filter values", "Por favor, seleccione otros valores para los filtros", "Si us plau, seleccioni altres valors per als filtres",
+  "sweet_alert_polygon_title", "No data inside the provided polygons", "No hay datos en los polígonos", "No hi ha dades en els polígons",
+  "sweet_alert_polygon_text", "Check if there are filters in effect and/or the polygons are correct", "Compruebe si hay filtros activos y/o si los polígonos son correctos", "Comproveu si hi ha filtres en efecte i/o els polígons són correctes",
   "dismiss", "Dismiss", "Cancelar", "Descartar",
   "mean", "Mean", "Media", "Mitjana",
   "se", "SE", "ES", "ES",
