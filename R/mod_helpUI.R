@@ -91,8 +91,8 @@ mod_help <- function(
     )
     var_description <- var_thes %>%
       dplyr::filter(var_id == input$glossary_var) %>%
-      dplyr::select(dplyr::one_of(
-        glue::glue("var_description_{lang()}")
+      dplyr::select(tidyselect::any_of(
+        c(glue::glue("var_description_{lang()}"))
       )) %>%
       purrr::flatten_chr() %>%
       unique()
@@ -108,9 +108,9 @@ mod_help <- function(
     )
     var_units <- numerical_thes %>%
       dplyr::filter(var_id == input$glossary_var) %>%
-      dplyr::select(dplyr::one_of(
+      dplyr::select(tidyselect::any_of(c(
         glue::glue("var_units")
-      )) %>%
+      ))) %>%
       purrr::flatten_chr() %>%
       unique()
     if (length(var_units) < 1) {

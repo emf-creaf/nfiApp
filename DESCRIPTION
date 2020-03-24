@@ -32,7 +32,8 @@ Imports:
     rlang,
     scales,
     sf,
-    viridis
+    viridis,
+    tidyselect
 Suggests: 
     testthat (>= 2.1.0),
     shinytest

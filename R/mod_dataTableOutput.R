@@ -180,7 +180,7 @@ mod_dataTable <- function(
           temp
         }
       } %>%
-      dplyr::select(dplyr::one_of(c(
+      dplyr::select(tidyselect::any_of(c(
         # inputs selected
         input$col_vis_selector
       ))) %>%

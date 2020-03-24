@@ -104,7 +104,7 @@ mod_info <- function(
         }
       }
     } %>%
-      dplyr::select(dplyr::one_of(
+      dplyr::select(tidyselect::any_of(c(
         'plot_id',
         map_reactives$aesthetics$polygon_join_var,
         'diamclass_id',
@@ -124,7 +124,7 @@ mod_info <- function(
         'clim_tmean_year', 'clim_prec_year', 'clim_pet_year',
         'topo_altitude_asl_mean', 'topo_fdm_slope_percentage_mean',
         'clim_tmean_year_mean', 'clim_prec_year_mean', 'clim_pet_year_mean'
-      )) %>%
+      ))) %>%
       dplyr::mutate_if(
         is.numeric, round, digits = 2,
       ) %>%
@@ -256,7 +256,7 @@ mod_info <- function(
       #     + Variable is viz_color or {viz_color}{viz_statistic}
       #     + Color is click id vs the other ones at polygon_join_var
       #     + Always interactive
-      dplyr::select(dplyr::one_of(
+      dplyr::select(tidyselect::any_of(c(
         'label_var',
         map_reactives$aesthetics$polygon_join_var,
         map_reactives$aesthetics$viz_color,
@@ -269,7 +269,7 @@ mod_info <- function(
           "{map_reactives$aesthetics$viz_size}",
           "{map_reactives$aesthetics$viz_statistic}"
         )
-      )) %>% {
+      ))) %>% {
         if (map_reactives$aesthetics$viz_color %in% names(.)) {
           dplyr::rename(
             .,

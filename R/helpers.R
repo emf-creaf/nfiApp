@@ -105,10 +105,10 @@ translate_var <- function(
     var_lookup_table <-
       var_thes %>%
       dplyr::select(
-        dplyr::one_of(
+        tidyselect::any_of(c(
           'var_id', glue::glue('translation_{lang}'),
           'var_order_app', 'var_table'
-        )
+        ))
       ) %>%
       dplyr::filter(var_id %in% vars, var_table %in% tables) %>%
       dplyr::left_join(
@@ -128,9 +128,9 @@ translate_var <- function(
         sep = ' '
       ) %>%
       dplyr::mutate(var_name = stringr::str_remove(var_name, ' NA')) %>%
-      dplyr::select(-dplyr::one_of(
+      dplyr::select(-tidyselect::any_of(c(
         'var_table'
-      )) %>%
+      ))) %>%
       dplyr::distinct()
   }
 
