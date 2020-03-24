@@ -25,3 +25,6 @@ Imports:
     ggplot2,
     readr,
     writexl
+Suggests: 
+    testthat (>= 2.1.0),
+    shinytest
