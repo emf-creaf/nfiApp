@@ -323,7 +323,7 @@ mod_map <- function(
         'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
       )
       pal_legend <- leaflet::colorFactor(
-        'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
+        'plasma', color_vector, reverse = !viz_pal_reverse, na.color = 'black'
       )
       legend_class <- 'info legend'
     }
