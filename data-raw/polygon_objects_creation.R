@@ -123,6 +123,8 @@ texts_thes <- tibble::tribble(
   "natura_network_2000_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
   "special_protection_natural_area_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
   "natural_interest_area_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
+  "cat_admin_info_plot_title", "Distribution of plots in {map_reactives$nfi_map_shape_click$id} for {viz_color}", "Distribución de parcelas en {map_reactives$nfi_map_shape_click$id} para {viz_color}", "Distribució de parcel·les a {map_reactives$nfi_map_shape_click$id} per a {viz_color}",
+  "cat_plot_info_plot_title", "Distribution of plots for {viz_color}", "Distribución de parcelas para {viz_color}", "Dostribució de parcel·les per a {viz_color}",
   "dri_group_by_div", "by administrative division", "por división administrativa", "per divisió administrativa",
   "dri_group_by_dom", "by dominant functional group", "por grupo funcional", "per grup funcional",
   "dri_title", "Query summary", "Resumen de la consulta", "Resum de la consulta",

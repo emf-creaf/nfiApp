@@ -164,9 +164,6 @@ mod_mainData <- function(
         first_table, ancillary_tables
       )
 
-      browser()
-
-
       if (!all(filter_reactives$filter_vars %in% names(main_data_pre))) {
         ##TODO add sweet alarm
         # shiny::validate(

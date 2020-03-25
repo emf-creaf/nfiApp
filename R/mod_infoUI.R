@@ -13,11 +13,15 @@ mod_infoUI <- function(id) {
   shiny::tagList(
     shiny::fluidRow(
       shiny::br(),
+      shiny::h4(shiny::textOutput(ns('plot_title'))),
       shiny::plotOutput(ns("info_plot"))
     ),
     shiny::fluidRow(
       shiny::br(),
-      formattable::formattableOutput(ns('info_table'), width = "75%")
+      shiny::column(
+        12, align = 'center',
+        formattable::formattableOutput(ns('info_table'), width = "90%")
+      )
     )
   )
 }
@@ -330,16 +334,8 @@ mod_info <- function(
             ggplot2::scale_fill_manual(values = palette_colors) +
             ggplot2::scale_colour_manual(values = palette_colors) +
             ggplot2::labs(
-              x = names(translate_var(
-                map_reactives$aesthetics$viz_color,
-                tables_to_look_at, lang(),
-                var_thes, numerical_thes, texts_thes, need_order = FALSE
-              )),
-              y = text_translate('info_count', lang(), texts_thes),
-              title = text_translate(
-                glue::glue("{label_var_chr}_info_plot_title"),
-                lang(), texts_thes
-              )
+              x = '',
+              y = text_translate('info_count', lang(), texts_thes)
             )
         } else {
           temp_plot <-
@@ -363,11 +359,7 @@ mod_info <- function(
                 map_reactives$aesthetics$viz_color,
                 tables_to_look_at, lang(),
                 var_thes, numerical_thes, texts_thes, need_order = FALSE
-              )),
-              title = text_translate(
-                glue::glue("{label_var_chr}_info_plot_title"),
-                lang(), texts_thes
-              )
+              ))
             )
         }
         temp_plot  +
@@ -393,7 +385,7 @@ mod_info <- function(
           )
         # return(temp_plot)
       }
-    return(plot_data)
+    return(list(plot_data = plot_data, label_var_chr = label_var_chr))
   })
 
   ## outputs ####
@@ -402,7 +394,55 @@ mod_info <- function(
   })
 
   output$info_plot <- shiny::renderPlot({
-    info_plot_data()
+    info_plot_data()[["plot_data"]]
+  })
+
+  output$plot_title <- shiny::renderText({
+
+    tables_to_look_at <- c(
+      main_table_to_look_at(
+        map_reactives$aesthetics$nfi, map_reactives$aesthetics$desglossament,
+        map_reactives$aesthetics$diameter_classes
+      ),
+      ancillary_tables_to_look_at(map_reactives$aesthetics$nfi)
+    )
+
+    viz_color <- names(translate_var(
+      map_reactives$aesthetics$viz_color,
+      tables_to_look_at, lang(),
+      var_thes, numerical_thes, texts_thes, need_order = FALSE
+    ))
+
+    # numeric?
+    if (is.numeric(map_reactives$aesthetics$color_vector)) {
+      return(text_translate(
+        glue::glue("{info_plot_data()[['label_var_chr']]}_info_plot_title"),
+        lang(), texts_thes
+      ))
+    } else {
+      # categorical
+      # polys?
+      if (info_plot_data()[['label_var_chr']] != 'plot_id') {
+        glue::glue(
+          text_translate("cat_admin_info_plot_title", lang(), texts_thes)
+        )
+        # glue::glue(
+        #   "Distribution of plots in {map_reactives$nfi_map_shape_click$id}",
+        #   " for {viz_color}"
+        # )
+      } else {
+        # plots
+        glue::glue(
+          text_translate("cat_plot_info_plot_title", lang(), texts_thes)
+        )
+        # glue::glue(
+        #   "Distribution of plots for {viz_color}"
+        # )
+      }
+    }
+
+
+
   })
 
 }
