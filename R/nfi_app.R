@@ -177,6 +177,7 @@ nfi_app <- function() {
 
     # cache ####
     filters_cache <- shiny::memoryCache(evict = 'fifo')
+    viz_cache <- shiny::memoryCache(evict = 'fifo')
 
     # modules ####
     # data inputs
@@ -206,7 +207,8 @@ nfi_app <- function() {
     viz_reactives <- shiny::callModule(
       mod_viz, 'mod_vizInput',
       data_reactives, filter_reactives, main_data_reactives,
-      var_thes, texts_thes, numerical_thes, categorical_thes, lang
+      var_thes, texts_thes, numerical_thes, categorical_thes, lang,
+      viz_cache
     )
     # table
     table_reactives <- shiny::callModule(

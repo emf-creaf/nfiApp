@@ -15,7 +15,8 @@ mod_viz(
   texts_thes,
   numerical_thes,
   categorical_thes,
-  lang
+  lang,
+  cache
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ mod_viz(
 \item{var_thes, texts_thes, numerical_thes, categorical_thes}{thesauruses}
 
 \item{lang}{lang value}
+
+\item{cache}{memoryCache object to store the selected col}
 }
 \description{
 mod_viz server function

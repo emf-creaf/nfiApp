@@ -24,6 +24,7 @@ mod_vizInput <- function(id) {
 #' @param data_reactives,filter_reactives,main_data_reactives, reactives needed
 #' @param var_thes,texts_thes,numerical_thes,categorical_thes thesauruses
 #' @param lang lang value
+#' @param cache memoryCache object to store the selected col
 #'
 #' @export
 #'
@@ -32,7 +33,7 @@ mod_viz <- function(
   input, output, session,
   data_reactives, filter_reactives, main_data_reactives,
   var_thes, texts_thes, numerical_thes, categorical_thes,
-  lang
+  lang, cache
 ) {
 
   # static UI, later we populate the inputs with updaters
@@ -40,8 +41,10 @@ mod_viz <- function(
   output$mod_viz_panel <- shiny::renderUI({
 
     ns <- session$ns
-
-    ## precalculated choices
+    ## precalculated choices and selected col ####
+    # The selected choice is always the one in the cache if it exists and is
+    # available, if not the default one.
+    # statistic
     statistic_choices <- c('_mean', '_se', '_min', '_max', '_n') %>%
       magrittr::set_names(c(
         text_translate('mean_stat', lang(), texts_thes),
@@ -50,32 +53,68 @@ mod_viz <- function(
         text_translate('max_stat', lang(), texts_thes),
         text_translate('n_stat', lang(), texts_thes)
       ))
-
-    color_choices <- vars_to_viz_by()
-    # let's make density (or density_balance) the selected var
-    if ('density' %in% color_choices) {
-      selected_col <- 'density'
+    cached_statistic <- cache$get('selectedstatistic', 'non_existent_statistic')
+    if (cached_statistic %in% statistic_choices) {
+      selected_statistic <- cached_statistic
     } else {
-      if ('density_balance' %in% color_choices) {
-        selected_col <- 'density_balance'
+      selected_statistic <- statistic_choices[1]
+    }
+
+    # color
+    color_choices <- vars_to_viz_by()
+    # lets make the selected var the cached one if exists in the new data,
+    # and if not, use the default for each kind of data
+    cached_col <- cache$get("selectedcol", 'non_existent_var')
+    if (cached_col %in% color_choices) {
+      selected_col <- cached_col
+    } else {
+      if ('density' %in% color_choices) {
+        selected_col <- 'density'
       } else {
-        if ('regeneration_small_trees' %in% color_choices) {
-          selected_col <- 'regeneration_small_trees'
+        if ('density_balance' %in% color_choices) {
+          selected_col <- 'density_balance'
         } else {
-          selected_col <- 'shrub_canopy_cover'
+          if ('regeneration_small_trees' %in% color_choices) {
+            selected_col <- 'regeneration_small_trees'
+          } else {
+            selected_col <- 'shrub_canopy_cover'
+          }
         }
       }
     }
+    # size
     size_choices <- c('', color_choices)
+    cached_size <- cache$get("selectedsize", 'non_existent_variable')
+    if (cached_size %in% size_choices) {
+      selected_size <- cached_size
+    } else {
+      selected_size = ''
+    }
+    # diameter classes
     diameter_classes_choices <- seq(10, 70, 5) %>% as.character()
     dc_filter_vals <- filter_reactives$otf_filter_inputs[['diamclass_id']]
-
     if (!is.null(dc_filter_vals)) {
       diameter_classes_choices <- diameter_classes_choices[
         diameter_classes_choices %in% dc_filter_vals
       ]
     }
+    # update dc_choices with the dc_var in the data if this exists.
+    if (!is.null(
+      main_data_reactives[['main_data']][['main_data']][['diamclass_id']]
+    )) {
+      data_dc_choices <-
+        main_data_reactives[['main_data']][['main_data']][['diamclass_id']]
+      diameter_classes_choices <-
+        diameter_classes_choices[diameter_classes_choices %in% data_dc_choices]
+    }
+    cached_dc <- cache$get('selecteddc', 'non_existent_dc')
+    if (cached_dc %in% diameter_classes_choices) {
+      selected_dc <- cached_dc
+    } else {
+      selected_dc <- diameter_classes_choices[1]
+    }
 
+    # functional group
     group_by_div <- data_reactives$group_by_div
     group_by_dom <- data_reactives$group_by_dom
     dominant_group <- data_reactives$dominant_group
@@ -120,14 +159,25 @@ mod_viz <- function(
     if (!is.null(fg_filter_vals)) {
       fg_choices <- fg_choices[fg_choices %in% fg_filter_vals]
     }
-
     # update fg_choices with the fg_var in the data if this exists.
-    if(!is.null(main_data_reactives[['main_data']][['main_data']])){
+    if (!is.null(main_data_reactives[['main_data']][['main_data']])) {
       data_fg_choices <-
         main_data_reactives[['main_data']][['main_data']][[fg_var]]
 
       fg_choices <- fg_choices[fg_choices %in% data_fg_choices]
     }
+    cached_fg <- cache$get('selectedfg', 'non_existent_fg')
+    if (cached_fg %in% fg_choices) {
+      selected_fg <- cached_fg
+    } else {
+      selected_fg <- fg_choices[1]
+    }
+
+    # palette
+    selected_pal_config <- cache$get('selectedpalconfig', 'normal')
+    selected_pal_reverse <- cache$get('selectedpalreverse', FALSE)
+
+    # browser()
 
     # tagList ####
     shiny::tagList(
@@ -146,7 +196,9 @@ mod_viz <- function(
               noneSelectedText = text_translate(
                 'deselect-all-text', lang(), texts_thes
               ),
-              selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+              selectAllText = text_translate(
+                'select-all-text', lang(), texts_thes
+              ),
               selectedTextFormat =  'count',
               countSelectedText =  text_translate(
                 'count-selected-text-value', lang(), texts_thes
@@ -162,16 +214,19 @@ mod_viz <- function(
             shiny::tagList(
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
-                  ns('viz_size'), text_translate('viz_size_input', lang(), texts_thes),
+                  ns('viz_size'),
+                  text_translate('viz_size_input', lang(), texts_thes),
                   choices = size_choices %>%
                     var_inputs_aggregator(lang(), texts_thes),
-                  selected = '',
+                  selected = selected_size,
                   options = shinyWidgets::pickerOptions(
                     actionsBox = FALSE,
                     noneSelectedText = text_translate(
                       'deselect-all-text', lang(), texts_thes
                     ),
-                    selectAllText =  text_translate('select-all-text', lang(), texts_thes),
+                    selectAllText =  text_translate(
+                      'select-all-text', lang(), texts_thes
+                    ),
                     selectedTextFormat =  'count',
                     countSelectedText =  text_translate(
                       'count-selected-text-value', lang(), texts_thes
@@ -186,7 +241,8 @@ mod_viz <- function(
                 ns('viz_statistic'),
                 text_translate('viz_statistic_input', lang(), texts_thes),
                 choices = statistic_choices,
-                shinyWidgets::pickerOptions(
+                selected = selected_statistic,
+                options = shinyWidgets::pickerOptions(
                   actionsBox = FALSE,
                   size = 10,
                   liveSearch = TRUE,
@@ -197,10 +253,11 @@ mod_viz <- function(
           } else {
             shiny::tagList(
               shinyWidgets::pickerInput(
-                ns('viz_size'), text_translate('viz_size_input', lang(), texts_thes),
+                ns('viz_size'),
+                text_translate('viz_size_input', lang(), texts_thes),
                 choices = size_choices %>%
                   var_inputs_aggregator(lang(), texts_thes),
-                selected = '',
+                selected = selected_size,
                 options = shinyWidgets::pickerOptions(
                   actionsBox = FALSE,
                   size = 10,
@@ -213,7 +270,8 @@ mod_viz <- function(
                   ns('viz_statistic'),
                   text_translate('viz_statistic_input', lang(), texts_thes),
                   choices = statistic_choices,
-                  shinyWidgets::pickerOptions(
+                  selected = selected_statistic,
+                  options = shinyWidgets::pickerOptions(
                     actionsBox = FALSE,
                     size = 10,
                     liveSearch = TRUE,
@@ -236,6 +294,7 @@ mod_viz <- function(
                 ns('viz_functional_group_value'),
                 text_translate('functional_group_viz_input', lang(), texts_thes),
                 choices = fg_choices,
+                selected = selected_fg,
                 options = shinyWidgets::pickerOptions(
                   actionsBox = FALSE,
                   size = 10,
@@ -249,6 +308,7 @@ mod_viz <- function(
                   ns('viz_functional_group_value'),
                   text_translate('functional_group_viz_input', lang(), texts_thes),
                   choices = fg_choices,
+                  selected = selected_fg,
                   options = shinyWidgets::pickerOptions(
                     actionsBox = FALSE,
                     size = 10,
@@ -264,9 +324,11 @@ mod_viz <- function(
           {
             if (data_reactives$diameter_classes) {
               shinyWidgets::pickerInput(
-                ns('viz_diamclass'), text_translate('viz_diamclass_input', lang(), texts_thes),
+                ns('viz_diamclass'),
+                text_translate('viz_diamclass_input', lang(), texts_thes),
                 choices = diameter_classes_choices,
-                shinyWidgets::pickerOptions(
+                selected = selected_dc,
+                options = shinyWidgets::pickerOptions(
                   actionsBox = FALSE,
                   size = 10,
                   liveSearch = TRUE,
@@ -276,9 +338,11 @@ mod_viz <- function(
             } else {
               shinyjs::hidden(
                 shinyWidgets::pickerInput(
-                  ns('viz_diamclass'), text_translate('viz_diamclass_input', lang(), texts_thes),
+                  ns('viz_diamclass'),
+                  text_translate('viz_diamclass_input', lang(), texts_thes),
                   choices = diameter_classes_choices,
-                  shinyWidgets::pickerOptions(
+                  selected = selected_dc,
+                  options = shinyWidgets::pickerOptions(
                     actionsBox = FALSE,
                     size = 10,
                     liveSearch = TRUE,
@@ -294,20 +358,22 @@ mod_viz <- function(
           # low, normal or high palette
           shinyWidgets::radioGroupButtons(
             ns('viz_pal_config'),
-            text_translate('viz_pal_config_input', lang(), texts_thes),, size = 'sm',
-            choices = c('low', 'normal', 'high') %>%
+            text_translate('viz_pal_config_input', lang(), texts_thes),
+            size = 'sm',
+            choices = c('high', 'normal', 'low') %>%
               magrittr::set_names(c(
-                text_translate('pal_low', lang(), texts_thes),
+                text_translate('pal_high', lang(), texts_thes),
                 text_translate('pal_normal', lang(), texts_thes),
-                text_translate('pal_high', lang(), texts_thes)
+                text_translate('pal_low', lang(), texts_thes)
               )),
-            selected = 'normal', direction = 'vertical', status = 'lfc_radiogroupbuttons'
+            selected = selected_pal_config, direction = 'vertical',
+            status = 'lfc_radiogroupbuttons'
           ),
           # reverse palette
           shinyWidgets::awesomeCheckbox(
             ns('viz_pal_reverse'),
             label = text_translate('viz_pal_reverse_input', lang(), texts_thes),
-            value = FALSE, status = 'info'
+            value = selected_pal_reverse, status = 'info'
           )
         )
       )
@@ -335,7 +401,8 @@ mod_viz <- function(
 
     return(tables_to_look_at)
   })
-  # we need the vars in the data to be able to show the names in the color and size inputs
+  # we need the vars in the data to be able to show the names in the color and
+  # size inputs
   vars_to_viz_by <- shiny::reactive({
 
     group_by_div <- data_reactives$group_by_div
@@ -371,43 +438,44 @@ mod_viz <- function(
   })
 
   # observers ####
-  # here we update the viz inputs based on the data available
-  # size input updater
-  # shiny::observe({
-  #
-  #   group_by_div <- data_reactives$group_by_div
-  #   group_by_dom <- data_reactives$group_by_dom
-  #   # the logic here is that if there is summary, hide this, if not show it and
-  #   # update it
-  #   if (any(group_by_div, group_by_dom)) {
-  #     shinyjs::reset('viz_size')
-  #     shinyjs::disable('viz_size')
-  #     shinyjs::hide('viz_size')
-  #   } else {
-  #     # show and enable
-  #     shinyjs::enable('viz_size')
-  #     shinyjs::show('viz_size')
-  #   }
-  # }) # end of size updater
-
-  # statistic input updater
-  # shiny::observe({
-  #   group_by_div <- data_reactives$group_by_div
-  #   group_by_dom <- data_reactives$group_by_dom
-  #   # the logic here is that if there is summary, show this, if not hide it
-  #   if (any(group_by_div, group_by_dom)) {
-  #     # show and enable
-  #     shinyjs::enable('viz_statistic')
-  #     shinyjs::show('viz_statistic')
-  #   } else {
-  #     shinyjs::reset('viz_statistic')
-  #     shinyjs::disable('viz_statistic')
-  #     shinyjs::hide('viz_statistic')
-  #   }
-  # }) # end of statistic updater
-
-  # updaters for fg and dc are inside the renderUI to avoid conflicts and
-  # circular dependencies
+  # update cache
+  shiny::observe({
+    shiny::validate(shiny::need(input$viz_color, 'no input yet'))
+    selected_col <- input$viz_color
+    cache$set('selectedcol', selected_col)
+  })
+  shiny::observe({
+    shiny::validate(shiny::need(input$viz_size, 'no_input_yet'))
+    selected_size <- input$viz_size
+    cache$set('selectedsize', selected_size)
+  })
+  shiny::observe({
+    shiny::validate(shiny::need(input$viz_statistic, 'no_input_yet'))
+    selected_statistic <- input$viz_statistic
+    cache$set('selectedstatistic', selected_statistic)
+  })
+  shiny::observe({
+    shiny::validate(
+      shiny::need(input$viz_functional_group_value, 'no_input_yet')
+    )
+    selected_fg <- input$viz_functional_group_value
+    cache$set('selectedfg', selected_fg)
+  })
+  shiny::observe({
+    shiny::validate(shiny::need(input$viz_diamclass, 'no_input_yet'))
+    selected_dc <- input$viz_diamclass
+    cache$set('selecteddc', selected_dc)
+  })
+  shiny::observe({
+    shiny::validate(shiny::need(input$viz_pal_config, 'no_input_yet'))
+    selected_pal_config <- input$viz_pal_config
+    cache$set('selectedpalconfig', selected_pal_config)
+  })
+  shiny::observe({
+    shiny::validate(shiny::need(input$viz_pal_reverse, 'no_input_yet'))
+    selected_pal_reverse <- input$viz_pal_reverse
+    cache$set('selectedpalreverse', selected_pal_reverse)
+  })
 
   # return the viz inputs
   viz_reactives <- shiny::reactiveValues()
