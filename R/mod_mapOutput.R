@@ -279,22 +279,38 @@ mod_map <- function(
 
     # palette and legend class
     if (is.numeric(color_vector)) {
+
+      # here we can have the possibility of one length numeric color vector
+      # (when only one plot or polygon due to custom polygons or filters).
+      # In that case, we need to add 5% above and below to build the palette
+      # for the map and the legend
+      if (length(color_vector) < 2) {
+        color_vector_legend <- c(
+          color_vector - (color_vector*0.05),
+          color_vector,
+          color_vector + (color_vector*0.05)
+        )
+      } else {
+        color_vector_legend <- color_vector
+      }
+
       pal <- switch(
         viz_pal_config,
         "low" = leaflet::colorNumeric(
           scales::gradient_n_pal(
             viridis::plasma(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
-          color_vector, reverse = viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = viz_pal_reverse, na.color = 'black'
         ),
         "high" = leaflet::colorNumeric(
           scales::gradient_n_pal(
             viridis::plasma(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
-          color_vector, reverse = viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = viz_pal_reverse, na.color = 'black'
         ),
         "normal" = leaflet::colorNumeric(
-          'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
+          'plasma', color_vector_legend, reverse = viz_pal_reverse,
+          na.color = 'black'
         )
       )
       # as we need to reverse the legend values (low at bottom) we need an
@@ -305,16 +321,17 @@ mod_map <- function(
           scales::gradient_n_pal(
             viridis::plasma(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
-          color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'black'
         ),
         "high" = leaflet::colorNumeric(
           scales::gradient_n_pal(
             viridis::plasma(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
-          color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'black'
         ),
         "normal" = leaflet::colorNumeric(
-          'plasma', color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+          'plasma', color_vector_legend, reverse = !viz_pal_reverse,
+          na.color = 'black'
         )
       )
       legend_class <- 'info legend na_out'
@@ -331,6 +348,7 @@ mod_map <- function(
     return(list(
       # color
       color_vector = color_vector,
+      color_vector_legend = color_vector_legend,
       size_vector = size_vector,
       pal = pal,
       pal_legend = pal_legend,
@@ -417,7 +435,7 @@ mod_map <- function(
           temp %>%
             leaflet::addLegend(
               position = 'bottomright', pal = aesthetics_data$pal_legend,
-              values = aesthetics_data$color_vector,
+              values = aesthetics_data$color_vector_legend,
               title = names(
                 translate_var(
                   aesthetics_data$viz_color,
@@ -462,6 +480,7 @@ mod_map <- function(
     aesthetics_data <- aesthetics_builder()
 
     if (!isTRUE(group_by_div)) {
+
       # update the map
       leaflet::leafletProxy('nfi_map') %>%
         leaflet::clearGroup('plots') %>%
@@ -475,7 +494,7 @@ mod_map <- function(
         ) %>%
         leaflet::addLegend(
           position = 'bottomright', pal = aesthetics_data$pal_legend,
-          values = aesthetics_data$color_vector,
+          values = aesthetics_data$color_vector_legend,
           title = names(
             translate_var(
               aesthetics_data$viz_color,
