@@ -175,6 +175,10 @@ mod_info <- function(
       ),
       ancillary_tables_to_look_at(map_reactives$aesthetics$nfi)
     )
+    summary_on <- any(
+      map_reactives$aesthetics$group_by_div,
+      map_reactives$aesthetics$group_by_dom
+    )
     # get the click
     nfi_map_shape_click <- map_reactives$nfi_map_shape_click
 
@@ -244,6 +248,8 @@ mod_info <- function(
       }
     }
 
+    # browser()
+
     plot_data <- data_for_plot %>%
       # plot. Logic is as follows:
       #   - violin plots
@@ -295,7 +301,10 @@ mod_info <- function(
           shiny::need(
             nfi_map_shape_click$id %in% .[['label_var']], 'no data in clicked'
           ),
-          shiny::need(nrow(.) > 3, 'no enough data to safely create the plot')
+          shiny::need(
+            nrow(.) > 3,
+            text_translate('not_enough_info_plot_warning', lang(), texts_thes)
+          )
         )
         .
       } %>% {
@@ -340,7 +349,7 @@ mod_info <- function(
         } else {
           temp_plot <-
             temp_data %>%
-            ggplot2::ggplot(ggplot2::aes(x = '', y = y_var)) +
+            ggplot2::ggplot(ggplot2::aes(x = 0, y = y_var)) +
             ggplot2::geom_point(
               data = ~ dplyr::filter(.x, label_var != nfi_map_shape_click$id),
               colour = '#647a8d', size = 4, alpha = 0.5,
@@ -353,12 +362,14 @@ mod_info <- function(
               data = ~ dplyr::filter(.x, label_var == nfi_map_shape_click$id),
               colour = '#448714', size = 6
             ) +
+            ggplot2::scale_x_continuous(breaks = NULL) +
             ggplot2::labs(
               x = '',
               y = names(translate_var(
                 map_reactives$aesthetics$viz_color,
                 tables_to_look_at, lang(),
-                var_thes, numerical_thes, texts_thes, need_order = FALSE
+                var_thes, numerical_thes, texts_thes,
+                summary_on, need_order = FALSE
               ))
             )
         }
@@ -378,6 +389,8 @@ mod_info <- function(
               fill = '#c8cac8', colour = NA
             ),
             panel.grid = ggplot2::element_line(colour = '#647a8d'),
+            panel.grid.minor.x = ggplot2::element_blank(),
+            panel.grid.major.x = ggplot2::element_blank(),
             panel.grid.minor.y = ggplot2::element_blank(),
             panel.grid.major.y = ggplot2::element_line(
               size = ggplot2::rel(0.5), colour = '#647a8d'
@@ -406,11 +419,16 @@ mod_info <- function(
       ),
       ancillary_tables_to_look_at(map_reactives$aesthetics$nfi)
     )
+    summary_on <- any(
+      map_reactives$aesthetics$group_by_div,
+      map_reactives$aesthetics$group_by_dom
+    )
 
     viz_color <- names(translate_var(
       map_reactives$aesthetics$viz_color,
       tables_to_look_at, lang(),
-      var_thes, numerical_thes, texts_thes, need_order = FALSE
+      var_thes, numerical_thes, texts_thes,
+      summary_on, need_order = FALSE
     ))
 
     # numeric?
