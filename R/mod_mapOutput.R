@@ -135,7 +135,9 @@ mod_map <- function(
     if (admin_div %in% c('file', 'drawn_poly')) {
       polygon_label <- as.formula('~poly_id')
       polygon_join_var <- 'poly_id'
-      polygon_join_data_expr <- rlang::expr(main_data_reactives$custom_polygon)
+      polygon_join_data_expr <- rlang::expr(
+        shiny::isolate(main_data_reactives$custom_polygon)
+      )
     } else {
       polygon_label <- as.formula(glue::glue("~admin_{admin_div}"))
       polygon_join_var <- glue::glue("admin_{admin_div}")
