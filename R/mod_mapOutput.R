@@ -258,6 +258,12 @@ mod_map <- function(
       if (is.null(viz_size) || rlang::is_empty(viz_size) || viz_size == '') {
         size_vector <- rep(base_size(), nrow(plot_data))
       } else {
+        shiny::validate(
+          shiny::need(
+            viz_size %in% names(plot_data),
+            text_translate('apply_warning', lang(), texts_thes)
+          )
+        )
         size_vector_pre <- plot_data %>%
           dplyr::pull(!! rlang::sym(viz_size))
 
@@ -271,7 +277,7 @@ mod_map <- function(
              * 1500) + base_size()
         }
       }
-      size_vector[is.na(color_vector)] <- 500
+      size_vector[is.na(color_vector)] <- base_size()/2
     }
 
     # we need to check if the color variable is in the data. When applying
@@ -345,6 +351,7 @@ mod_map <- function(
         'plasma', color_vector, reverse = !viz_pal_reverse, na.color = 'black'
       )
       legend_class <- 'info legend'
+      color_vector_legend <- color_vector
     }
 
     return(list(
@@ -382,23 +389,23 @@ mod_map <- function(
     shiny::validate(
       shiny::need(main_data_reactives$main_data, 'no data yet')
     )
+    # aesthetics (mainly for legend, but also for filling the polygons or plots)
+    aesthetics_data <- aesthetics_builder()
     # inputs for translating and other stuff
     lang_sel <- lang()
-    nfi <- shiny::isolate(data_reactives$nfi)
-    desglossament <- shiny::isolate(data_reactives$desglossament)
-    diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
     admin_div <- shiny::isolate(data_reactives$admin_div)
+    nfi <- aesthetics_data$nfi
+    desglossament <- aesthetics_data$desglossament
+    diameter_classes <- aesthetics_data$diameter_classes
     # are we drawing summary data?
-    group_by_div <- shiny::isolate(data_reactives$group_by_div)
-    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+    group_by_div <- aesthetics_data$group_by_div
+    group_by_dom <- aesthetics_data$group_by_dom
 
     tables_to_look_at <- c(
       main_table_to_look_at(nfi, desglossament, diameter_classes),
       ancillary_tables_to_look_at(nfi)
     )
 
-    # aesthetics (mainly for legend, but also for filling the polygons or plots)
-    aesthetics_data <- aesthetics_builder()
 
     # update the map
     leaflet::leafletProxy('nfi_map') %>%
@@ -463,23 +470,21 @@ mod_map <- function(
     shiny::validate(
       shiny::need(main_data_reactives$main_data, 'no data yet')
     )
+    # aesthetics (mainly for legend, but also for filling the polygons or plots)
+    aesthetics_data <- aesthetics_builder()
     # inputs for translating and other stuff
     lang_sel <- lang()
-    nfi <- shiny::isolate(data_reactives$nfi)
-    desglossament <- shiny::isolate(data_reactives$desglossament)
-    diameter_classes <- shiny::isolate(data_reactives$diameter_classes)
     admin_div <- shiny::isolate(data_reactives$admin_div)
+    nfi <- aesthetics_data$nfi
+    desglossament <- aesthetics_data$desglossament
+    diameter_classes <- aesthetics_data$diameter_classes
     # are we drawing summary data?
-    group_by_div <- shiny::isolate(data_reactives$group_by_div)
-    group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
+    group_by_div <- aesthetics_data$group_by_div
 
     tables_to_look_at <- c(
       main_table_to_look_at(nfi, desglossament, diameter_classes),
       ancillary_tables_to_look_at(nfi)
     )
-
-    # aesthetics (mainly for legend, but also for filling the polygons or plots)
-    aesthetics_data <- aesthetics_builder()
 
     if (!isTRUE(group_by_div)) {
 

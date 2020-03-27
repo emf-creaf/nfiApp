@@ -53,43 +53,36 @@ mod_viz <- function(
         text_translate('max_stat', lang(), texts_thes),
         text_translate('n_stat', lang(), texts_thes)
       ))
-    cached_statistic <- cache$get('selectedstatistic', 'non_existent_statistic')
-    if (cached_statistic %in% statistic_choices) {
-      selected_statistic <- cached_statistic
-    } else {
-      selected_statistic <- statistic_choices[1]
-    }
+    selected_statistic <-
+      cache_selected_choice(statistic_choices, cache, 'selectedstatistic')
 
     # color
     color_choices <- vars_to_viz_by()
-    # lets make the selected var the cached one if exists in the new data,
-    # and if not, use the default for each kind of data
-    cached_col <- cache$get("selectedcol", 'non_existent_var')
-    if (cached_col %in% color_choices) {
-      selected_col <- cached_col
+    if ('density' %in% color_choices) {
+      default_color <- 'density'
     } else {
-      if ('density' %in% color_choices) {
-        selected_col <- 'density'
+      if ('density_balance' %in% color_choices) {
+        default_color <- 'density_balance'
       } else {
-        if ('density_balance' %in% color_choices) {
-          selected_col <- 'density_balance'
+        if ('regeneration_small_trees' %in% color_choices) {
+          default_color <- 'regeneration_small_trees'
         } else {
-          if ('regeneration_small_trees' %in% color_choices) {
-            selected_col <- 'regeneration_small_trees'
-          } else {
-            selected_col <- 'shrub_canopy_cover'
-          }
+          default_color <- 'shrub_canopy_cover'
         }
       }
     }
+    # lets make the selected var the cached one if exists in the new data,
+    # and if not, use the default for each kind of data
+    selected_color <- cache_selected_choice(
+      color_choices, cache, 'selectedcol',
+      default = default_color
+    )
+
     # size
     size_choices <- c('', color_choices)
-    cached_size <- cache$get("selectedsize", 'non_existent_variable')
-    if (cached_size %in% size_choices) {
-      selected_size <- cached_size
-    } else {
-      selected_size = ''
-    }
+    selected_size <-
+      cache_selected_choice(size_choices, cache, 'selectedsize')
+
     # diameter classes
     diameter_classes_choices <- seq(10, 70, 5) %>% as.character()
     dc_filter_vals <- filter_reactives$otf_filter_inputs[['diamclass_id']]
@@ -107,12 +100,8 @@ mod_viz <- function(
       diameter_classes_choices <-
         diameter_classes_choices[diameter_classes_choices %in% data_dc_choices]
     }
-    cached_dc <- cache$get('selecteddc', 'non_existent_dc')
-    if (cached_dc %in% diameter_classes_choices) {
-      selected_dc <- cached_dc
-    } else {
-      selected_dc <- diameter_classes_choices[1]
-    }
+    selected_dc <-
+      cache_selected_choice(diameter_classes_choices, cache, 'selecteddc')
 
     # functional group
     group_by_div <- data_reactives$group_by_div
@@ -166,18 +155,12 @@ mod_viz <- function(
 
       fg_choices <- fg_choices[fg_choices %in% data_fg_choices]
     }
-    cached_fg <- cache$get('selectedfg', 'non_existent_fg')
-    if (cached_fg %in% fg_choices) {
-      selected_fg <- cached_fg
-    } else {
-      selected_fg <- fg_choices[1]
-    }
+    selected_fg <-
+      cache_selected_choice(fg_choices, cache, 'selectedfg')
 
     # palette
     selected_pal_config <- cache$get('selectedpalconfig', 'normal')
     selected_pal_reverse <- cache$get('selectedpalreverse', FALSE)
-
-    # browser()
 
     # tagList ####
     shiny::tagList(
@@ -190,7 +173,7 @@ mod_viz <- function(
             text_translate('viz_color_input', lang(), texts_thes),
             choices = color_choices %>%
               var_inputs_aggregator(lang(), texts_thes),
-            selected = selected_col,
+            selected = selected_color,
             options = shinyWidgets::pickerOptions(
               actionsBox = FALSE,
               noneSelectedText = text_translate(
@@ -441,13 +424,17 @@ mod_viz <- function(
   # update cache
   shiny::observe({
     shiny::validate(shiny::need(input$viz_color, 'no input yet'))
-    selected_col <- input$viz_color
-    cache$set('selectedcol', selected_col)
+    selected_color <- input$viz_color
+    cache$set('selectedcol', selected_color)
   })
   shiny::observe({
-    shiny::validate(shiny::need(input$viz_size, 'no_input_yet'))
-    selected_size <- input$viz_size
-    cache$set('selectedsize', selected_size)
+    # here we can not validate, as the defaut is '' which shiny::need coniders
+    # a failure, making the observer not launching
+    # shiny::validate(shiny::need(input$viz_size, 'no_input_yet')) # not working
+    if (!is.null(input$viz_size)) {
+      selected_size <- input$viz_size
+      cache$set('selectedsize', selected_size)
+    }
   })
   shiny::observe({
     shiny::validate(shiny::need(input$viz_statistic, 'no_input_yet'))

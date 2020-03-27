@@ -411,17 +411,15 @@ general_summary_grouping_vars <- function(
   return(res)
 }
 
-# # reactive trigger based on
-# # https://github.com/daattali/advanced-shiny/tree/master/reactive-trigger
-# makeReactiveTrigger <- function() {
-#   rv <- shiny::reactiveValues(a = 0)
-#   list(
-#     depend = function() {
-#       rv$a
-#       invisible()
-#     },
-#     trigger = function() {
-#       rv$a <- shiny::isolate(rv$a + 1)
-#     }
-#   )
-# }
+# cache_selected_choice
+# logic is as follows:
+#   - if the cached value is in choices provided, then return it, if not,
+#     return the default value (first choice if not provided)
+cache_selected_choice <- function(choices, cache, key, default = choices[1]) {
+  cached_input <- cache$get(key, 'non_existent')
+  if (all(cached_input %in% choices)) {
+    return(cached_input)
+  } else {
+    return(default)
+  }
+}
