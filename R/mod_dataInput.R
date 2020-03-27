@@ -502,6 +502,32 @@ mod_data <- function(
 
   })
 
+  # observer to hide diameter classes when is not available
+  shiny::observe({
+    shiny::validate(
+      shiny::need(input$nfi, 'no data')
+    )
+    nfi <- input$nfi
+    available <- c(
+      # shrub
+      'nfi_2_shrub', 'nfi_3_shrub', 'nfi_4_shrub',
+      # regeneration
+      'nfi_2_regen', 'nfi_3_regen', 'nfi_4_regen'
+    )
+
+    if (nfi %in% available) {
+      shinyjs::reset('diameter_classes')
+      # shinyjs::disable('desglossament')
+      # shinyjs::disable('diameter_classes')
+      shinyjs::hide('diameter_classes')
+    } else {
+      # shinyjs::enable('desglossament')
+      # shinyjs::enable('diameter_classes')
+      shinyjs::show('diameter_classes')
+    }
+
+  })
+
   ## observers for setting the cache
   shiny::observe({
     shiny::validate(shiny::need(input$nfi, 'no_input_yet'))
