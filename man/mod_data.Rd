@@ -4,7 +4,16 @@
 \alias{mod_data}
 \title{mod_data server function}
 \usage{
-mod_data(input, output, session, lang, var_thes, numerical_thes, texts_thes)
+mod_data(
+  input,
+  output,
+  session,
+  lang,
+  var_thes,
+  numerical_thes,
+  texts_thes,
+  cache
+)
 }
 \arguments{
 \item{input}{internal}
@@ -16,6 +25,8 @@ mod_data(input, output, session, lang, var_thes, numerical_thes, texts_thes)
 \item{lang}{lang reactive}
 
 \item{var_thes, numerical_thes, texts_thes}{thesauruses}
+
+\item{cache}{cache object to maintain previously selected values in inputs}
 }
 \description{
 mod_data server function

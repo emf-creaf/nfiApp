@@ -26,11 +26,13 @@ mod_dataInput <- function(id) {
 #'
 #' @param lang lang reactive
 #' @param var_thes,numerical_thes,texts_thes thesauruses
+#' @param cache cache object to maintain previously selected values in inputs
 #'
 #' @export
 mod_data <- function(
   input, output, session,
-  lang, var_thes, numerical_thes, texts_thes
+  lang, var_thes, numerical_thes, texts_thes,
+  cache
 ) {
 
   # renderUI ####
@@ -321,6 +323,30 @@ mod_data <- function(
         shinyjs::enable('dominant_criteria')
         shinyjs::enable('dominant_nfi')
         shinyjs::show('dom_grouping_panel')
+
+        nfi_choices <- c(
+          # base_data
+          'nfi_2', 'nfi_3', 'nfi_4',
+          # comparisions
+          'nfi_2_nfi_3', 'nfi_3_nfi_4'
+        ) %>%
+          magrittr::set_names(c(
+            text_translate('nfi_2', lang(), texts_thes),
+            text_translate('nfi_3', lang(), texts_thes),
+            text_translate('nfi_4', lang(), texts_thes),
+            text_translate('nfi_2_nfi_3', lang(), texts_thes),
+            text_translate('nfi_3_nfi_4', lang(), texts_thes)
+          ))
+        selected_nfi <-
+          cache_selected_choice(nfi_choices, cache, 'selectednfi', 'nfi_4')
+
+        shinyWidgets::updatePickerInput(
+          session, 'nfi',
+          label = text_translate('data_version', lang(), texts_thes),
+          choices = nfi_choices, selected = selected_nfi
+        )
+
+
       } else {
         shinyjs::reset('dominant_group')
         shinyjs::reset('dominant_criteria')
@@ -329,6 +355,39 @@ mod_data <- function(
         shinyjs::disable('dominant_criteria')
         shinyjs::disable('dominant_nfi')
         shinyjs::hide('dom_grouping_panel')
+
+        nfi_choices <- c(
+          # base_data
+          'nfi_2', 'nfi_3', 'nfi_4',
+          # comparisions
+          'nfi_2_nfi_3', 'nfi_3_nfi_4',
+          # shrub
+          'nfi_2_shrub', 'nfi_3_shrub', 'nfi_4_shrub',
+          # regeneration
+          'nfi_2_regen', 'nfi_3_regen', 'nfi_4_regen'
+        ) %>%
+          magrittr::set_names(c(
+            text_translate('nfi_2', lang(), texts_thes),
+            text_translate('nfi_3', lang(), texts_thes),
+            text_translate('nfi_4', lang(), texts_thes),
+            text_translate('nfi_2_nfi_3', lang(), texts_thes),
+            text_translate('nfi_3_nfi_4', lang(), texts_thes),
+            text_translate('nfi_2_shrub', lang(), texts_thes),
+            text_translate('nfi_3_shrub', lang(), texts_thes),
+            text_translate('nfi_4_shrub', lang(), texts_thes),
+            text_translate('nfi_2_regen', lang(), texts_thes),
+            text_translate('nfi_3_regen', lang(), texts_thes),
+            text_translate('nfi_4_regen', lang(), texts_thes)
+          ))
+
+        selected_nfi <-
+          cache_selected_choice(nfi_choices, cache, 'selectednfi', 'nfi_4')
+
+        shinyWidgets::updatePickerInput(
+          session, 'nfi',
+          label = text_translate('data_version', lang(), texts_thes),
+          choices = nfi_choices, selected = selected_nfi
+        )
       }
     }
   )
@@ -441,6 +500,13 @@ mod_data <- function(
       )
     }
 
+  })
+
+  ## observers for setting the cache
+  shiny::observe({
+    shiny::validate(shiny::need(input$nfi, 'no_input_yet'))
+    selected_nfi <- input$nfi
+    cache$set('selectednfi', selected_nfi)
   })
 
   ## returning inputs ####
