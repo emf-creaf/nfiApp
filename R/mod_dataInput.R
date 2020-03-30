@@ -475,10 +475,15 @@ mod_data <- function(
         magrittr::set_names(c(
           text_translate('fg_species', lang(), texts_thes)
         ))
+      selected_desglossament <-
+        cache_selected_choice(
+          desglossament_choices, cache, 'selecteddesglossament', 'species'
+        )
+
       shinyWidgets::updatePickerInput(
         session, 'desglossament',
         label = text_translate('desglossament_input', lang(), texts_thes),
-        choices = desglossament_choices, selected = desglossament_choices[1]
+        choices = desglossament_choices, selected = selected_desglossament
       )
     } else {
 
@@ -493,10 +498,15 @@ mod_data <- function(
           text_translate('fg_dec', lang(), texts_thes),
           text_translate('fg_bc', lang(), texts_thes)
         ))
+      selected_desglossament <-
+        cache_selected_choice(
+          desglossament_choices, cache, 'selecteddesglossament', 'plot'
+        )
+
       shinyWidgets::updatePickerInput(
         session, 'desglossament',
         label = text_translate('desglossament_input', lang(), texts_thes),
-        choices = desglossament_choices, selected = desglossament_choices[1]
+        choices = desglossament_choices, selected = selected_desglossament
       )
     }
 
@@ -533,6 +543,11 @@ mod_data <- function(
     shiny::validate(shiny::need(input$nfi, 'no_input_yet'))
     selected_nfi <- input$nfi
     cache$set('selectednfi', selected_nfi)
+  })
+  shiny::observe({
+    shiny::validate(shiny::need(input$desglossament, 'no_input_yet'))
+    selected_desglossament <- input$desglossament
+    cache$set('selecteddesglossament', selected_desglossament)
   })
 
   ## returning inputs ####
