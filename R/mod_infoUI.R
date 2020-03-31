@@ -135,7 +135,7 @@ mod_info <- function(
       tidyr::gather('Characteristics', 'Value') %>%
       dplyr::mutate(
         Characteristics = stringr::str_remove(
-          Characteristics, '_mean|_se|_max|_min|_n'
+          Characteristics, '_mean$|_se$|_max$|_min$|_n$'
         ),
         Characteristics = names(translate_var(
           Characteristics, tables_to_look_at, lang(),

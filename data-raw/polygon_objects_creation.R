@@ -90,8 +90,6 @@ natura_network_2000_polygons <-
   dplyr::select(-dummy) %>%
   sf::st_cast('MULTIPOLYGON')
 
-
-
 # app texts thesaurus
 texts_thes <- tibble::tribble(
   ~text_id, ~text_eng, ~text_spa, ~text_cat,
@@ -139,9 +137,9 @@ texts_thes <- tibble::tribble(
   "admin_region_info_plot_title", "Clicked region compared to other regions in map", "Comarca seleccionada comparada con las otras comarcas en el mapa", "Comarca seleccionada comparada amb les altres comarques al mapa",
   "admin_municipality_info_plot_title", "Clicked municipality compared to other municipalities in map", "Municipio seleccionada comparada con los otros municipios en el mapa", "Municipi seleccionado comparad amb els altres municipis al mapa",
   "poly_id_info_plot_title", "Clicked polygon compared to other polygons in map", "Polígono seleccionada comparada con los otros polígonos en el mapa", "Polìgon seleccionado comparado amb les altres polìgons al mapa",
-  "natura_network_2000_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
-  "special_protection_natural_area_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
-  "natural_interest_area_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
+  "admin_natura_network_2000_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
+  "admin_special_protection_natural_area_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
+  "admin_natural_interest_area_info_plot_title", "Clicked natural area compared to other natural areas in map", "Área seleccionada comparada con las otras áreas en el mapa", "Àrea seleccionada comparada amb les altres àreas al mapa",
   "cat_admin_info_plot_title", "Distribution of plots in {map_reactives$nfi_map_shape_click$id} for {viz_color}", "Distribución de parcelas en {map_reactives$nfi_map_shape_click$id} para {viz_color}", "Distribució de parcel·les a {map_reactives$nfi_map_shape_click$id} per a {viz_color}",
   "cat_plot_info_plot_title", "Distribution of plots for {viz_color}", "Distribución de parcelas para {viz_color}", "Dostribució de parcel·les per a {viz_color}",
   "not_enough_info_plot_warning", "Not enough data to safely build the plot", "No hay datos suficientes para contruir la gráfica de manera segura", "No hi ha dades suficients per construir el gràfic de forma segura",
