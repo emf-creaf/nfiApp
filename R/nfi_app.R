@@ -239,7 +239,7 @@ nfi_app <- function() {
     # help
     shiny::callModule(
       mod_help, 'mod_helpUI',
-      data_reactives,
+      data_reactives, viz_reactives,
       nfidb, var_thes, texts_thes, numerical_thes, lang
     )
 

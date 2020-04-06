@@ -16,7 +16,7 @@ mod_helpUI <- function(id) {
 #' @param input internal
 #' @param output internal
 #' @param session internal
-#' @param data_reactives reactives needed
+#' @param data_reactives,viz_reactives reactives needed
 #' @param nfidb object to access the database, with describe_var method
 #' @param var_thes,texts_thes,numerical_thes thesauruses
 #' @param lang language selected
@@ -26,7 +26,7 @@ mod_helpUI <- function(id) {
 #' @rdname mod_helpUI
 mod_help <- function(
   input, output, session,
-  data_reactives,
+  data_reactives, viz_reactives,
   nfidb, var_thes, texts_thes, numerical_thes, lang
 ) {
 
@@ -53,6 +53,8 @@ mod_help <- function(
         is_summary = FALSE, need_order = TRUE
       )
 
+    selected_choice <- viz_reactives$viz_color
+
     # tagList
     shiny::tagList(
       shiny::fluidRow(
@@ -63,6 +65,7 @@ mod_help <- function(
             ns('glossary_var'),
             text_translate('glossary_var_input', lang(), texts_thes),
             choices = var_choices, width = '100%',
+            selected = selected_choice,
             options = list(
               `size` = 10,
               `live-search` = TRUE,

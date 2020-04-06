@@ -12,6 +12,7 @@ mod_help(
   output,
   session,
   data_reactives,
+  viz_reactives,
   nfidb,
   var_thes,
   texts_thes,
@@ -28,7 +29,7 @@ mod_help(
 
 \item{session}{internal}
 
-\item{data_reactives}{reactives needed}
+\item{data_reactives, viz_reactives}{reactives needed}
 
 \item{nfidb}{object to access the database, with describe_var method}
 
