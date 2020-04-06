@@ -227,6 +227,7 @@ texts_thes <- tibble::tribble(
   "pal_high", "Discriminate higher values", "Discriminar valores altos", "Discriminar valors alts",
   "pal_low", "Discriminate lower values", "Discriminar valores bajos", "Discriminar valors baixos",
   "pal_normal", "Normal", "Normal", "Normal",
+  "main_tab_translation", "Explore", "Explora", "Explora",
   "data_translation", "Data", "Datos", "Dades",
   "filters_translation", "Filters", "Filtros", "Filtres",
   "viz_translation", "Visualization", "Visualización", "Visualització",

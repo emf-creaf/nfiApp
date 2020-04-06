@@ -75,7 +75,7 @@ nfi_app <- function() {
 
       # main tab
       shiny::tabPanel(
-        title = 'Main',
+        title = mod_tab_translateOutput('main_tab_translation'),
         # css
         shiny::tags$head(
           # js script,
@@ -244,6 +244,10 @@ nfi_app <- function() {
     )
 
     ## tab translations ####
+    shiny::callModule(
+      mod_tab_translate, 'main_tab_translation',
+      'main_tab_translation', lang, texts_thes
+    )
     shiny::callModule(
       mod_tab_translate, 'data_translation',
       'data_translation', lang, texts_thes
