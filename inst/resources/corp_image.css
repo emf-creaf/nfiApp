@@ -20,14 +20,14 @@ uniformize the apps style
   --main-button-hover-color: #76f7a7
 }
 */
-/* Wes Anderson Cavalcanti */
+/* modified from https://www.schemecolor.com/rocky-cliff-color-scheme.php */
 :root {
-  --main-bg-color: #81A88D;
-  --main-dark-color: #02401B;
-  --main-selected-color: #972D15;
-  --main-not-focused-color: #A2A475;
-  --main-button-color: #D8B70A;
-  --main-button-hover-color: #D8B79A;
+  --main-bg-color: #E8EAEB;
+  --main-dark-color: #1C1C20;
+  --main-selected-color: #83A24E;
+  --main-not-focused-color: #606064;
+  --main-button-color: #606064;
+  --main-button-hover-color: #83A24E;
 }
 
 
