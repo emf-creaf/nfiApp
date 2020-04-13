@@ -243,6 +243,16 @@ mod_viz <- function(
                 selected = selected_size,
                 options = shinyWidgets::pickerOptions(
                   actionsBox = FALSE,
+                  noneSelectedText = text_translate(
+                    'deselect-all-text', lang(), texts_thes
+                  ),
+                  selectAllText =  text_translate(
+                    'select-all-text', lang(), texts_thes
+                  ),
+                  selectedTextFormat =  'count',
+                  countSelectedText =  text_translate(
+                    'count-selected-text-value', lang(), texts_thes
+                  ),
                   size = 10,
                   liveSearch = TRUE,
                   tickIcon = 'glyphicon-tree-deciduous'
