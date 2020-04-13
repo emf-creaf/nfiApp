@@ -82,11 +82,11 @@ nfi_app <- function() {
           shiny::tags$script(js_script),
           # custom css
           shiny::includeCSS(
-            system.file('resources', 'nfi.css', package = 'NFIappkg')
+            system.file('resources', 'nfi.css', package = 'nfiApp')
           ),
           # corporative image css
           shiny::includeCSS(
-            system.file('resources', 'corp_image.css', package = 'NFIappkg')
+            system.file('resources', 'corp_image.css', package = 'nfiApp')
           )
         ),
         # Sidebar layout

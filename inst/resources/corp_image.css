@@ -9,6 +9,8 @@ uniformize the apps style
 
 */
 
+/* CREAF / CTFC colors */
+/*
 :root {
   --main-bg-color: #c8cac8;
   --main-dark-color: #001629;
@@ -17,6 +19,17 @@ uniformize the apps style
   --main-button-color: #15351e;
   --main-button-hover-color: #76f7a7
 }
+*/
+/* Wes Anderson Cavalcanti */
+:root {
+  --main-bg-color: #81A88D;
+  --main-dark-color: #02401B;
+  --main-selected-color: #972D15;
+  --main-not-focused-color: #A2A475;
+  --main-button-color: #D8B70A;
+  --main-button-hover-color: #D8B79A;
+}
+
 
 /* language selector */
 .navbar-form {
