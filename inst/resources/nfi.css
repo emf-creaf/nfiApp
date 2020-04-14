@@ -135,3 +135,9 @@ div.table_container {
 .modal-lg {
   width: 1200px;
 }
+
+/* table body */
+table.dataTable tbody tr {
+  background-color: var(--main-bg-color) !important;
+  color: black;
+}
