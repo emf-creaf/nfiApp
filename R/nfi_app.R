@@ -53,7 +53,7 @@ nfi_app <- function() {
     # navbar with inputs (custom function, see helpers.R)
     navbarPageWithInputs(
       # opts
-      title = 'NFI app',
+      title = 'IFN app',
       id = 'nav',
       collapsible = TRUE,
 
