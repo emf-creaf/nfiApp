@@ -18,7 +18,7 @@ nfi_app <- function() {
 
   ### Language input ###########################################################
   shiny::addResourcePath(
-    'images', system.file('resources', 'images', package = 'NFIappkg')
+    'images', system.file('resources', 'images', package = 'nfiApp')
   )
   lang_choices <- c('cat', 'spa', 'eng')
   lang_flags <- c(
