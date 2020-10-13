@@ -34,6 +34,16 @@ mod_mainData <- function(
   nfidb, lang, texts_thes, parent_session
 ) {
 
+  ## waiter/hostess progress ####
+  # set a progress with waiter. We will use infinite TRUE, that way we dont
+  # need to calculate any steps durations
+  # 1. hostess progress
+  hostess_progress <- waiter::Hostess$new(infinite = TRUE)
+  # 2. waiter overlay related to map id
+  waiter_overlay <- waiter::Waiter$new(
+    'mod_mapOutput-nfi_map', color = '#E8EAEB'
+  )
+
   # custom polygon ####
   # we need to check if custom polygon, to retrieve it and build the data later
   custom_polygon <- shiny::reactive({
@@ -124,13 +134,26 @@ mod_mainData <- function(
     eventExpr = apply_reactives$apply_button,
     valueExpr = {
 
-      # shiny::updateTabsetPanel(
-      #   parent_session, 'sidebar_tabset', selected = 'viz_panel'
-      # )
+      # progress
+      waiter_overlay$show()
+      waiter_overlay$update(
+        html = shiny::tagList(
+          hostess_progress$get_loader(
+            svg = 'images/hostess_image.svg',
+            progress_type = 'fill',
+            fill_direction = 'btt'
+          ),
+          shiny::h3(text_translate("progress_message", lang(), texts_thes)),
+          shiny::p(text_translate("progress_detail_initial", lang(), texts_thes))
+        )
+      )
+      hostess_progress$start()
+      on.exit(hostess_progress$close())
+      on.exit(waiter_overlay$hide(), add = TRUE)
 
       # set a progress
       progress <- shiny::Progress$new(session, min = 0, max = 100)
-      on.exit(progress$close())
+      on.exit(progress$close(), add = TRUE)
       progress$set(
         message = text_translate("progress_message", lang(), texts_thes),
           # 'Calculation in progress',

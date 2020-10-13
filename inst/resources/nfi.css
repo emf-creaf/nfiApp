@@ -141,3 +141,92 @@ table.dataTable tbody tr {
   background-color: var(--main-bg-color) !important;
   color: black;
 }
+
+/* waiter-waitress css custom */
+.waitress-overlay-content {
+  top: 5px;
+  right: 30%;
+}
+
+.progressjs-theme-blueOverlayRadiusWithPercentBar {
+  background-color: #E8EAEB;
+}
+
+.waiter-overlay-content {
+  width: 100%;
+  text-align: center;
+  height: auto;
+  position: relative;
+  right: 0%;
+  margin-right: 0px;
+  top: 0%;
+  margin-top: 0px;
+}
+
+.waiter-overlay-content > h3 {
+  width: 100%;
+  left: 0%;
+  text-align: center;
+  color: #1C1C20;
+}
+.waiter-overlay-content > p {
+  width: 100%;
+  left: 0%;
+  text-align: center;
+  color: #1C1C20;
+}
+
+.waiter-overlay {
+  top: 0px !important;
+  left: 0px !important;
+  z-index: 9999 !important;
+}
+
+#mod_infoUI-info_plot > .waiter-overlay {
+    height: 400px !important;
+    width: 598px !important;
+    top: 93px !important;
+    left: 0px !important;
+    background-color: rgb(28, 28, 32) !important;
+    position: absolute !important;
+    z-index: 9999 !important;
+}
+
+.ldBar {
+  /*margin-top: 50px;
+  left: 30%;*/
+  margin: auto;
+}
+
+.ldBar-label {
+  color: #1C1C20;
+}
+
+.timer-loader:not(:required) {
+  border: 6px solid #83A24E;
+  border-top-color: #83A24E;
+  border-top-style: solid;
+  border-top-width: 6px;
+  border-right-color: #83A24E;
+  border-right-style: solid;
+  border-right-width: 6px;
+  border-bottom-color: #83A24E;
+  border-bottom-style: solid;
+  border-bottom-width: 6px;
+  border-left-color: #83A24E;
+  border-left-style: solid;
+  border-left-width: 6px;
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+}
+
+.timer-loader:not(:required)::after {
+  background: #83A24E;
+}
+
+.timer-loader:not(:required)::before {
+  background: #83A24E;
+}

@@ -49,6 +49,9 @@ nfi_app <- function() {
 
     # use shinyjs
     shinyjs::useShinyjs(),
+    # waiter
+    waiter::use_waiter(),
+    waiter::use_hostess(),
 
     # navbar with inputs (custom function, see helpers.R)
     navbarPageWithInputs(
