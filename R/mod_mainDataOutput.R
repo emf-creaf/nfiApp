@@ -151,16 +151,6 @@ mod_mainData <- function(
       on.exit(hostess_progress$close())
       on.exit(waiter_overlay$hide(), add = TRUE)
 
-      # set a progress
-      progress <- shiny::Progress$new(session, min = 0, max = 100)
-      on.exit(progress$close(), add = TRUE)
-      progress$set(
-        message = text_translate("progress_message", lang(), texts_thes),
-          # 'Calculation in progress',
-        detail = text_translate("progress_detail_initial", lang(), texts_thes)
-          # 'This may take a while...'
-      )
-
       # tables to look at
       nfi <- data_reactives$nfi
       desglossament <- data_reactives$desglossament
@@ -179,24 +169,15 @@ mod_mainData <- function(
         ancillary_tables_to_look_at(nfi)
       )
 
-      progress$set(value = 5)
-
       # get data, join it
       first_table <-
         main_table_to_look_at(nfi, desglossament, diameter_classes) %>%
         nfidb$get_data(spatial = TRUE)
 
-      progress$set(value = 15)
-
       ancillary_tables <-
         ancillary_tables_to_look_at(nfi) %>%
         purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
         purrr::reduce(dplyr::left_join, by = c('plot_id'))
-
-      progress$set(
-        value = 35,
-        detail = text_translate("progress_detail_tables", lang(), texts_thes)
-      )
 
       main_data_pre <- dplyr::left_join(
         first_table, ancillary_tables
@@ -240,11 +221,6 @@ mod_mainData <- function(
       # validate to see if we can continue
       shiny::validate(
         shiny::need(nrow(main_data_table) > 0, 'filters too restrictive')
-      )
-
-      progress$set(
-        value = 45,
-        detail = text_translate("progress_detail_calc", lang(), texts_thes)
       )
 
       # processed_data
@@ -309,10 +285,8 @@ mod_mainData <- function(
             nrow(raw_main_data) > 0, 'polygon contains no plots'
           ))
         }
-        progress$set(value = 55)
       } else {
         raw_main_data <- main_data_table
-        progress$set(value = 55)
       }
 
       # general_summary ####
@@ -334,16 +308,16 @@ mod_mainData <- function(
             n = ~ n()
           )
         )
-      progress$set(value = 75)
+
 
       # requested_data ####
       if (isTRUE(group_by_div)) {
         requested_data <- general_summary
-        progress$set(value = 95)
+
       } else {
         if (!isTRUE(group_by_dom)) {
           requested_data <- raw_main_data
-          progress$set(value = 95)
+
         } else {
           requested_data <-
             raw_main_data %>%
@@ -360,7 +334,7 @@ mod_mainData <- function(
                 n = ~ n()
               )
             )
-          progress$set(value = 95)
+
         }
       }
 
