@@ -309,7 +309,6 @@ mod_mainData <- function(
           )
         )
 
-
       # requested_data ####
       if (isTRUE(group_by_div)) {
         requested_data <- general_summary

@@ -285,6 +285,12 @@ mod_map <- function(
     # old variables
     shiny::validate(shiny::need(nrow(polygon_data) > 0, 'no polygon data'))
 
+    # what happens with ES when there is only 1 value, is NA. And that creates
+    # a problem with leaflet::colorNumeric, so we change is all is na to 0
+    if (all(is.na(color_vector))) {
+      color_vector[is.na(color_vector)] <- 0
+    }
+
     # palette and legend class
     if (is.numeric(color_vector)) {
 
