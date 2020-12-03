@@ -207,14 +207,15 @@ mod_map <- function(
       fill_color <- rlang::expr(
         aesthetics_data$pal(aesthetics_data$color_vector)
       )
+
+      geometry_column <-
+        attr(rlang::eval_tidy(polygon_join_data_expr), 'sf_column')
       # data
       polygon_data <-  main_data_reactives$main_data$requested_data %>%
-        # dplyr::as_tibble() %>%
-        # dplyr::select(-geometry) %>%
         dplyr::left_join(
           rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
         ) %>%
-        sf::st_as_sf(sf_column_name = 'geometry') %>%
+        sf::st_as_sf(sf_column_name = geometry_column) %>%
         dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
       # validation
       shiny::validate(
