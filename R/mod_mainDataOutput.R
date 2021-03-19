@@ -81,6 +81,10 @@ mod_mainData <- function(
       # rename the poly_id
       names(user_file_polygons)[1] <- 'poly_id'
 
+      # ensure poly_id is character
+      user_file_polygons <- user_file_polygons %>%
+        dplyr::mutate(poly_id = as.character(poly_id))
+
       return(user_file_polygons)
     }
 
