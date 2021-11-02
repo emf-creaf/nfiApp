@@ -81,7 +81,7 @@ mod_help <- function(
           shiny::br(),
           shiny::tags$a(
             text_translate('link_to_tutorials_text', lang(), texts_thes),
-            href = "http://laboratoriforestal.creaf.uab.cat/tutorial/ifn_app/"
+            href = "http://laboratoriforestal.creaf.cat/tutorial/ifn_app/"
           )
         )
       )
