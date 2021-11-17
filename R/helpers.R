@@ -5,8 +5,8 @@ navbarPageWithInputs <- function(..., inputs) {
   navbar <- shiny::navbarPage(...)
   form <- shiny::tags$form(class = "navbar-form", inputs)
 
-  navbar[[3]][[1]]$children[[1]]$children[[2]] <- htmltools::tagAppendChild(
-    navbar[[3]][[1]]$children[[1]]$children[[2]], form
+  navbar[[4]][[1]][[1]]$children[[1]]$children[[2]] <- htmltools::tagAppendChild(
+    navbar[[4]][[1]][[1]]$children[[1]]$children[[2]], form
   )
   navbar
 }
