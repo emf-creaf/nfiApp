@@ -298,18 +298,21 @@ mod_mainData <- function(
         nfi, diameter_classes, admin_div, group_by_dom, dominant_group,
         dominant_criteria, dominant_nfi, desglossament
       )
+
       general_summary <- raw_main_data %>%
         dplyr::as_tibble() %>%
         dplyr::select(-geometry) %>%
         dplyr::group_by(!!! group_by_general) %>%
-        dplyr::summarise_if(
-          .predicate = is.numeric,
-          .funs = list(
-            mean = ~ mean(., na.rm = TRUE),
-            se = ~ sd(., na.rm = TRUE)/sqrt(n()),
-            min = ~ min(., na.rm = TRUE),
-            max = ~ max(., na.rm = TRUE),
-            n = ~ n()
+        dplyr::summarise(
+          dplyr::across(
+            tidyselect:::where(function(x) {is.numeric(x) && !all(is.na(x))}),
+            list(
+              mean = ~ mean(., na.rm = TRUE),
+              se = ~ sd(., na.rm = TRUE)/sqrt(n()),
+              min = ~ min(., na.rm = TRUE),
+              max = ~ max(., na.rm = TRUE),
+              n = ~ n()
+            )
           )
         )
 
@@ -327,17 +330,18 @@ mod_mainData <- function(
             dplyr::as_tibble() %>%
             dplyr::select(-geometry) %>%
             dplyr::group_by(!!! group_by_general[2]) %>%
-            dplyr::summarise_if(
-              .predicate = is.numeric,
-              .funs = list(
-                mean = ~ mean(., na.rm = TRUE),
-                se = ~ sd(., na.rm = TRUE)/sqrt(n()),
-                min = ~ min(., na.rm = TRUE),
-                max = ~ max(., na.rm = TRUE),
-                n = ~ n()
+            dplyr::summarise(
+              dplyr::across(
+                tidyselect:::where(function(x) {is.numeric(x) && !all(is.na(x))}),
+                list(
+                  mean = ~ mean(., na.rm = TRUE),
+                  se = ~ sd(., na.rm = TRUE)/sqrt(n()),
+                  min = ~ min(., na.rm = TRUE),
+                  max = ~ max(., na.rm = TRUE),
+                  n = ~ n()
+                )
               )
             )
-
         }
       }
 
