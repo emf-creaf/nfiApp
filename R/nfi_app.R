@@ -195,9 +195,9 @@ $(document).on('shiny:disconnected', function(event) {
     })
 
     # cache ####
-    data_inputs_cache <- shiny::memoryCache(evict = 'fifo')
-    filters_cache <- shiny::memoryCache(evict = 'fifo')
-    viz_cache <- shiny::memoryCache(evict = 'fifo')
+    data_inputs_cache <- cachem::cache_mem(evict = 'fifo')
+    filters_cache <- cachem::cache_mem(evict = 'fifo')
+    viz_cache <- cachem::cache_mem(evict = 'fifo')
 
     # modules ####
     # data inputs

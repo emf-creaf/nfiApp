@@ -9,7 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2
 Imports: 
     glue,
     dplyr,
@@ -33,9 +33,12 @@ Imports:
     scales,
     sf,
     viridis,
-    tidyselect
+    tidyselect,
+    cachem
 Suggests: 
     testthat (>= 2.1.0),
     shinytest
 Remotes: 
     MalditoBarbudo/lfcdata
+Depends: 
+    R (>= 2.10)

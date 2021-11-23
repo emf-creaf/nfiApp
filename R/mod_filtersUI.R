@@ -24,7 +24,7 @@ mod_filtersUI <- function(id) {
 #'
 #' @param lang lang reactive value
 #' @param data_reactives reactives from the dataInput module
-#' @param cache memoryCache to store the filters values
+#' @param cache cache_mem object to store the filters values
 #' @param var_thes,numerical_thes,texts_thes,categorical_thes thesauruses
 #'
 #' @details

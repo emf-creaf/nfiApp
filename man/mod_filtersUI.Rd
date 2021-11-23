@@ -33,7 +33,7 @@ mod_filters(
 
 \item{data_reactives}{reactives from the dataInput module}
 
-\item{cache}{memoryCache to store the filters values}
+\item{cache}{cache_mem object to store the filters values}
 
 \item{var_thes, numerical_thes, texts_thes, categorical_thes}{thesauruses}
 }
