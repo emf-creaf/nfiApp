@@ -80,12 +80,26 @@ mod_mainData <- function(
         shiny::need(user_file_polygons, 'no file provided')
       )
 
-      # rename the poly_id
-      names(user_file_polygons)[1] <- 'poly_id'
+      # check for poly_id
+      if (!"poly_id" %in% names(user_file_polygons)) {
+        warning('No poly_id variable found in spatial file, using first variable found as id')
+        user_file_polygons$poly_id <- as.character(user_file_polygons[[1]])
 
-      # ensure poly_id is character
-      user_file_polygons <- user_file_polygons %>%
-        dplyr::mutate(poly_id = as.character(poly_id))
+        shiny::showNotification(
+          ui = shiny::tagList(
+            shiny::h4(text_translate("poly_id_missing_title", lang(), texts_thes))
+          ),
+          action = shiny::tagList(
+            text_translate("poly_id_missing_message", lang(), texts_thes)
+          ),
+          duration = 15,
+          type = "warning"
+        )
+
+      } else {
+        # ensure polygon id is character (factors fuck it all)
+        user_file_polygons$poly_id <- as.character(user_file_polygons$poly_id)
+      }
 
       return(user_file_polygons)
     }

@@ -244,6 +244,9 @@ texts_thes <- tibble::tribble(
   "progress_detail_initial", "Querying database", "Consultando base de datos", "Consultant la base de dades",
   "progress_detail_tables", "Applying filters", "Aplicando filtros", "Aplicant filtres",
   "progress_detail_calc", "Data processing", "Procesando datos", "Processar les dades",
+  # poly_id_var_check
+  "poly_id_missing_title", "Not 'poly_id' variable found in file", "No se ha encontrado ninguna variable llamada 'poly_id' en el archivo", "No s'ha trobat cap variable anomenada 'poly_id' al fitxer",
+  "poly_id_missing_message", "First variable found in file used as poly_id", "Se ha usado la primera variable del archivo como poly_id", "S'ha fet servir la primera variable del fitxer com a poly_id",
 
   'NA_', "", "", ""
 )
