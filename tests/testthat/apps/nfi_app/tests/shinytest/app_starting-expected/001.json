@@ -1,0 +1,373 @@
+{
+  "input": {
+    "first_time": "true",
+    "lang": "cat",
+    "main_panel_tabset": "map_panel",
+    "mod_applyButtonInput-apply": 1,
+    "mod_dataInput-admin_div": "region",
+    "mod_dataInput-desglossament": "plot",
+    "mod_dataInput-diameter_classes": false,
+    "mod_dataInput-dominant_criteria": "density",
+    "mod_dataInput-dominant_group": "species",
+    "mod_dataInput-dominant_nfi": "none",
+    "mod_dataInput-group_by_div": false,
+    "mod_dataInput-group_by_dom": false,
+    "mod_dataInput-nfi": "nfi_4",
+    "mod_dataInput-shinyjs-resettable-mod_dataInput-dominant_criteria": {
+      "mod_dataInput-dominant_criteria": {
+        "type": "RadioButtons",
+        "value": "density"
+      }
+    },
+    "mod_dataInput-shinyjs-resettable-mod_dataInput-dominant_group": {
+      "mod_dataInput-dominant_group": {
+        "type": "RadioButtons",
+        "value": "species"
+      }
+    },
+    "mod_dataInput-shinyjs-resettable-mod_dataInput-dominant_nfi": {
+      "mod_dataInput-dominant_nfi": {
+        "type": "RadioButtons",
+        "value": "none"
+      }
+    },
+    "mod_dataInput-user_file_sel": null,
+    "mod_mapOutput-nfi_map_bounds": {
+      "north": 42.9202292273379,
+      "east": 2.6092529296875,
+      "south": 40.459486898372,
+      "west": -0.406494140625
+    },
+    "mod_mapOutput-nfi_map_center": {
+      "lng": 1.1,
+      "lat": 41.7
+    },
+    "mod_mapOutput-nfi_map_groups": [
+      "Relief",
+      "drawn_poly"
+    ],
+    "mod_mapOutput-nfi_map_zoom": 8,
+    "nav": "<div id=\"main_tab_translation-tab_title_translated\" class=\"shiny-html-output\"><\/div>",
+    "sidebar_tabset": "data_inputs_panel"
+  },
+  "output": {
+    "data_translation-tab_title_translated": {
+      "html": "Dades",
+      "deps": [
+
+      ]
+    },
+    "filters_translation-tab_title_translated": {
+      "html": "Filtres",
+      "deps": [
+
+      ]
+    },
+    "help_translation-tab_title_translated": {
+      "html": "Ajuda",
+      "deps": [
+
+      ]
+    },
+    "main_tab_translation-tab_title_translated": {
+      "html": "Explora",
+      "deps": [
+
+      ]
+    },
+    "map_translation-tab_title_translated": {
+      "html": "Mapa",
+      "deps": [
+
+      ]
+    },
+    "mod_applyButtonInput-apply_panel": {
+      "html": "<div class=\"row\">\n  <button id=\"mod_applyButtonInput-apply\" type=\"button\" class=\"btn btn-default action-button\">\n    <i class=\"fa fa-check-circle\" role=\"presentation\" aria-label=\"check-circle icon\"><\/i>\n    Aplicar\n  <\/button>\n<\/div>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "5.15.3",
+          "src": {
+            "href": "font-awesome-5.15.3"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
+    "mod_applyButtonInput-data_requested_info": {
+      "html": "<h4>Resum de la consulta<\/h4>\n<p>\n  <strong>\n    Versió de les dades\n    : \n  <\/strong>\n  IFN v4\n<\/p>\n<p>\n  <strong>\n    Agrupat per\n    : \n  <\/strong>\n  Cap\n<\/p>\n<p>\n  <strong>\n    Desglossat per\n    : \n  <\/strong>\n  Cap\n<\/p>\n<p>\n  <strong>\n    Filtres actius\n    : \n  <\/strong>\n  Cap\n<\/p>",
+      "deps": [
+
+      ]
+    },
+    "mod_dataInput-mod_data_container": {
+      "html": "<h4>Selecció de dades<\/h4>\n<div class=\"row\">\n  <div class=\"col-sm-6\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label\" for=\"mod_dataInput-nfi\">Versió de les dades<\/label>\n      <select id=\"mod_dataInput-nfi\" class=\"selectpicker form-control\"><option value=\"nfi_2\">IFN v2<\/option>\n<option value=\"nfi_3\">IFN v3<\/option>\n<option value=\"nfi_4\" selected>IFN v4<\/option>\n<option value=\"nfi_2_nfi_3\">IFN comp v2 - v3<\/option>\n<option value=\"nfi_3_nfi_4\">IFN comp v3 - v4<\/option>\n<option value=\"nfi_2_shrub\">IFN v2 Arbusts<\/option>\n<option value=\"nfi_3_shrub\">IFN v3 Arbusts<\/option>\n<option value=\"nfi_4_shrub\">IFN v4 Arbusts<\/option>\n<option value=\"nfi_2_regen\">IFN v2 Regeneració<\/option>\n<option value=\"nfi_3_regen\">IFN v3 Regeneració<\/option>\n<option value=\"nfi_4_regen\">IFN v4 Regeneració<\/option><\/select>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-6\">\n    <div class=\"form-group shiny-input-container\">\n      <label class=\"control-label\" for=\"mod_dataInput-admin_div\">Divisions<\/label>\n      <select id=\"mod_dataInput-admin_div\" class=\"selectpicker form-control\"><option value=\"aut_community\">Catalunya<\/option>\n<option value=\"province\">Provincies<\/option>\n<option value=\"vegueria\">Vegueries<\/option>\n<option value=\"region\" selected>Comarques<\/option>\n<option value=\"municipality\">Municipis<\/option>\n<option value=\"natural_interest_area\">Àrees d'interès natural<\/option>\n<option value=\"special_protection_natural_area\">Àrees naturals de protecció especial<\/option>\n<option value=\"natura_network_2000\">Xarxa Natura 2000<\/option>\n<option value=\"file\">Arxiu de polìgons<\/option>\n<option value=\"drawn_poly\">Polígon dibuixat<\/option><\/select>\n    <\/div>\n  <\/div>\n<\/div>\n<div id=\"mod_dataInput-file_upload_panel\" class=\"shinyjs-hide\">\n  <div class=\"row\">\n    <div class=\"col-sm-7\" align=\"center\">\n      <div class=\"form-group shiny-input-container\">\n        <label class=\"control-label\" id=\"mod_dataInput-user_file_sel-label\" for=\"mod_dataInput-user_file_sel\">Selecciona l'arxiu a carregar<\/label>\n        <div class=\"input-group\">\n          <label class=\"input-group-btn input-group-prepend\">\n            <span class=\"btn btn-default btn-file\">\n              Inspecciona...\n              <input id=\"mod_dataInput-user_file_sel\" name=\"mod_dataInput-user_file_sel\" type=\"file\" style=\"position: absolute !important; top: -99999px !important; left: -99999px !important;\" accept=\"zip,gpkg\"/>\n            <\/span>\n          <\/label>\n          <input type=\"text\" class=\"form-control\" placeholder=\"Cap fitxer seleccionat\" readonly=\"readonly\"/>\n        <\/div>\n        <div id=\"mod_dataInput-user_file_sel_progress\" class=\"progress active shiny-file-input-progress\">\n          <div class=\"progress-bar\"><\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-5\" align=\"center\">\n      <p>El fitxer pot ser un shapefile (comprimit en un fitxer zip) o un fitxer GeoPackage (.gpkg). Han de tenir un camp anomenat \"poly_id\" amb els identificadors dels polígons continguts.<\/p>\n    <\/div>\n  <\/div>\n<\/div>\n<h4>Agrupament de les dades<\/h4>\n<div class=\"row\">\n  <div class=\"col-sm-6\" align=\"center\">\n    <div class=\"form-group shiny-input-container\">\n      <div class=\"pretty p-default p-curve p-fill\">\n        <input id=\"mod_dataInput-group_by_div\" type=\"checkbox\"/>\n        <div class=\"state p-success\">\n          <label>\n            <span>Agrupar per divisió administrativa<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-6\" align=\"center\">\n    <div class=\"form-group shiny-input-container\">\n      <div class=\"pretty p-default p-curve p-fill\">\n        <input id=\"mod_dataInput-group_by_dom\" type=\"checkbox\"/>\n        <div class=\"state p-success\">\n          <label>\n            <span>Agrupar per grup funcional<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div id=\"mod_dataInput-dom_grouping_panel\" class=\"shinyjs-hide\">\n  <div class=\"row\">\n    <div class=\"col-sm-5 offset-md-1 col-sm-offset-1\">\n      <div id=\"mod_dataInput-dominant_group\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n        <label class=\"control-label\" for=\"mod_dataInput-dominant_group\">Grup funcional<\/label>\n        <div class=\"shiny-options-group\">\n          <div style=\"height:7px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_group\" value=\"species\" checked=\"checked\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Espècie<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_group\" value=\"simpspecies\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Espècie simplificada<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_group\" value=\"genus\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Gènere<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_group\" value=\"dec\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Cad/Escler/Conif.<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_group\" value=\"bc\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Planif/Conif.<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-5 offset-md-1 col-sm-offset-1\">\n      <div id=\"mod_dataInput-dominant_criteria\" class=\"form-group shiny-input-radiogroup shiny-input-container\">\n        <label class=\"control-label\" for=\"mod_dataInput-dominant_criteria\">Criteri de dominància<\/label>\n        <div class=\"shiny-options-group\">\n          <div style=\"height:7px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_criteria\" value=\"density\" checked=\"checked\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Densitat<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_criteria\" value=\"basal_area\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Àrea basal<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n        <\/div>\n      <\/div>\n      <div class=\"form-group shiny-input-radiogroup shiny-input-container shinyjs-hide\" id=\"mod_dataInput-dominant_nfi\">\n        <label class=\"control-label\" for=\"mod_dataInput-dominant_nfi\">Dominant en<\/label>\n        <div class=\"shiny-options-group\">\n          <div style=\"height:7px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_nfi\" value=\"none\" checked=\"checked\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>Cap<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_nfi\" value=\"nfi2\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>IFN 2<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_nfi\" value=\"nfi3\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>IFN 3<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n          <div class=\"pretty p-default p-round p-fill\">\n            <input type=\"radio\" name=\"mod_dataInput-dominant_nfi\" value=\"nfi4\"/>\n            <div class=\"state p-success\">\n              <label>\n                <span>IFN 4<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n          <div style=\"height:3px;\"><\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n<div id=\"mod_dataInput-desglossament_panel\">\n  <h4>Desglossat de les dades<\/h4>\n  <div class=\"row\">\n    <div class=\"col-sm-6\" align=\"left\">\n      <div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n        <label class=\"control-label\" for=\"mod_dataInput-desglossament\">Selecciona el nivell<\/label>\n        <select data-width=\"100%\" id=\"mod_dataInput-desglossament\" class=\"selectpicker form-control\"><option value=\"plot\" selected>Total per parcel·la<\/option>\n<option value=\"species\">Desglossat per espècies<\/option>\n<option value=\"simpspecies\">Desglossat per espècie simplificada<\/option>\n<option value=\"genus\">Desglossat per gènere<\/option>\n<option value=\"dec\">Desglossat per caducifòlia-esclerofil·le-conífera<\/option>\n<option value=\"bc\">Desglossat per planifòlia-conífera<\/option><\/select>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-6\" align=\"center\">\n      <br/>\n      <br/>\n      <div class=\"form-group shiny-input-container\">\n        <div class=\"pretty p-default p-curve p-fill\">\n          <input id=\"mod_dataInput-diameter_classes\" type=\"checkbox\"/>\n          <div class=\"state p-success\">\n            <label>\n              <span>Desglossar per classes diamètriques?<\/span>\n            <\/label>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "shinyWidgets",
+          "version": "0.6.4",
+          "src": {
+            "href": "shinyWidgets"
+          },
+          "meta": null,
+          "script": "shinyWidgets-bindings.min.js",
+          "stylesheet": "shinyWidgets.min.css",
+          "head": null,
+          "attachment": null,
+          "all_files": false
+        },
+        {
+          "name": "bootstrap-select",
+          "version": "1.13.8",
+          "src": {
+            "href": "shinyWidgets/bootstrap-select"
+          },
+          "meta": null,
+          "script": "js/bootstrap-select.min.js",
+          "stylesheet": "css/bootstrap-select.min.css",
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        },
+        {
+          "name": "pretty",
+          "version": "3.0.3",
+          "src": {
+            "href": "shinyWidgets/pretty-checkbox"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "pretty-checkbox.min.css",
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
+    "mod_mapOutput-map_container": {
+      "html": "<div id=\"cite\">Dades elaborades pel CTFC i el CREAF a partir de les dades brutes de NFI ateses pel MAPA (Govern espanyol)<\/div>",
+      "deps": [
+
+      ]
+    },
+    "mod_mapOutput-nfi_map": {
+      "x": {
+        "options": {
+          "crs": {
+            "crsClass": "L.CRS.EPSG3857",
+            "code": null,
+            "proj4def": null,
+            "projectedBounds": null,
+            "options": {
+
+            }
+          }
+        },
+        "setView": [
+          [
+            41.7,
+            1.1
+          ],
+          8,
+          [
+
+          ]
+        ],
+        "calls": [
+          {
+            "method": "addProviderTiles",
+            "args": [
+              "Esri.WorldShadedRelief",
+              null,
+              "Relief",
+              {
+                "errorTileUrl": "",
+                "noWrap": false,
+                "detectRetina": false
+              }
+            ]
+          },
+          {
+            "method": "addProviderTiles",
+            "args": [
+              "Esri.WorldImagery",
+              null,
+              "Imaginery",
+              {
+                "errorTileUrl": "",
+                "noWrap": false,
+                "detectRetina": false
+              }
+            ]
+          },
+          {
+            "method": "createMapPane",
+            "args": [
+              "admin_divs",
+              410
+            ]
+          },
+          {
+            "method": "createMapPane",
+            "args": [
+              "plots",
+              420
+            ]
+          },
+          {
+            "method": "addLayersControl",
+            "args": [
+              [
+                "Relief",
+                "Imaginery"
+              ],
+              [
+
+              ],
+              {
+                "collapsed": true,
+                "autoZIndex": true,
+                "position": "topright"
+              }
+            ]
+          },
+          {
+            "method": "addDrawToolbar",
+            "args": [
+              null,
+              "drawn_poly",
+              {
+                "position": "topleft",
+                "draw": {
+                  "polyline": false,
+                  "polygon": {
+                    "showArea": false,
+                    "metric": true,
+                    "shapeOptions": {
+                      "stroke": true,
+                      "color": "#03f",
+                      "weight": 1,
+                      "opacity": 1,
+                      "fill": true,
+                      "fillColor": "#03f",
+                      "fillOpacity": 0.4,
+                      "clickable": true,
+                      "smoothFactor": 1,
+                      "noClip": true
+                    },
+                    "repeatMode": false
+                  },
+                  "circle": false,
+                  "rectangle": false,
+                  "marker": false,
+                  "circlemarker": false,
+                  "singleFeature": true
+                },
+                "edit": {
+                  "edit": true,
+                  "remove": true,
+                  "allowIntersection": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "evals": [
+
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+        {
+          "name": "leaflet-providers",
+          "version": "1.9.0",
+          "src": {
+            "href": "leaflet-providers-1.9.0"
+          },
+          "meta": null,
+          "script": "leaflet-providers_1.9.0.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": false
+        },
+        {
+          "name": "leaflet-providers-plugin",
+          "version": "2.1.1",
+          "src": {
+            "href": "leaflet-providers-plugin-2.1.1"
+          },
+          "meta": null,
+          "script": "leaflet-providers-plugin.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        },
+        {
+          "name": "lfx-draw",
+          "version": "1.0.2",
+          "src": {
+            "href": "lfx-draw-1.0.2"
+          },
+          "meta": null,
+          "script": [
+            "lfx-draw-prod.js",
+            "lfx-draw-bindings.js"
+          ],
+          "stylesheet": "lfx-draw-prod.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "lfx-draw-drag",
+          "version": "1.0.2",
+          "src": {
+            "href": "lfx-draw-drag-1.0.2"
+          },
+          "meta": null,
+          "script": "lfx-draw-drag-prod.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "save_translation-tab_title_translated": {
+      "html": "Guardar",
+      "deps": [
+
+      ]
+    },
+    "table_translation-tab_title_translated": {
+      "html": "Taula",
+      "deps": [
+
+      ]
+    },
+    "viz_translation-tab_title_translated": {
+      "html": "Visualització",
+      "deps": [
+
+      ]
+    }
+  },
+  "export": {
+
+  }
+}
