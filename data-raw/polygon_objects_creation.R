@@ -252,8 +252,15 @@ texts_thes <- tibble::tribble(
 )
 
 
+# thesauruses
+nfidb <- lfcdata::nfi()
 
-
+var_thes <- nfidb$get_data('variables_thesaurus')
+numerical_thes <- nfidb$get_data('variables_numerical')
+# texts_thes <- nfidb$get_data('texts_thesaurus')
+categorical_thes <- nfidb$get_data('variables_categorical') %>%
+  dplyr::select(-dummy_id) %>%
+  tidyr::nest(var_values = c(var_values))
 
 
 
@@ -261,8 +268,10 @@ usethis::use_data(
   municipality_polygons, region_polygons, vegueria_polygons,
   province_polygons, aut_community_polygons, natural_interest_area_polygons,
   special_protection_natural_area_polygons, natura_network_2000_polygons,
+
   texts_thes,
 
+  var_thes, numerical_thes, categorical_thes,
 
   internal = TRUE, overwrite = TRUE
 )

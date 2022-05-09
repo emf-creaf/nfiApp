@@ -9,12 +9,12 @@ nfi_app <- function() {
   nfidb <- lfcdata::nfi()
 
   ### thesauruses ##############################################################
-  var_thes <- nfidb$get_data('variables_thesaurus')
-  numerical_thes <- nfidb$get_data('variables_numerical')
-  # texts_thes <- nfidb$get_data('texts_thesaurus')
-  categorical_thes <- nfidb$get_data('variables_categorical') %>%
-    dplyr::select(-dummy_id) %>%
-    tidyr::nest(var_values = c(var_values))
+  # var_thes <- nfidb$get_data('variables_thesaurus')
+  # numerical_thes <- nfidb$get_data('variables_numerical')
+  # # texts_thes <- nfidb$get_data('texts_thesaurus')
+  # categorical_thes <- nfidb$get_data('variables_categorical') %>%
+  #   dplyr::select(-dummy_id) %>%
+  #   tidyr::nest(var_values = c(var_values))
 
   ### Language input ###########################################################
   shiny::addResourcePath(
