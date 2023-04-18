@@ -84,10 +84,19 @@ mod_map <- function(
       leaflet::addProviderTiles(
         leaflet::providers$Esri.WorldImagery, group = 'Imaginery'
       ) |>
+      leaflet::addProviderTiles(
+        leaflet::providers$OpenStreetMap, group = 'OSM'
+      ) |>
+      leaflet::addProviderTiles(
+        leaflet::providers$Esri.WorldGrayCanvas, group = 'WorldGrayCanvas'
+      ) |>
+      leaflet::addProviderTiles(
+        leaflet::providers$CartoDB.PositronNoLabels, group = 'PositronNoLabels'
+      ) |>
       leaflet::addMapPane('admin_divs', zIndex = 410) |>
       leaflet::addMapPane('plots', zIndex = 420) |>
       leaflet::addLayersControl(
-        baseGroups = c('Relief', 'Imaginery'),
+        baseGroups = c('Relief', 'Imaginery', 'OSM', 'WorldGrayCanvas', 'PositronNoLabels'),
         options = leaflet::layersControlOptions(collapsed = TRUE)
       ) |>
       # leaflet.extras plugins
@@ -339,19 +348,19 @@ mod_map <- function(
         viz_pal_config,
         "low" = leaflet::colorNumeric(
           scales::gradient_n_pal(
-            viridis::plasma(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
+            viridis::mako(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
-          color_vector_legend, reverse = viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = viz_pal_reverse, na.color = 'transparent'
         ),
         "high" = leaflet::colorNumeric(
           scales::gradient_n_pal(
-            viridis::plasma(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
+            viridis::mako(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
-          color_vector_legend, reverse = viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = viz_pal_reverse, na.color = 'transparent'
         ),
         "normal" = leaflet::colorNumeric(
-          'plasma', color_vector_legend, reverse = viz_pal_reverse,
-          na.color = 'black'
+          viridis::mako(256), color_vector_legend, reverse = viz_pal_reverse,
+          na.color = 'transparent'
         )
       )
       # as we need to reverse the legend values (low at bottom) we need an
@@ -360,28 +369,28 @@ mod_map <- function(
         viz_pal_config,
         "low" = leaflet::colorNumeric(
           scales::gradient_n_pal(
-            viridis::plasma(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
+            viridis::mako(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
-          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'transparent'
         ),
         "high" = leaflet::colorNumeric(
           scales::gradient_n_pal(
-            viridis::plasma(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
+            viridis::mako(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
-          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'black'
+          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'transparent'
         ),
         "normal" = leaflet::colorNumeric(
-          'plasma', color_vector_legend, reverse = !viz_pal_reverse,
-          na.color = 'black'
+          viridis::mako(256), color_vector_legend, reverse = !viz_pal_reverse,
+          na.color = 'transparent'
         )
       )
       legend_class <- 'info legend na_out'
     } else {
       pal <- leaflet::colorFactor(
-        'plasma', color_vector, reverse = viz_pal_reverse, na.color = 'black'
+        viridis::mako(256), color_vector, reverse = viz_pal_reverse, na.color = 'transparent'
       )
       pal_legend <- leaflet::colorFactor(
-        'plasma', color_vector, reverse = !viz_pal_reverse, na.color = 'black'
+        viridis::mako(256), color_vector, reverse = !viz_pal_reverse, na.color = 'transparent'
       )
       legend_class <- 'info legend'
       color_vector_legend <- color_vector
