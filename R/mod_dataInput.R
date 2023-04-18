@@ -50,8 +50,8 @@ mod_data <- function(
       'nfi_2_shrub', 'nfi_3_shrub', 'nfi_4_shrub',
       # regeneration
       'nfi_2_regen', 'nfi_3_regen', 'nfi_4_regen'
-    ) %>%
-      magrittr::set_names(c(
+    ) |>
+      purrr::set_names(c(
         text_translate('nfi_2', lang(), texts_thes),
         text_translate('nfi_3', lang(), texts_thes),
         text_translate('nfi_4', lang(), texts_thes),
@@ -69,8 +69,8 @@ mod_data <- function(
       'aut_community', 'province', 'vegueria', 'region', 'municipality',
       'natural_interest_area', 'special_protection_natural_area',
       'natura_network_2000', 'file', 'drawn_poly'
-    ) %>%
-      magrittr::set_names(c(
+    ) |>
+      purrr::set_names(c(
         text_translate('aut_community', lang(), texts_thes),
         text_translate('province', lang(), texts_thes),
         text_translate('vegueria', lang(), texts_thes),
@@ -85,8 +85,8 @@ mod_data <- function(
 
     desglossament_choices <- c(
       'plot', 'species', 'simpspecies', 'genus', 'dec', 'bc'
-    ) %>%
-      magrittr::set_names(c(
+    ) |>
+      purrr::set_names(c(
         text_translate('fg_plot', lang(), texts_thes),
         text_translate('fg_species', lang(), texts_thes),
         text_translate('fg_simpspecies', lang(), texts_thes),
@@ -98,8 +98,8 @@ mod_data <- function(
     dominant_group_choices <- c(
       # 'none',
       'species', 'simpspecies', 'genus', 'dec', 'bc'
-    ) %>%
-      magrittr::set_names(c(
+    ) |>
+      purrr::set_names(c(
         # text_translate('none', lang(), texts_thes),
         text_translate('species', lang(), texts_thes),
         text_translate('simpspecies', lang(), texts_thes),
@@ -108,14 +108,14 @@ mod_data <- function(
         text_translate('bc', lang(), texts_thes)
       ))
 
-    dominant_criteria_choices <- c('density', 'basal_area') %>%
-      magrittr::set_names(c(
+    dominant_criteria_choices <- c('density', 'basal_area') |>
+      purrr::set_names(c(
         text_translate('dominant_criteria_density', lang(), texts_thes),
         text_translate('dominant_criteria_basal_area', lang(), texts_thes)
       ))
 
-    dominant_nfi_choices <- c('none', 'nfi2', 'nfi3', 'nfi4') %>%
-      magrittr::set_names(c(
+    dominant_nfi_choices <- c('none', 'nfi2', 'nfi3', 'nfi4') |>
+      purrr::set_names(c(
         text_translate('none', lang(), texts_thes),
         text_translate('nfi2', lang(), texts_thes),
         text_translate('nfi3', lang(), texts_thes),
@@ -329,8 +329,8 @@ mod_data <- function(
           'nfi_2', 'nfi_3', 'nfi_4',
           # comparisions
           'nfi_2_nfi_3', 'nfi_3_nfi_4'
-        ) %>%
-          magrittr::set_names(c(
+        ) |>
+          purrr::set_names(c(
             text_translate('nfi_2', lang(), texts_thes),
             text_translate('nfi_3', lang(), texts_thes),
             text_translate('nfi_4', lang(), texts_thes),
@@ -365,8 +365,8 @@ mod_data <- function(
           'nfi_2_shrub', 'nfi_3_shrub', 'nfi_4_shrub',
           # regeneration
           'nfi_2_regen', 'nfi_3_regen', 'nfi_4_regen'
-        ) %>%
-          magrittr::set_names(c(
+        ) |>
+          purrr::set_names(c(
             text_translate('nfi_2', lang(), texts_thes),
             text_translate('nfi_3', lang(), texts_thes),
             text_translate('nfi_4', lang(), texts_thes),
@@ -402,14 +402,14 @@ mod_data <- function(
     if (nfi %in% c('nfi_2_nfi_3', 'nfi_3_nfi_4')) {
       # show only relevant options for the comparision selected
       if (nfi == 'nfi_2_nfi_3') {
-        dominant_nfi_choices <- c('nfi2', 'nfi3') %>%
-          magrittr::set_names(c(
+        dominant_nfi_choices <- c('nfi2', 'nfi3') |>
+          purrr::set_names(c(
             text_translate('nfi2', lang(), texts_thes),
             text_translate('nfi3', lang(), texts_thes)
           ))
       } else {
-        dominant_nfi_choices <- c('nfi3', 'nfi4') %>%
-          magrittr::set_names(c(
+        dominant_nfi_choices <- c('nfi3', 'nfi4') |>
+          purrr::set_names(c(
             text_translate('nfi3', lang(), texts_thes),
             text_translate('nfi4', lang(), texts_thes)
           ))
@@ -471,8 +471,8 @@ mod_data <- function(
 
     if (nfi %in% available) {
 
-      desglossament_choices <- c('species') %>%
-        magrittr::set_names(c(
+      desglossament_choices <- c('species') |>
+        purrr::set_names(c(
           text_translate('fg_species', lang(), texts_thes)
         ))
       selected_desglossament <-
@@ -489,8 +489,8 @@ mod_data <- function(
 
       desglossament_choices <- desglossament_choices <- c(
         'plot', 'species', 'simpspecies', 'genus', 'dec', 'bc'
-      ) %>%
-        magrittr::set_names(c(
+      ) |>
+        purrr::set_names(c(
           text_translate('fg_plot', lang(), texts_thes),
           text_translate('fg_species', lang(), texts_thes),
           text_translate('fg_simpspecies', lang(), texts_thes),

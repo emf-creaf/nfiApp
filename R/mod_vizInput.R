@@ -45,8 +45,8 @@ mod_viz <- function(
     # The selected choice is always the one in the cache if it exists and is
     # available, if not the default one.
     # statistic
-    statistic_choices <- c('_mean', '_se', '_min', '_max', '_n') %>%
-      magrittr::set_names(c(
+    statistic_choices <- c('_mean', '_se', '_min', '_max', '_n') |>
+      purrr::set_names(c(
         text_translate('mean_stat', lang(), texts_thes),
         text_translate('se_stat', lang(), texts_thes),
         text_translate('min_stat', lang(), texts_thes),
@@ -84,7 +84,7 @@ mod_viz <- function(
       cache_selected_choice(size_choices, cache, 'selectedsize')
 
     # diameter classes
-    diameter_classes_choices <- seq(10, 70, 5) %>% as.character()
+    diameter_classes_choices <- seq(10, 70, 5) |> as.character()
     dc_filter_vals <- filter_reactives$otf_filter_inputs[['diamclass_id']]
     if (!is.null(dc_filter_vals)) {
       diameter_classes_choices <- diameter_classes_choices[
@@ -132,16 +132,16 @@ mod_viz <- function(
     }
 
     fg_choices <-
-      var_thes %>%
+      var_thes |>
       dplyr::filter(
         var_id == fg_var,
         var_table %in% tables_to_look_at()
-      ) %>%
-      dplyr::select(var_id, var_table, var_type) %>%
-      dplyr::distinct() %>%
-      dplyr::left_join(categorical_thes, by = c('var_id', 'var_table')) %>%
-      tidyr::unnest(cols = c(var_values)) %>%
-      dplyr::pull(var_values) %>%
+      ) |>
+      dplyr::select(var_id, var_table, var_type) |>
+      dplyr::distinct() |>
+      dplyr::left_join(categorical_thes, by = c('var_id', 'var_table')) |>
+      tidyr::unnest(cols = c(var_values)) |>
+      dplyr::pull(var_values) |>
       stringr::str_sort()
 
     fg_filter_vals <- filter_reactives$otf_filter_inputs[[fg_var]]
@@ -171,7 +171,7 @@ mod_viz <- function(
           shinyWidgets::pickerInput(
             ns('viz_color'),
             text_translate('viz_color_input', lang(), texts_thes),
-            choices = color_choices %>%
+            choices = color_choices |>
               var_inputs_aggregator(lang(), texts_thes),
             selected = selected_color,
             options = shinyWidgets::pickerOptions(
@@ -199,7 +199,7 @@ mod_viz <- function(
                 shinyWidgets::pickerInput(
                   ns('viz_size'),
                   text_translate('viz_size_input', lang(), texts_thes),
-                  choices = size_choices %>%
+                  choices = size_choices |>
                     var_inputs_aggregator(lang(), texts_thes),
                   selected = selected_size,
                   options = shinyWidgets::pickerOptions(
@@ -238,7 +238,7 @@ mod_viz <- function(
               shinyWidgets::pickerInput(
                 ns('viz_size'),
                 text_translate('viz_size_input', lang(), texts_thes),
-                choices = size_choices %>%
+                choices = size_choices |>
                   var_inputs_aggregator(lang(), texts_thes),
                 selected = selected_size,
                 options = shinyWidgets::pickerOptions(
@@ -353,8 +353,8 @@ mod_viz <- function(
             ns('viz_pal_config'),
             text_translate('viz_pal_config_input', lang(), texts_thes),
             size = 'sm',
-            choices = c('high', 'normal', 'low') %>%
-              magrittr::set_names(c(
+            choices = c('high', 'normal', 'low') |>
+              purrr::set_names(c(
                 text_translate('pal_high', lang(), texts_thes),
                 text_translate('pal_normal', lang(), texts_thes),
                 text_translate('pal_low', lang(), texts_thes)
@@ -401,23 +401,23 @@ mod_viz <- function(
     group_by_div <- data_reactives$group_by_div
     group_by_dom <- data_reactives$group_by_dom
 
-    all_variables <- var_thes %>%
+    all_variables <- var_thes |>
       dplyr::filter(
         var_table %in% tables_to_look_at(),
         stringr::str_detect(
           var_id, "^old_|^coords_|^presence_|plot_id|poly_id", negate = TRUE
         )
-      ) %>%
-      dplyr::pull(var_id) %>%
+      ) |>
+      dplyr::pull(var_id) |>
       translate_var(
         tables_to_look_at(), lang(), var_thes, numerical_thes,
         texts_thes, need_order = TRUE
       )
-    numeric_variables <- numerical_thes %>%
+    numeric_variables <- numerical_thes |>
       dplyr::filter(
         var_id %in% all_variables, var_table %in% tables_to_look_at()
-      ) %>%
-      dplyr::pull(var_id) %>%
+      ) |>
+      dplyr::pull(var_id) |>
       translate_var(
         tables_to_look_at(), lang(), var_thes, numerical_thes,
         texts_thes, need_order = TRUE

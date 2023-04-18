@@ -5,89 +5,89 @@ library(lfcdata)
 # lidardb <- lidar()
 
 municipality_polygons <-
-sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpm1_20180101_0.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
+sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpm1_20180101_0.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
   dplyr::select(admin_municipality = NOMMUNI, geometry)
 # municipality_polygons <-
-#   lidar_get_data(lidardb, 'lidar_municipalities', 'AB') %>%
-#   dplyr::select(admin_municipality = poly_id, geometry) %>%
+#   lidar_get_data(lidardb, 'lidar_municipalities', 'AB') |>
+#   dplyr::select(admin_municipality = poly_id, geometry) |>
 #   sf::st_transform(4326)
 
 region_polygons <-
-  sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpc1_20180101_0.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
+  sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpc1_20180101_0.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
   dplyr::select(admin_region = NOMCOMAR, geometry)
 # region_polygons <-
-#   lidar_get_data(lidardb, 'lidar_counties', 'AB') %>%
-#   dplyr::select(admin_region = poly_id, geometry) %>%
+#   lidar_get_data(lidardb, 'lidar_counties', 'AB') |>
+#   dplyr::select(admin_region = poly_id, geometry) |>
 #   sf::st_transform(4326)
 
 vegueria_polygons <-
-  sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpv1_20180101_0.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
+  sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpv1_20180101_0.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
   dplyr::select(admin_vegueria = NOMVEGUE, geometry)
 # vegueria_polygons <-
-#   lidar_get_data(lidardb, 'lidar_vegueries', 'AB') %>%
-#   dplyr::select(admin_vegueria = poly_id, geometry) %>%
+#   lidar_get_data(lidardb, 'lidar_vegueries', 'AB') |>
+#   dplyr::select(admin_vegueria = poly_id, geometry) |>
 #   sf::st_transform(4326)
 
 province_polygons <-
-  sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpp1_20180101_0.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
+  sf::read_sf('data-raw/shapefiles/bm5mv20sh0tpp1_20180101_0.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
   dplyr::select(admin_province = NOMPROV, geometry)
 # province_polygons <-
-#   lidar_get_data(lidardb, 'lidar_provinces', 'AB') %>%
-#   dplyr::select(admin_province = poly_id, geometry) %>%
+#   lidar_get_data(lidardb, 'lidar_provinces', 'AB') |>
+#   dplyr::select(admin_province = poly_id, geometry) |>
 #   sf::st_transform(4326)
 
 aut_community_polygons <-
-  sf::read_sf('data-raw/shapefiles/catalunya.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
+  sf::read_sf('data-raw/shapefiles/catalunya.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
   dplyr::select(admin_aut_community = NOM_CA, geometry)
 # aut_community_polygons <-
-#   lidar_get_data(lidardb, 'lidar_municipalities', 'AB') %>%
-#   dplyr::select(admin_aut_community = poly_id, geometry) %>%
+#   lidar_get_data(lidardb, 'lidar_municipalities', 'AB') |>
+#   dplyr::select(admin_aut_community = poly_id, geometry) |>
 #   sf::st_transform(4326)
 
 # enpe_polygons
 natural_interest_area_polygons <-
-  sf::read_sf('data-raw/shapefiles/enpe_2017.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
-  dplyr::select(admin_natural_interest_area = nom, geometry) %>%
-  dplyr::mutate(dummy = admin_natural_interest_area) %>%
-  dplyr::group_by(admin_natural_interest_area) %>%
-  dplyr::summarise(dummy = dplyr::first(dummy)) %>%
-  dplyr::select(-dummy) %>%
+  sf::read_sf('data-raw/shapefiles/enpe_2017.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
+  dplyr::select(admin_natural_interest_area = nom, geometry) |>
+  dplyr::mutate(dummy = admin_natural_interest_area) |>
+  dplyr::group_by(admin_natural_interest_area) |>
+  dplyr::summarise(dummy = dplyr::first(dummy)) |>
+  dplyr::select(-dummy) |>
   sf::st_cast('MULTIPOLYGON')
 
 # pein_polygons
 special_protection_natural_area_polygons <-
-  sf::read_sf('data-raw/shapefiles/pein_2017.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
-  dplyr::select(admin_special_protection_natural_area = nom, geometry) %>%
-  dplyr::mutate(dummy = admin_special_protection_natural_area) %>%
-  dplyr::group_by(admin_special_protection_natural_area) %>%
-  dplyr::summarise(dummy = dplyr::first(dummy)) %>%
-  dplyr::select(-dummy) %>%
+  sf::read_sf('data-raw/shapefiles/pein_2017.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
+  dplyr::select(admin_special_protection_natural_area = nom, geometry) |>
+  dplyr::mutate(dummy = admin_special_protection_natural_area) |>
+  dplyr::group_by(admin_special_protection_natural_area) |>
+  dplyr::summarise(dummy = dplyr::first(dummy)) |>
+  dplyr::select(-dummy) |>
   sf::st_cast('MULTIPOLYGON')
 
 # xn2000_polyogns
 natura_network_2000_polygons <-
-  sf::read_sf('data-raw/shapefiles/xn2000_2017.shp') %>%
-  rmapshaper::ms_simplify(0.01) %>%
-  sf::st_transform(4326) %>%
-  dplyr::select(admin_natura_network_2000 = nom_n2, geometry) %>%
-  dplyr::mutate(dummy = admin_natura_network_2000) %>%
-  dplyr::group_by(admin_natura_network_2000) %>%
-  dplyr::summarise(dummy = dplyr::first(dummy)) %>%
-  dplyr::select(-dummy) %>%
+  sf::read_sf('data-raw/shapefiles/xn2000_2017.shp') |>
+  rmapshaper::ms_simplify(0.01) |>
+  sf::st_transform(4326) |>
+  dplyr::select(admin_natura_network_2000 = nom_n2, geometry) |>
+  dplyr::mutate(dummy = admin_natura_network_2000) |>
+  dplyr::group_by(admin_natura_network_2000) |>
+  dplyr::summarise(dummy = dplyr::first(dummy)) |>
+  dplyr::select(-dummy) |>
   sf::st_cast('MULTIPOLYGON')
 
 # app texts thesaurus
@@ -258,8 +258,8 @@ nfidb <- lfcdata::nfi()
 var_thes <- nfidb$get_data('variables_thesaurus')
 numerical_thes <- nfidb$get_data('variables_numerical')
 # texts_thes <- nfidb$get_data('texts_thesaurus')
-categorical_thes <- nfidb$get_data('variables_categorical') %>%
-  dplyr::select(-dummy_id) %>%
+categorical_thes <- nfidb$get_data('variables_categorical') |>
+  dplyr::select(-dummy_id) |>
   tidyr::nest(var_values = c(var_values))
 
 

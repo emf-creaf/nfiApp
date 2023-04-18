@@ -32,6 +32,32 @@ mod_map <- function(
   lang, var_thes, texts_thes, numerical_thes
 ) {
 
+  ## helper ####
+  leaflet_legend_helper <- function(map, group_by_div, group_by_dom, aesthetics_data, tables_to_look_at, lang_sel) {
+    # legend in summaries
+    if (!any(group_by_div, group_by_dom)) {
+      return(map)
+    }
+
+    map |>
+      leaflet::addLegend(
+        position = 'bottomright', pal = aesthetics_data$pal_legend,
+        values = aesthetics_data$color_vector_legend,
+        title = names(
+          translate_var(
+            aesthetics_data$viz_color,
+            tables_to_look_at, lang_sel, var_thes, numerical_thes,
+            texts_thes, is_summary = TRUE, need_order = FALSE
+          )
+        ),
+        layerId = 'color_legend', opacity = 1,
+        na.label = '', className = aesthetics_data$legend_class,
+        labFormat = leaflet::labelFormat(
+          transform = function(x) {sort(x, decreasing = TRUE)}
+        )
+      )
+  }
+
   ## renderUI ####
   output$map_container <- shiny::renderUI({
 
@@ -50,20 +76,20 @@ mod_map <- function(
   output$nfi_map <- leaflet::renderLeaflet({
 
     # we need data, and we need color var at least
-    leaflet::leaflet() %>%
-      leaflet::setView(1.1, 41.70, zoom = 8) %>%
+    leaflet::leaflet() |>
+      leaflet::setView(1.1, 41.70, zoom = 8) |>
       leaflet::addProviderTiles(
         leaflet::providers$Esri.WorldShadedRelief, group = 'Relief'
-      ) %>%
+      ) |>
       leaflet::addProviderTiles(
         leaflet::providers$Esri.WorldImagery, group = 'Imaginery'
-      ) %>%
-      leaflet::addMapPane('admin_divs', zIndex = 410) %>%
-      leaflet::addMapPane('plots', zIndex = 420) %>%
+      ) |>
+      leaflet::addMapPane('admin_divs', zIndex = 410) |>
+      leaflet::addMapPane('plots', zIndex = 420) |>
       leaflet::addLayersControl(
         baseGroups = c('Relief', 'Imaginery'),
         options = leaflet::layersControlOptions(collapsed = TRUE)
-      ) %>%
+      ) |>
       # leaflet.extras plugins
       leaflet.extras::addDrawToolbar(
         targetGroup = 'drawn_poly',
@@ -211,11 +237,11 @@ mod_map <- function(
       geometry_column <-
         attr(rlang::eval_tidy(polygon_join_data_expr), 'sf_column')
       # data
-      polygon_data <-  main_data_reactives$main_data$requested_data %>%
+      polygon_data <-  main_data_reactives$main_data$requested_data |>
         dplyr::left_join(
           rlang::eval_tidy(polygon_join_data_expr), by = polygon_join_var
-        ) %>%
-        sf::st_as_sf(sf_column_name = geometry_column) %>%
+        ) |>
+        sf::st_as_sf(sf_column_name = geometry_column) |>
         dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
       # validation
       shiny::validate(
@@ -226,7 +252,7 @@ mod_map <- function(
       )
       # color vector
       color_vector <-
-        polygon_data %>%
+        polygon_data |>
         dplyr::pull(!! rlang::sym(viz_color))
       # size vector
       size_vector <- NULL
@@ -236,11 +262,11 @@ mod_map <- function(
       # plot data
       if (isTRUE(group_by_dom)) {
         plot_data <-
-          main_data_reactives$main_data$main_data %>%
+          main_data_reactives$main_data$main_data |>
           dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
       } else {
         plot_data <-
-          main_data_reactives$main_data$requested_data %>%
+          main_data_reactives$main_data$requested_data |>
           dplyr::filter(!! fg_filter_expression, !! dc_filter_expression)
       }
       # validation
@@ -253,7 +279,7 @@ mod_map <- function(
       )
       # color vector
       color_vector <-
-        plot_data %>%
+        plot_data |>
         dplyr::pull(!! rlang::sym(viz_color))
       # size vector
       if (is.null(viz_size) || rlang::is_empty(viz_size) || viz_size == '') {
@@ -265,7 +291,7 @@ mod_map <- function(
             text_translate('apply_warning', lang(), texts_thes)
           )
         )
-        size_vector_pre <- plot_data %>%
+        size_vector_pre <- plot_data |>
           dplyr::pull(!! rlang::sym(viz_size))
 
         if (is.numeric(size_vector_pre)) {
@@ -415,18 +441,18 @@ mod_map <- function(
 
 
     # update the map
-    leaflet::leafletProxy('nfi_map') %>%
-      leaflet::clearGroup('aut_community') %>%
-      leaflet::clearGroup('province') %>%
-      leaflet::clearGroup('vegueria') %>%
-      leaflet::clearGroup('region') %>%
-      leaflet::clearGroup('municipality') %>%
-      leaflet::clearGroup('natural_interest_area') %>%
-      leaflet::clearGroup('special_protection_natural_area') %>%
-      leaflet::clearGroup('natura_network_2000') %>%
-      leaflet::clearGroup('file') %>%
-      leaflet::clearGroup('drawn_poly') %>%
-      # leaflet::clearGroup('plots') %>%
+    leaflet::leafletProxy('nfi_map') |>
+      leaflet::clearGroup('aut_community') |>
+      leaflet::clearGroup('province') |>
+      leaflet::clearGroup('vegueria') |>
+      leaflet::clearGroup('region') |>
+      leaflet::clearGroup('municipality') |>
+      leaflet::clearGroup('natural_interest_area') |>
+      leaflet::clearGroup('special_protection_natural_area') |>
+      leaflet::clearGroup('natura_network_2000') |>
+      leaflet::clearGroup('file') |>
+      leaflet::clearGroup('drawn_poly') |>
+      # leaflet::clearGroup('plots') |>
       leaflet::addPolygons(
         data = aesthetics_data$polygon_data,
         group = admin_div,
@@ -444,31 +470,8 @@ mod_map <- function(
         options = leaflet::pathOptions(
           pane = 'admin_divs'
         )
-      ) %>% {
-        # legend in summaries
-        temp <- .
-        if (any(group_by_div, group_by_dom)) {
-          temp %>%
-            leaflet::addLegend(
-              position = 'bottomright', pal = aesthetics_data$pal_legend,
-              values = aesthetics_data$color_vector_legend,
-              title = names(
-                translate_var(
-                  aesthetics_data$viz_color,
-                  tables_to_look_at, lang_sel, var_thes, numerical_thes,
-                  texts_thes, is_summary = TRUE, need_order = FALSE
-                )
-              ),
-              layerId = 'color_legend', opacity = 1,
-              na.label = '', className = aesthetics_data$legend_class,
-              labFormat = leaflet::labelFormat(
-                transform = function(x) {sort(x, decreasing = TRUE)}
-              )
-            )
-        } else {
-          temp
-        }
-      }
+      ) |>
+      leaflet_legend_helper(group_by_div, group_by_dom, aesthetics_data, tables_to_look_at, lang_sel)
   }) # end of polygon observer
 
   # observer to plot plots
@@ -496,8 +499,8 @@ mod_map <- function(
     if (!isTRUE(group_by_div)) {
 
       # update the map
-      leaflet::leafletProxy('nfi_map') %>%
-        leaflet::clearGroup('plots') %>%
+      leaflet::leafletProxy('nfi_map') |>
+        leaflet::clearGroup('plots') |>
         leaflet::addCircles(
           data = aesthetics_data$plot_data,
           group = 'plots', label = ~plot_id, layerId = ~plot_id,
@@ -505,7 +508,7 @@ mod_map <- function(
           fillColor = aesthetics_data$pal(aesthetics_data$color_vector),
           radius = aesthetics_data$size_vector,
           options = leaflet::pathOptions(pane = 'plots')
-        ) %>%
+        ) |>
         leaflet::addLegend(
           position = 'bottomright', pal = aesthetics_data$pal_legend,
           values = aesthetics_data$color_vector_legend,
@@ -524,7 +527,7 @@ mod_map <- function(
         )
     } else {
       # update the map
-      leaflet::leafletProxy('nfi_map') %>%
+      leaflet::leafletProxy('nfi_map') |>
         leaflet::clearGroup('plots')
     }
   })

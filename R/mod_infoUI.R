@@ -50,6 +50,160 @@ mod_info <- function(
     color = "#1C1C20"
   )
 
+  ## helpers
+  filter_functional_group_helper <- function(data) {
+    if (!is.null(map_reactives$aesthetics$fg_var)) {
+      data <- data |>
+        dplyr::filter(
+          !! rlang::sym(map_reactives$aesthetics$fg_var) == viz_reactives$viz_functional_group_value
+        )
+    }
+
+    return(data)
+    # temp <- .
+    # if (!is.null(map_reactives$aesthetics$fg_var)) {
+    #   temp |>
+    #     dplyr::filter(
+    #       !! rlang::sym(map_reactives$aesthetics$fg_var) ==
+    #         viz_reactives$viz_functional_group_value
+    #     )
+    # } else {
+    #   temp
+    # }
+  }
+
+  filter_diameter_classe_helper <- function(data) {
+    if (isTRUE(map_reactives$aesthetics$diameter_classes)) {
+      data <- data |>
+        dplyr::filter(diamclass_id == viz_reactives$viz_diamclass)
+    }
+
+    return(data)
+  }
+
+  y_var_renaming <- function(data) {
+    if (map_reactives$aesthetics$viz_color %in% names(data)) {
+      dplyr::rename(
+        data,
+        y_var = !! rlang::sym(map_reactives$aesthetics$viz_color)
+      )
+    } else {
+      dplyr::rename(
+        data,
+        y_var = !! rlang::sym(
+          glue::glue(
+            "{map_reactives$aesthetics$viz_color}",
+            "{map_reactives$aesthetics$viz_statistic}"
+          )
+        )
+      )
+    }
+  }
+
+  validation_plot_data <- function(data, nfi_map_shape_click) {
+    shiny::validate(
+      shiny::need(
+        nfi_map_shape_click$id %in% data[['label_var']], 'no data in clicked'
+      ),
+      shiny::need(
+        nrow(data) > 3,
+        text_translate('not_enough_info_plot_warning', lang(), texts_thes)
+      )
+    )
+    data
+  }
+
+  info_plot <- function(data, tables_to_look_at, summary_on, nfi_map_shape_click) {
+    temp_data <- data
+    # if character
+    if (!is.numeric(map_reactives$aesthetics$color_vector)) {
+      # browser()
+      # if click poly
+      if (nfi_map_shape_click$group != 'plots') {
+        temp_data <- temp_data |>
+          dplyr::filter(label_var == nfi_map_shape_click$id)
+        palette_colors <- rep(
+          '#448714', length(unique(temp_data[['y_var']]))
+        ) |>
+          purrr::set_names(
+            stringr::str_sort(unique(temp_data[['y_var']]))
+          )
+      } else {
+        green_value <- temp_data |>
+          dplyr::filter(label_var == nfi_map_shape_click$id) |>
+          dplyr::pull(y_var)
+        palette_colors <- rep(
+          '#647a8d', length(unique(temp_data[['y_var']]))
+        ) |>
+          purrr::set_names(
+            stringr::str_sort(unique(temp_data[['y_var']]))
+          )
+        palette_colors[[green_value]] <- '#448714'
+      }
+      temp_plot <-
+        temp_data |>
+        ggplot2::ggplot(
+          ggplot2::aes(x = y_var, fill = y_var, colour = y_var)
+        ) +
+        ggplot2::geom_bar(show.legend = FALSE) +
+        ggplot2::scale_fill_manual(values = palette_colors) +
+        ggplot2::scale_colour_manual(values = palette_colors) +
+        ggplot2::labs(
+          x = '',
+          y = text_translate('info_count', lang(), texts_thes)
+        )
+    } else {
+      temp_plot <-
+        temp_data |>
+        ggplot2::ggplot(ggplot2::aes(x = 0, y = y_var)) +
+        ggplot2::geom_point(
+          data = ~ dplyr::filter(.x, label_var != nfi_map_shape_click$id),
+          colour = '#647a8d', size = 4, alpha = 0.5,
+          position = ggplot2::position_jitter(
+            width = .2, height = 0, seed = 25
+          )
+        ) +
+        ggplot2::geom_violin(fill = 'transparent') +
+        ggplot2::geom_point(
+          data = ~ dplyr::filter(.x, label_var == nfi_map_shape_click$id),
+          colour = '#448714', size = 6
+        ) +
+        ggplot2::scale_x_continuous(breaks = NULL) +
+        ggplot2::labs(
+          x = '',
+          y = names(translate_var(
+            map_reactives$aesthetics$viz_color,
+            tables_to_look_at, lang(),
+            var_thes, numerical_thes, texts_thes,
+            summary_on, need_order = FALSE
+          ))
+        )
+    }
+    temp_plot  +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+        text = ggplot2::element_text(size = 14, color = '#647a8d'),
+        axis.text = ggplot2::element_text(color = '#647a8d'),
+        strip.text = ggplot2::element_text(color = '#647a8d'),
+        panel.background = ggplot2::element_rect(
+          fill = '#c8cac8', colour = NA
+        ),
+        plot.background = ggplot2::element_rect(
+          fill = '#c8cac8', colour = NA
+        ),
+        strip.background = ggplot2::element_rect(
+          fill = '#c8cac8', colour = NA
+        ),
+        panel.grid = ggplot2::element_line(colour = '#647a8d'),
+        panel.grid.minor.x = ggplot2::element_blank(),
+        panel.grid.major.x = ggplot2::element_blank(),
+        panel.grid.minor.y = ggplot2::element_blank(),
+        panel.grid.major.y = ggplot2::element_line(
+          size = ggplot2::rel(0.5), colour = '#647a8d'
+        )
+      )
+  }
+
   ## reactives ####
   # table reactive
   info_table_data <- shiny::reactive({
@@ -77,45 +231,28 @@ mod_info <- function(
     #     the possible options
     table_data <- {
       if (nfi_map_shape_click$group == 'plots') {
-        map_reactives$aesthetics$plot_data %>%
-          dplyr::as_tibble() %>%
+        map_reactives$aesthetics$plot_data |>
+          dplyr::as_tibble() |>
           dplyr::filter(plot_id == nfi_map_shape_click$id)
       } else {
         if (isTRUE(map_reactives$aesthetics$group_by_div)) {
-          map_reactives$aesthetics$polygon_data %>%
-            dplyr::as_tibble() %>%
+          map_reactives$aesthetics$polygon_data |>
+            dplyr::as_tibble() |>
             dplyr::filter(
               !! rlang::sym(map_reactives$aesthetics$polygon_join_var) ==
                 nfi_map_shape_click$id
             )
         } else {
-          main_data_reactives$main_data$general_summary %>%
+          main_data_reactives$main_data$general_summary |>
             dplyr::filter(
               !! rlang::sym(map_reactives$aesthetics$polygon_join_var) ==
                 nfi_map_shape_click$id
-            ) %>% {
-              temp <- .
-              if (!is.null(map_reactives$aesthetics$fg_var)) {
-                temp %>%
-                  dplyr::filter(
-                    !! rlang::sym(map_reactives$aesthetics$fg_var) ==
-                      viz_reactives$viz_functional_group_value
-                  )
-              } else {
-                temp
-              }
-            } %>% {
-              temp <- .
-              if (isTRUE(map_reactives$aesthetics$diameter_classes)) {
-                temp %>%
-                  dplyr::filter(diamclass_id == viz_reactives$viz_diamclass)
-              } else {
-                temp
-              }
-            }
+            ) |>
+            filter_functional_group_helper() |>
+            filter_diameter_classe_helper()
         }
       }
-    } %>%
+    } |>
       dplyr::select(tidyselect::any_of(c(
         'plot_id',
         map_reactives$aesthetics$polygon_join_var,
@@ -136,11 +273,11 @@ mod_info <- function(
         'clim_tmean_year', 'clim_prec_year', 'clim_pet_year',
         'topo_altitude_asl_mean', 'topo_fdm_slope_percentage_mean',
         'clim_tmean_year_mean', 'clim_prec_year_mean', 'clim_pet_year_mean'
-      ))) %>%
+      ))) |>
       dplyr::mutate_if(
         is.numeric, round, digits = 2,
-      ) %>%
-      tidyr::gather('Characteristics', 'Value') %>%
+      ) |>
+      tidyr::gather('Characteristics', 'Value') |>
       dplyr::mutate(
         Characteristics = stringr::str_remove(
           Characteristics, '_mean$|_se$|_max$|_min$|_n$'
@@ -149,7 +286,7 @@ mod_info <- function(
           Characteristics, tables_to_look_at, lang(),
           var_thes, numerical_thes, texts_thes, need_order = FALSE
         ))
-      ) %>%
+      ) |>
       formattable::formattable(
         list(
           Characteristics = formattable::formatter(
@@ -202,16 +339,16 @@ mod_info <- function(
     #   - plot has to be built always the same, so maybe this involves changing
     #     variable names
     if (nfi_map_shape_click$group == 'plots') {
-      data_for_plot <- map_reactives$aesthetics$plot_data %>%
-        dplyr::as_tibble() %>%
+      data_for_plot <- map_reactives$aesthetics$plot_data |>
+        dplyr::as_tibble() |>
         dplyr::rename(
           label_var = plot_id
         )
       label_var_chr <- 'plot_id'
     } else {
       if (isTRUE(map_reactives$aesthetics$group_by_div)) {
-        data_for_plot <- map_reactives$aesthetics$polygon_data %>%
-          dplyr::as_tibble() %>%
+        data_for_plot <- map_reactives$aesthetics$polygon_data |>
+          dplyr::as_tibble() |>
           dplyr::rename(
             label_var = !! rlang::sym(
               map_reactives$aesthetics$polygon_join_var
@@ -226,39 +363,22 @@ mod_info <- function(
           } else {
             main_data_reactives$main_data$general_summary
           }
-        } %>%
-          dplyr::as_tibble() %>%
+        } |>
+          dplyr::as_tibble() |>
           dplyr::rename(
             label_var = !! rlang::sym(
               map_reactives$aesthetics$polygon_join_var
             )
-          ) %>% {
-            temp <- .
-            if (!is.null(map_reactives$aesthetics$fg_var)) {
-              temp %>%
-                dplyr::filter(
-                  !! rlang::sym(map_reactives$aesthetics$fg_var) ==
-                    viz_reactives$viz_functional_group_value
-                )
-            } else {
-              temp
-            }
-          } %>% {
-            temp <- .
-            if (isTRUE(map_reactives$aesthetics$diameter_classes)) {
-              temp %>%
-                dplyr::filter(diamclass_id == viz_reactives$viz_diamclass)
-            } else {
-              temp
-            }
-          }
+          ) |>
+          filter_functional_group_helper() |>
+          filter_diameter_classe_helper()
         label_var_chr <- map_reactives$aesthetics$polygon_join_var
       }
     }
 
     # browser()
 
-    plot_data <- data_for_plot %>%
+    plot_data <- data_for_plot |>
       # plot. Logic is as follows:
       #   - violin plots
       #   - if plots are clicked:
@@ -287,125 +407,10 @@ mod_info <- function(
           "{map_reactives$aesthetics$viz_size}",
           "{map_reactives$aesthetics$viz_statistic}"
         )
-      ))) %>% {
-        if (map_reactives$aesthetics$viz_color %in% names(.)) {
-          dplyr::rename(
-            .,
-            y_var = !! rlang::sym(map_reactives$aesthetics$viz_color)
-          )
-        } else {
-          dplyr::rename(
-            .,
-            y_var = !! rlang::sym(
-              glue::glue(
-                "{map_reactives$aesthetics$viz_color}",
-                "{map_reactives$aesthetics$viz_statistic}"
-              )
-            )
-          )
-        }
-      } %>% {
-        shiny::validate(
-          shiny::need(
-            nfi_map_shape_click$id %in% .[['label_var']], 'no data in clicked'
-          ),
-          shiny::need(
-            nrow(.) > 3,
-            text_translate('not_enough_info_plot_warning', lang(), texts_thes)
-          )
-        )
-        .
-      } %>% {
-        temp_data <- .
-        # if character
-        if (!is.numeric(map_reactives$aesthetics$color_vector)) {
-          # browser()
-          # if click poly
-          if (nfi_map_shape_click$group != 'plots') {
-            temp_data <- temp_data %>%
-              dplyr::filter(label_var == nfi_map_shape_click$id)
-            palette_colors <- rep(
-              '#448714', length(unique(temp_data[['y_var']]))
-            ) %>%
-              magrittr::set_names(
-                stringr::str_sort(unique(temp_data[['y_var']]))
-              )
-          } else {
-            green_value <- temp_data %>%
-              dplyr::filter(label_var == nfi_map_shape_click$id) %>%
-              dplyr::pull(y_var)
-            palette_colors <- rep(
-              '#647a8d', length(unique(temp_data[['y_var']]))
-            ) %>%
-              magrittr::set_names(
-                stringr::str_sort(unique(temp_data[['y_var']]))
-              )
-            palette_colors[[green_value]] <- '#448714'
-          }
-          temp_plot <-
-            temp_data %>%
-            ggplot2::ggplot(
-              ggplot2::aes(x = y_var, fill = y_var, colour = y_var)
-            ) +
-            ggplot2::geom_bar(show.legend = FALSE) +
-            ggplot2::scale_fill_manual(values = palette_colors) +
-            ggplot2::scale_colour_manual(values = palette_colors) +
-            ggplot2::labs(
-              x = '',
-              y = text_translate('info_count', lang(), texts_thes)
-            )
-        } else {
-          temp_plot <-
-            temp_data %>%
-            ggplot2::ggplot(ggplot2::aes(x = 0, y = y_var)) +
-            ggplot2::geom_point(
-              data = ~ dplyr::filter(.x, label_var != nfi_map_shape_click$id),
-              colour = '#647a8d', size = 4, alpha = 0.5,
-              position = ggplot2::position_jitter(
-                width = .2, height = 0, seed = 25
-              )
-            ) +
-            ggplot2::geom_violin(fill = 'transparent') +
-            ggplot2::geom_point(
-              data = ~ dplyr::filter(.x, label_var == nfi_map_shape_click$id),
-              colour = '#448714', size = 6
-            ) +
-            ggplot2::scale_x_continuous(breaks = NULL) +
-            ggplot2::labs(
-              x = '',
-              y = names(translate_var(
-                map_reactives$aesthetics$viz_color,
-                tables_to_look_at, lang(),
-                var_thes, numerical_thes, texts_thes,
-                summary_on, need_order = FALSE
-              ))
-            )
-        }
-        temp_plot  +
-          ggplot2::theme_minimal() +
-          ggplot2::theme(
-            text = ggplot2::element_text(size = 14, color = '#647a8d'),
-            axis.text = ggplot2::element_text(color = '#647a8d'),
-            strip.text = ggplot2::element_text(color = '#647a8d'),
-            panel.background = ggplot2::element_rect(
-              fill = '#c8cac8', colour = NA
-            ),
-            plot.background = ggplot2::element_rect(
-              fill = '#c8cac8', colour = NA
-            ),
-            strip.background = ggplot2::element_rect(
-              fill = '#c8cac8', colour = NA
-            ),
-            panel.grid = ggplot2::element_line(colour = '#647a8d'),
-            panel.grid.minor.x = ggplot2::element_blank(),
-            panel.grid.major.x = ggplot2::element_blank(),
-            panel.grid.minor.y = ggplot2::element_blank(),
-            panel.grid.major.y = ggplot2::element_line(
-              size = ggplot2::rel(0.5), colour = '#647a8d'
-            )
-          )
-        # return(temp_plot)
-      }
+      ))) |>
+      y_var_renaming() |>
+      validation_plot_data(nfi_map_shape_click) |>
+      info_plot(tables_to_look_at, summary_on, nfi_map_shape_click)
     return(list(plot_data = plot_data, label_var_chr = label_var_chr))
   })
 

@@ -57,8 +57,8 @@ mod_save <- function(
           shinyWidgets::prettyRadioButtons(
             ns('table_length_options'),
             label = text_translate('table_length_options_input', lang(), texts_thes),
-            choices = c('visible', 'all') %>%
-              magrittr::set_names(c(
+            choices = c('visible', 'all') |>
+              purrr::set_names(c(
                 text_translate('visible', lang(), texts_thes),
                 text_translate('all_columns', lang(), texts_thes)
               )),
@@ -67,8 +67,8 @@ mod_save <- function(
           shinyWidgets::prettyRadioButtons(
             ns('table_output_options'),
             label = text_translate('table_output_options_input', lang(), texts_thes),
-            choices = c('csv', 'xlsx') %>%
-              magrittr::set_names(c(
+            choices = c('csv', 'xlsx') |>
+              purrr::set_names(c(
                 text_translate('csv', lang(), texts_thes),
                 text_translate('xlsx', lang(), texts_thes)
               )),

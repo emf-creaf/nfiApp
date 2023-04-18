@@ -34,6 +34,11 @@ mod_mainData <- function(
   nfidb, lang, texts_thes, parent_session
 ) {
 
+  ## helpers ####
+  to_matrix_list <- function(data) {
+    list(as.matrix(data))
+  }
+
   ## waiter/hostess progress ####
   # set a progress with waiter. We will use infinite TRUE, that way we dont
   # need to calculate any steps durations
@@ -67,11 +72,11 @@ mod_mainData <- function(
           user_file_polygons <- sf::st_read(
             list.files(tmp_folder, '.shp', recursive = TRUE, full.names = TRUE),
             as_tibble = TRUE
-          ) %>%
+          ) |>
             sf::st_transform(4326)
         } else {
           # gpkg
-          user_file_polygons <- sf::st_read(path_to_file) %>%
+          user_file_polygons <- sf::st_read(path_to_file) |>
             sf::st_transform(4326)
         }
       }
@@ -116,14 +121,15 @@ mod_mainData <- function(
         shiny::need(length(drawn_polygon[['features']]) != 0, 'removed poly')
       )
       res <-
-        drawn_polygon[['features']][[1]][['geometry']][['coordinates']] %>%
-        purrr::flatten() %>%
-        purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) %>%
-        dplyr::bind_rows() %>%
-        {list(as.matrix(.))} %>%
-        sf::st_polygon() %>%
-        sf::st_sfc() %>%
-        sf::st_sf(crs = 4326) %>%
+        drawn_polygon[['features']][[1]][['geometry']][['coordinates']] |>
+        purrr::flatten() |>
+        purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) |>
+        dplyr::bind_rows() |>
+        # {list(as.matrix(.))} |>
+        to_matrix_list() |>
+        sf::st_polygon() |>
+        sf::st_sfc() |>
+        sf::st_sf(crs = 4326) |>
         dplyr::mutate(poly_id = 'drawn_poly')
       return(res)
 
@@ -131,14 +137,14 @@ mod_mainData <- function(
       #   return(NULL)
       # } else {
       #   res <-
-      #     drawn_polygon[['features']][[1]][['geometry']][['coordinates']] %>%
-      #     purrr::flatten() %>%
-      #     purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) %>%
-      #     dplyr::bind_rows() %>%
-      #     {list(as.matrix(.))} %>%
-      #     sf::st_polygon() %>%
-      #     sf::st_sfc() %>%
-      #     sf::st_sf(crs = 4326) %>%
+      #     drawn_polygon[['features']][[1]][['geometry']][['coordinates']] |>
+      #     purrr::flatten() |>
+      #     purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) |>
+      #     dplyr::bind_rows() |>
+      #     {list(as.matrix(.))} |>
+      #     sf::st_polygon() |>
+      #     sf::st_sfc() |>
+      #     sf::st_sf(crs = 4326) |>
       #     dplyr::mutate(poly_id = 'drawn_poly')
       #   return(res)
       # }
@@ -189,12 +195,12 @@ mod_mainData <- function(
 
       # get data, join it
       first_table <-
-        main_table_to_look_at(nfi, desglossament, diameter_classes) %>%
+        main_table_to_look_at(nfi, desglossament, diameter_classes) |>
         nfidb$get_data(spatial = TRUE)
 
       ancillary_tables <-
-        ancillary_tables_to_look_at(nfi) %>%
-        purrr::map(~ nfidb$get_data(., spatial = FALSE)) %>%
+        ancillary_tables_to_look_at(nfi) |>
+        purrr::map(~ nfidb$get_data(.x, spatial = FALSE)) |>
         purrr::reduce(dplyr::left_join, by = c('plot_id'))
 
       main_data_pre <- dplyr::left_join(
@@ -217,7 +223,7 @@ mod_mainData <- function(
         )
         main_data_table <- main_data_pre
       } else {
-        main_data_table <- main_data_pre %>%
+        main_data_table <- main_data_pre |>
           dplyr::filter(
             !!! filter_reactives$filter_expressions
           )
@@ -275,16 +281,16 @@ mod_mainData <- function(
         #   - use that indexes to extract the poly_id from the custom poly
         #   - create a new column in the main data with the poly_id to summarise
         #   - later
-        indexes <- sf::st_intersects(main_data_table, custom_poly) %>%
+        indexes <- sf::st_intersects(main_data_table, custom_poly) |>
           as.numeric()
-        polys_names <- custom_poly %>%
-          dplyr::pull(poly_id) %>%
-          as.character() %>%
+        polys_names <- custom_poly |>
+          dplyr::pull(poly_id) |>
+          as.character() |>
           magrittr::extract(indexes)
-        raw_main_data <- main_data_table %>%
+        raw_main_data <- main_data_table |>
           dplyr::mutate(
             poly_id = polys_names
-          ) %>%
+          ) |>
           dplyr::filter(!is.na(poly_id))
         # check if raw data has data
         # sweet alert for when no results are returned by the filters
@@ -313,18 +319,18 @@ mod_mainData <- function(
         dominant_criteria, dominant_nfi, desglossament
       )
 
-      general_summary <- raw_main_data %>%
-        dplyr::as_tibble() %>%
-        dplyr::select(-geometry) %>%
-        dplyr::group_by(!!! group_by_general) %>%
+      general_summary <- raw_main_data |>
+        dplyr::as_tibble() |>
+        dplyr::select(-geometry) |>
+        dplyr::group_by(!!! group_by_general) |>
         dplyr::summarise(
           dplyr::across(
             tidyselect:::where(function(x) {is.numeric(x) && !all(is.na(x))}),
             list(
-              mean = ~ mean(., na.rm = TRUE),
-              se = ~ sd(., na.rm = TRUE)/sqrt(n()),
-              min = ~ min(., na.rm = TRUE),
-              max = ~ max(., na.rm = TRUE),
+              mean = ~ mean(.x, na.rm = TRUE),
+              se = ~ sd(.x, na.rm = TRUE)/sqrt(n()),
+              min = ~ min(.x, na.rm = TRUE),
+              max = ~ max(.x, na.rm = TRUE),
               n = ~ n()
             )
           )
@@ -340,18 +346,18 @@ mod_mainData <- function(
 
         } else {
           requested_data <-
-            raw_main_data %>%
-            dplyr::as_tibble() %>%
-            dplyr::select(-geometry) %>%
-            dplyr::group_by(!!! group_by_general[2]) %>%
+            raw_main_data |>
+            dplyr::as_tibble() |>
+            dplyr::select(-geometry) |>
+            dplyr::group_by(!!! group_by_general[2]) |>
             dplyr::summarise(
               dplyr::across(
                 tidyselect:::where(function(x) {is.numeric(x) && !all(is.na(x))}),
                 list(
-                  mean = ~ mean(., na.rm = TRUE),
-                  se = ~ sd(., na.rm = TRUE)/sqrt(n()),
-                  min = ~ min(., na.rm = TRUE),
-                  max = ~ max(., na.rm = TRUE),
+                  mean = ~ mean(.x, na.rm = TRUE),
+                  se = ~ sd(.x, na.rm = TRUE)/sqrt(n()),
+                  min = ~ min(.x, na.rm = TRUE),
+                  max = ~ max(.x, na.rm = TRUE),
                   n = ~ n()
                 )
               )

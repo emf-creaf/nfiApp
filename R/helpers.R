@@ -83,78 +83,78 @@ translate_var <- function(
   if (isTRUE(is_summary)) {
     vars_translation <- stringr::str_remove(
       vars, '_mean$|_se$|_min$|_max$|_n$'
-    ) %>%
+    ) |>
       translate_var(
         tables, lang, var_thes, numerical_thes, texts_thes,
         need_order = FALSE
-      ) %>%
+      ) |>
       names()
-    vars_stat <- stringr::str_extract(vars, '_mean$|_se$|_min$|_max$|_n$') %>%
-      stringr::str_remove('_') %>%
+    vars_stat <- stringr::str_extract(vars, '_mean$|_se$|_min$|_max$|_n$') |>
+      stringr::str_remove('_') |>
       purrr::map_chr(
         text_translate, lang = lang, texts_thes = texts_thes
       )
-    res <- vars %>%
-      magrittr::set_names(
-        glue::glue("{vars_stat} {vars_translation}") %>%
+    res <- vars |>
+      purrr::set_names(
+        glue::glue("{vars_stat} {vars_translation}") |>
           stringr::str_remove('NA ')
       )
     return(res)
 
   } else {
     var_lookup_table <-
-      var_thes %>%
+      var_thes |>
       dplyr::select(
         tidyselect::any_of(c(
           'var_id', glue::glue('translation_{lang}'),
           'var_order_app', 'var_table'
         ))
-      ) %>%
-      dplyr::filter(var_id %in% vars, var_table %in% tables) %>%
+      ) |>
+      dplyr::filter(var_id %in% vars, var_table %in% tables) |>
       dplyr::left_join(
-        numerical_thes %>%
+        numerical_thes |>
           dplyr::select(var_id, var_table, var_units),
         by = c('var_id', 'var_table')
-      ) %>%
+      ) |>
       dplyr::mutate(
         var_units = dplyr::if_else(
           is.na(var_units), NA_character_,
           as.character(glue::glue("[{var_units}]"))
         )
-      ) %>%
+      ) |>
       tidyr::unite(
         col = var_name,
         !!rlang::sym(glue::glue("translation_{lang}")), var_units,
         sep = ' '
-      ) %>%
-      dplyr::mutate(var_name = stringr::str_remove(var_name, ' NA')) %>%
+      ) |>
+      dplyr::mutate(var_name = stringr::str_remove(var_name, ' NA')) |>
       dplyr::select(-tidyselect::any_of(c(
         'var_table'
-      ))) %>%
+      ))) |>
       dplyr::distinct()
   }
 
   if (isTRUE(need_order)) {
     # intended for input population, as we need an specific order
     order_of_vars <-
-      var_lookup_table %>%
-      dplyr::arrange(var_order_app) %>%
+      var_lookup_table |>
+      dplyr::arrange(var_order_app) |>
       dplyr::select(var_id, var_name)
 
     ordered_res <-
-      order_of_vars %>%
-      dplyr::pull(var_id) %>%
-      magrittr::set_names(
-        order_of_vars %>%
+      order_of_vars |>
+      dplyr::pull(var_id) |>
+      purrr::set_names(
+        order_of_vars |>
           dplyr::pull(var_name)
       )
 
     return(ordered_res)
   } else {
 
-    res <- vars %>%
-      magrittr::set_names(
-        vars %>%
+    res <- vars |>
+      purrr::set_names(
+        vars |>
           purrr::map_chr(
             ~ var_lookup_table[
               var_lookup_table$var_id == .x, 'var_name', drop = TRUE
@@ -169,10 +169,10 @@ translate_var <- function(
 var_inputs_aggregator <- function(ready_vars, lang, texts_thes) {
 
   list(
-    id = ready_vars[stringr::str_detect(ready_vars, '_id')] %>%
-      magrittr::extract(!stringr::str_detect(., 'admin_|old_')),
-    admin = ready_vars[stringr::str_detect(ready_vars, 'admin_')] %>%
-      magrittr::extract(!stringr::str_detect(., '_id')),
+    id = ready_vars[stringr::str_detect(ready_vars, '_id')] |>
+      magrittr::extract(!stringr::str_detect(ready_vars[stringr::str_detect(ready_vars, '_id')], 'admin_|old_')),
+    admin = ready_vars[stringr::str_detect(ready_vars, 'admin_')] |>
+      magrittr::extract(!stringr::str_detect(ready_vars[stringr::str_detect(ready_vars, 'admin_')], '_id')),
     proper_table = ready_vars[
       !stringr::str_detect(ready_vars, 'admin_') &
         !stringr::str_detect(ready_vars, '_id') &
@@ -187,8 +187,8 @@ var_inputs_aggregator <- function(ready_vars, lang, texts_thes) {
     feat = ready_vars[stringr::str_detect(ready_vars, 'feat_')]
     # coord = ready_vars[stringr::str_detect(ready_vars, 'coords_')],
     # old = ready_vars[stringr::str_detect(ready_vars, 'old_')]
-  ) %>%
-    magrittr::set_names(c(
+  ) |>
+    purrr::set_names(c(
       text_translate('id', lang, texts_thes),
       text_translate('admin', lang, texts_thes),
       text_translate('proper_table', lang, texts_thes),
@@ -214,11 +214,11 @@ filter_inputs_builder_helper <- function(
 ) {
   # checking the type of the variable
   variable_description <-
-    var_thes %>%
-    dplyr::filter(var_id == variable, var_table %in% tables) %>%
-    dplyr::select(var_id, var_table, var_type) %>%
-    dplyr::distinct() %>%
-    dplyr::left_join(numerical_thes, by = c('var_id', 'var_table')) %>%
+    var_thes |>
+    dplyr::filter(var_id == variable, var_table %in% tables) |>
+    dplyr::select(var_id, var_table, var_type) |>
+    dplyr::distinct() |>
+    dplyr::left_join(numerical_thes, by = c('var_id', 'var_table')) |>
     dplyr::left_join(categorical_thes, by = c('var_id', 'var_table'))
 
   # check for special case, plot_id which is present in all the tables,
@@ -228,15 +228,15 @@ filter_inputs_builder_helper <- function(
     variable_description <- dplyr::slice(variable_description, 1)
   }
   # variable_type
-  variable_type <- variable_description %>% dplyr::pull(var_type)
+  variable_type <- variable_description |> dplyr::pull(var_type)
 
   # browser()
   # character variable
   if (variable_type == 'character') {
     # get the available choices for the categorical variable
-    input_choices <- variable_description %>%
-      tidyr::unnest(cols = c(var_values)) %>%
-      dplyr::arrange(var_values) %>%
+    input_choices <- variable_description |>
+      tidyr::unnest(cols = c(var_values)) |>
+      dplyr::arrange(var_values) |>
       dplyr::pull(var_values)
 
     # check the cache to look if there was set before
@@ -276,8 +276,8 @@ filter_inputs_builder_helper <- function(
   if (variable_type %in% c('numeric', 'integer')) {
     # get the available min max values for the numeric
     input_choices <- c(
-      min = variable_description %>% dplyr::pull(var_min),
-      max = variable_description %>% dplyr::pull(var_max)
+      min = variable_description |> dplyr::pull(var_min),
+      max = variable_description |> dplyr::pull(var_max)
     )
 
     ## TODO remove this when db fixed with percentage variables

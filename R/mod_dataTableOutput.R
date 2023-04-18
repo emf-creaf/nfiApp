@@ -108,12 +108,18 @@ mod_dataTable <- function(
 
     # choices
     col_vis_selector_choices <-
-      names(main_data_reactives$main_data$requested_data) %>%
       magrittr::extract(
+        names(main_data_reactives$main_data$requested_data),
         stringr::str_detect(
-          ., "^geometry$", negate = TRUE
+          names(main_data_reactives$main_data$requested_data), "^geometry$", negate = TRUE
         )
-      ) %>%
+      ) |>
+      # names(main_data_reactives$main_data$requested_data) |>
+      # magrittr::extract(
+      #   stringr::str_detect(
+      #     ., "^geometry$", negate = TRUE
+      #   )
+      # ) |>
       translate_var(
         tables_to_look_at, lang(), var_thes, numerical_thes,
         texts_thes, is_summary = summary_on, need_order = FALSE
@@ -171,22 +177,22 @@ mod_dataTable <- function(
 
   table_data <- shiny::reactive({
 
-    main_data_reactives$main_data$requested_data %>%
-      dplyr::as_tibble() %>% {
-        temp <- .
-        if ('geometry' %in% names(temp)) {
-          dplyr::select(temp, -geometry)
-        } else {
-          temp
-        }
-      } %>%
-      dplyr::select(tidyselect::any_of(c(
-        # inputs selected
-        input$col_vis_selector
-      ))) %>%
-      dplyr::mutate_if(
-        is.numeric, round, digits = 2
-      )
+    main_data_reactives$main_data$requested_data |>
+      dplyr::as_tibble() |>
+      dplyr::select(dplyr::any_of(c(input$col_vis_selector)), -dplyr::any_of(c('geometry', 'geom'))) |>
+      # dplyr::as_tibble() |> {
+      #   temp <- .
+      #   if ('geometry' %in% names(temp)) {
+      #     dplyr::select(temp, -geometry)
+      #   } else {
+      #     temp
+      #   }
+      # } |>
+      # dplyr::select(tidyselect::any_of(c(
+      #   # inputs selected
+      #   input$col_vis_selector
+      # ))) |>
+      dplyr::mutate_if(is.numeric, round, digits = 2)
   })
 
   output$main_table <- DT::renderDT({
@@ -210,12 +216,12 @@ mod_dataTable <- function(
     summary_on <- any(group_by_div, group_by_dom)
 
     # DT
-    table_data() %>%
+    table_data() |>
       DT::datatable(
         rownames = FALSE,
         colnames = names(
           translate_var(
-            names(.), tables_to_look_at, lang(), var_thes, numerical_thes,
+            names(table_data()), tables_to_look_at, lang(), var_thes, numerical_thes,
             texts_thes, is_summary = summary_on, need_order = FALSE
           )
         ),

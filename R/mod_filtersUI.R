@@ -61,9 +61,9 @@ mod_filters <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-    vars_overall <- var_thes %>%
-      dplyr::filter(var_table %in% tables_to_look_at) %>%
-      dplyr::pull(var_id) %>%
+    vars_overall <- var_thes |>
+      dplyr::filter(var_table %in% tables_to_look_at) |>
+      dplyr::pull(var_id) |>
       unique()
 
     clim_vars <- vars_overall[
@@ -223,7 +223,7 @@ mod_filters <- function(
       # ns
       ns <- session$ns
       # variables
-      filter_inputs <- variables_to_filter_by() %>%
+      filter_inputs <- variables_to_filter_by() |>
         purrr::map(
           filter_inputs_builder_helper, tables = tables_to_look_at,
           var_thes = var_thes, texts_thes = texts_thes,
@@ -250,11 +250,11 @@ mod_filters <- function(
 
   # reactive to get the inputs
   on_the_fly_inputs <- shiny::reactive({
-    variables_to_filter_by() %>%
+    variables_to_filter_by() |>
       purrr::map(
-        ~ input[[.]]
-      ) %>%
-      magrittr::set_names(variables_to_filter_by())
+        ~ input[[.x]]
+      ) |>
+      purrr::set_names(variables_to_filter_by())
   }) # end of onthefly inputs
 
   # filter expressions builder ####
@@ -275,13 +275,13 @@ mod_filters <- function(
       }
 
       # lets create the expressions on a map
-      variables_to_filter_by() %>%
+      variables_to_filter_by() |>
         purrr::map(
           function(x) {
             # extract the var type
-            var_type <- var_thes %>%
-              dplyr::filter(var_id == x) %>%
-              dplyr::pull(var_type) %>%
+            var_type <- var_thes |>
+              dplyr::filter(var_id == x) |>
+              dplyr::pull(var_type) |>
               magrittr::extract(1)
             # build the correct filter expression
             if (var_type == 'character') {
@@ -317,28 +317,28 @@ mod_filters <- function(
       shiny::need(variables_to_filter_by(), 'no variables to filter')
     )
     # vars
-    vars_to_filter_by <- shiny::isolate(variables_to_filter_by()) %>%
-      magrittr::set_names(., .)
+    vars_to_filter_by <- shiny::isolate(variables_to_filter_by()) |>
+      purrr::set_names()
     # cache list
     cache_list <-
-      vars_to_filter_by %>%
-      purrr::map(~ cache$get(stringr::str_remove_all(., '_'), missing = NULL))
+      vars_to_filter_by |>
+      purrr::map(~ cache$get(stringr::str_remove_all(.x, '_'), missing = NULL))
     # inputs values
     input_values <-
-      vars_to_filter_by %>%
-      purrr::map(~ input[[.]])
+      vars_to_filter_by |>
+      purrr::map(~ input[[.x]])
 
-    vars_to_filter_by %>%
+    vars_to_filter_by |>
       purrr::walk(
-        ~ {
+        \(.x) {
           if (
             # logic:
             # input must be no null and if it is not, then it must be different
             # from cache
-            !is.null(input_values[[.]]) &
-            !identical(cache_list[[.]], input_values[[.]])
+            !is.null(input_values[[.x]]) &
+            !identical(cache_list[[.x]], input_values[[.x]])
           ) {
-            cache$set(stringr::str_remove_all(., '_'), input_values[[.]])
+            cache$set(stringr::str_remove_all(.x, '_'), input_values[[.x]])
           }
         }
       )

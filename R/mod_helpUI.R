@@ -43,10 +43,10 @@ mod_help <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-    var_choices <- var_thes %>%
-      dplyr::filter(var_table %in% tables_to_look_at) %>%
-      dplyr::pull(var_id) %>%
-      unique() %>%
+    var_choices <- var_thes |>
+      dplyr::filter(var_table %in% tables_to_look_at) |>
+      dplyr::pull(var_id) |>
+      unique() |>
       translate_var(
         tables_to_look_at, lang(),
         var_thes, numerical_thes, texts_thes,
@@ -92,12 +92,12 @@ mod_help <- function(
     shiny::validate(
       shiny::need(input$glossary_var, 'no var selected yet')
     )
-    var_description <- var_thes %>%
-      dplyr::filter(var_id == input$glossary_var) %>%
+    var_description <- var_thes |>
+      dplyr::filter(var_id == input$glossary_var) |>
       dplyr::select(tidyselect::any_of(
         c(glue::glue("var_description_{lang()}"))
-      )) %>%
-      purrr::flatten_chr() %>%
+      )) |>
+      purrr::flatten_chr() |>
       unique()
     c(
       text_translate("var_description_title", lang(), texts_thes),
@@ -109,12 +109,12 @@ mod_help <- function(
     shiny::validate(
       shiny::need(input$glossary_var, 'no var selected yet')
     )
-    var_units <- numerical_thes %>%
-      dplyr::filter(var_id == input$glossary_var) %>%
+    var_units <- numerical_thes |>
+      dplyr::filter(var_id == input$glossary_var) |>
       dplyr::select(tidyselect::any_of(c(
         glue::glue("var_units")
-      ))) %>%
-      purrr::flatten_chr() %>%
+      ))) |>
+      purrr::flatten_chr() |>
       unique()
     if (length(var_units) < 1) {
       var_units <- '-'

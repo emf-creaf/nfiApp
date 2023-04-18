@@ -78,8 +78,8 @@ mod_applyButton <- function(
         .x, tables_to_look_at, lang(),
         var_thes, numerical_thes, texts_thes
       )))
-    any_empty <- translated_filter_vars %>%
-      purrr::map_lgl(rlang::is_empty) %>%
+    any_empty <- translated_filter_vars |>
+      purrr::map_lgl(rlang::is_empty) |>
       any()
 
     if (isTRUE(any_empty)) {
