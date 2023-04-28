@@ -34,7 +34,8 @@ Imports:
     sf,
     viridis,
     tidyselect,
-    cachem
+    cachem,
+    waiter
 Suggests: 
     testthat (>= 2.1.0),
     shinytest
