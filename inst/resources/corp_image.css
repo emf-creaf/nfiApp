@@ -106,12 +106,12 @@
 }
 
 .dropdown-menu>.active>a:hover {
-  background-color: var(--main-selected-color);
+  background-color: var(--main-button-hover-color);
   color: var(--main-dark-color);
 }
 
 .dropdown-menu>li>a:hover {
-  background-color: var(--main-selected-color);
+  background-color: var(--main-button-hover-color);
 }
 
 button.btn.dropdown-toggle.btn-default {
