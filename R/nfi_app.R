@@ -89,6 +89,20 @@ $(document).on('shiny:disconnected', function(event) {
         )
       ),
 
+      # footer
+      footer = shiny::tags$footer(
+        shiny::fluidRow(
+          shiny::column(
+            width = 12, align = "right",
+            shiny::HTML(glue::glue(
+              '<img src="images/emf_white_logo.svg" width="120px" class="d-inline-block" alt="" loading="lazy">
+              <img src="images/creaf_white_logo.svg" width="135px" class="d-inline-block" alt="" loading="lazy">
+              <span>({lubridate::year(Sys.Date())})</span>'
+            ))
+          )
+        )
+      ),
+
       # main tab
       shiny::tabPanel(
         title = mod_tab_translateOutput('main_tab_translation'),

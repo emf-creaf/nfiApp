@@ -62,7 +62,7 @@ mod_save <- function(
                 text_translate('visible', lang(), texts_thes),
                 text_translate('all_columns', lang(), texts_thes)
               )),
-            status = 'success', fill = TRUE, shape = 'round'
+            status = 'info', fill = TRUE, shape = 'round'
           ),
           shinyWidgets::prettyRadioButtons(
             ns('table_output_options'),
@@ -72,7 +72,7 @@ mod_save <- function(
                 text_translate('csv', lang(), texts_thes),
                 text_translate('xlsx', lang(), texts_thes)
               )),
-            status = 'success', fill = TRUE, shape = 'round'
+            status = 'info', fill = TRUE, shape = 'round'
           )
         )
       )

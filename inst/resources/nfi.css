@@ -68,7 +68,7 @@ div.tableinner {
   bottom: 0;
   padding: 15px 50px 50px 50px;
   overflow: auto;
-  background-color: #DDDDDD;
+  background-color: var(--main-bg-color);
 }
 
 div.table_container {
@@ -139,7 +139,7 @@ div.table_container {
 /* table body */
 table.dataTable tbody tr {
   background-color: var(--main-bg-color) !important;
-  color: black;
+  color: var(--main-dark-color);
 }
 
 /* waiter-waitress css custom */
@@ -149,7 +149,7 @@ table.dataTable tbody tr {
 }
 
 .progressjs-theme-blueOverlayRadiusWithPercentBar {
-  background-color: #E8EAEB;
+  background-color: var(--main-bg-color);
 }
 
 .waiter-overlay-content {
@@ -167,13 +167,13 @@ table.dataTable tbody tr {
   width: 100%;
   left: 0%;
   text-align: center;
-  color: #1C1C20;
+  color: var(--main-dark-color);
 }
 .waiter-overlay-content > p {
   width: 100%;
   left: 0%;
   text-align: center;
-  color: #1C1C20;
+  color: var(--main-dark-color);
 }
 
 .waiter-overlay {
@@ -187,7 +187,7 @@ table.dataTable tbody tr {
     width: 598px !important;
     top: 70px !important;
     left: 0px !important;
-    background-color: rgb(28, 28, 32) !important;
+    background-color: var(--main-dark-color) !important;
     position: absolute !important;
     z-index: 9999 !important;
 }
@@ -199,21 +199,21 @@ table.dataTable tbody tr {
 }
 
 .ldBar-label {
-  color: #1C1C20;
+  color: var(--main-dark-color);
 }
 
 .timer-loader:not(:required) {
-  border: 6px solid #83A24E;
-  border-top-color: #83A24E;
+  border: 6px solid var(--main-selected-color);
+  border-top-color: var(--main-selected-color);
   border-top-style: solid;
   border-top-width: 6px;
-  border-right-color: #83A24E;
+  border-right-color: var(--main-selected-color);
   border-right-style: solid;
   border-right-width: 6px;
-  border-bottom-color: #83A24E;
+  border-bottom-color: var(--main-selected-color);
   border-bottom-style: solid;
   border-bottom-width: 6px;
-  border-left-color: #83A24E;
+  border-left-color: var(--main-selected-color);
   border-left-style: solid;
   border-left-width: 6px;
   border-image-source: initial;
@@ -224,9 +224,9 @@ table.dataTable tbody tr {
 }
 
 .timer-loader:not(:required)::after {
-  background: #83A24E;
+  background: var(--main-selected-color);
 }
 
 .timer-loader:not(:required)::before {
-  background: #83A24E;
+  background: var(--main-selected-color);
 }

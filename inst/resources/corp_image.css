@@ -1,26 +1,7 @@
 /* CORPORATIVE IMAGE */
-/*
 
-Esto es una tentativa de establecer una paleta de colores basada en los colores del
-CREAF y del CTFC e uniformizar el estilo de las apps
-
-This is a try to establish a color palette based on the main colors of CREAF and CTFC, and
-uniformize the apps style
-
-*/
-
-/* CREAF / CTFC colors */
-/*
-:root {
-  --main-bg-color: #c8cac8;
-  --main-dark-color: #001629;
-  --main-selected-color: #448714;
-  --main-not-focused-color: #647a8d;
-  --main-button-color: #15351e;
-  --main-button-hover-color: #76f7a7
-}
-*/
 /* modified from https://www.schemecolor.com/rocky-cliff-color-scheme.php */
+/*
 :root {
   --main-bg-color: #E8EAEB;
   --main-dark-color: #1C1C20;
@@ -28,6 +9,16 @@ uniformize the apps style
   --main-not-focused-color: #606064;
   --main-button-color: #606064;
   --main-button-hover-color: #83A24E;
+}
+*/
+/* Colors based on EMF web */
+:root {
+  --main-bg-color: #F8F9FA;
+  --main-dark-color: #444444;
+  --main-selected-color: #22B0C6;
+  --main-not-focused-color: #606060;
+  --main-button-color: #22B0C6;
+  --main-button-hover-color: #40cee4;
 }
 
 
@@ -112,12 +103,12 @@ uniformize the apps style
 
 .dropdown-menu>.active>a {
   background-color: var(--main-bg-color);
-  color: #333;
+  color: var(--main-dark-color);
 }
 
 .dropdown-menu>.active>a:hover {
   background-color: var(--main-selected-color);
-  color: #333;
+  color: var(--main-dark-color);
 }
 
 .dropdown-menu>li>a:hover {
@@ -127,7 +118,7 @@ uniformize the apps style
 button.btn.dropdown-toggle.btn-default {
   background-color: var(--main-bg-color);
   border-color: var(--main-bg-color);
-  color: #333;
+  color: var(--main-dark-color);
 }
 
 /* inputs */
@@ -142,7 +133,7 @@ button.btn.dropdown-toggle.btn-default {
 }
 
 .option:hover, .option:focus {
-  background-color: #448714 !important;
+  background-color: var(--main-button-hover-color) !important;
   border: 0px;
 }
 
@@ -229,3 +220,27 @@ input.form-control {
 .lfc_formattable>tbody>tr>td {
   border: none;
 }
+
+/* footer */
+footer {
+  position: relative;
+  bottom: 0px;
+  right: 0px;
+  left: 3%;
+  width: 97%;
+  height: 200px;
+  font-size: 1.2rem;
+  border-radius: 20px 0px 0px 0px;
+  border: 0px;
+  padding-top: 25px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  background-color: var(--main-dark-color);
+  color: var(--main-bg-color);
+}
+
+footer>div.row {
+  margin: 0px;
+}
+

@@ -178,7 +178,7 @@ mod_data <- function(
           shinyWidgets::prettyCheckbox(
             ns('group_by_div'),
             text_translate('group_by_div_input', lang(), texts_thes),
-            status = 'success', shape = 'curve', fill = TRUE
+            status = 'info', shape = 'curve', fill = TRUE
           )
 
         ),
@@ -187,7 +187,7 @@ mod_data <- function(
           shinyWidgets::prettyCheckbox(
             ns('group_by_dom'),
             text_translate('group_by_dom_input', lang(), texts_thes),
-            status = 'success', shape = 'curve', fill = TRUE
+            status = 'info', shape = 'curve', fill = TRUE
           )
 
         )
@@ -207,7 +207,7 @@ mod_data <- function(
                 ),
                 choices = dominant_group_choices,
                 selected = 'species',
-                status = 'success',
+                status = 'info',
                 fill = TRUE,
                 shape = 'round'
               )
@@ -221,7 +221,7 @@ mod_data <- function(
                 ),
                 choices = dominant_criteria_choices,
                 selected = 'density',
-                status = 'success',
+                status = 'info',
                 fill = TRUE,
                 shape = 'round'
               ),
@@ -233,7 +233,7 @@ mod_data <- function(
                   ),
                   choices = dominant_nfi_choices,
                   selected = 'none',
-                  status = 'success',
+                  status = 'info',
                   fill = TRUE,
                   shape = 'round'
                 )
@@ -264,7 +264,7 @@ mod_data <- function(
               label = text_translate(
                 'diameter_classes_input', lang(), texts_thes
               ),
-              status = 'success', shape = 'curve', fill = TRUE
+              status = 'info', shape = 'curve', fill = TRUE
             )
           )
         ) # end of desglossament row
@@ -421,7 +421,7 @@ mod_data <- function(
         choices = dominant_nfi_choices,
         selected = dominant_nfi_choices[1],
         prettyOptions = list(
-          status = 'success',
+          status = 'info',
           fill = TRUE,
           shape = 'round'
         )
