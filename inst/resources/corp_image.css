@@ -15,12 +15,11 @@
 :root {
   --main-bg-color: #F8F9FA;
   --main-dark-color: #444444;
-  --main-selected-color: #22B0C6;
+  --main-selected-color: #13ABCD;
   --main-not-focused-color: #606060;
-  --main-button-color: #22B0C6;
-  --main-button-hover-color: #40cee4;
+  --main-button-color: #13ABCD;
+  --main-button-hover-color: #E9E165;
 }
-
 
 /* language selector */
 .navbar-form {
@@ -228,7 +227,7 @@ footer {
   right: 0px;
   left: 3%;
   width: 97%;
-  height: 200px;
+  height: 120px;
   font-size: 1.2rem;
   border-radius: 20px 0px 0px 0px;
   border: 0px;
@@ -236,11 +235,16 @@ footer {
   padding-bottom: 10px;
   padding-right: 10px;
   margin-top: 10px;
-  background-color: var(--main-dark-color);
-  color: var(--main-bg-color);
+  /*background-color: var(--main-dark-color);
+  color: var(--main-bg-color);*/
+  background-image: linear-gradient(to right,#13ABCD -.4%,#E9E165 100.4%),url(/images/abstract_background_overlay.png);
+  background-blend-mode: overlay;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  color: var(--main-dark-color);
 }
 
 footer>div.row {
   margin: 0px;
 }
-
