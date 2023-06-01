@@ -237,7 +237,7 @@ footer {
   margin-top: 10px;
   /*background-color: var(--main-dark-color);
   color: var(--main-bg-color);*/
-  background-image: linear-gradient(to right,#13ABCD -.4%,#E9E165 100.4%),url(/images/abstract_background_overlay.png);
+  background-image: linear-gradient(to right,#13ABCD -.4%,#E9E165 100.4%),url(images/abstract_background_overlay.png);
   background-blend-mode: overlay;
   background-size: cover;
   background-repeat: no-repeat;
