@@ -111,13 +111,13 @@ $(document).on('shiny:disconnected', function(event) {
           # js script,
           shiny::tags$script(js_script),
           shiny::tags$script(keep_alive_script),
-          # custom css
-          shiny::includeCSS(
-            system.file('resources', 'nfi.css', package = 'nfiApp')
-          ),
           # corporative image css
           shiny::includeCSS(
-            system.file('resources', 'corp_image.css', package = 'nfiApp')
+            system.file('apps_css', 'corp_image.css', package = 'lfcdata')
+          ),
+          # custom css
+          shiny::includeCSS(
+            system.file('apps_css', 'nfi.css', package = 'lfcdata')
           )
         ),
         # Sidebar layout
