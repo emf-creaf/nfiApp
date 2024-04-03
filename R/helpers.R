@@ -5,10 +5,10 @@ navbarPageWithInputs <- function(..., inputs) {
   navbar <- shiny::navbarPage(...)
   form <- shiny::tags$form(class = "navbar-form", inputs)
 
-  navbar[[4]][[1]][[1]]$children[[1]]$children[[2]] <- htmltools::tagAppendChild(
-    navbar[[4]][[1]][[1]]$children[[1]]$children[[2]], form
-  )
-  navbar
+  navbar[[4]][[1]]$children[[1]][[1]]$children[[1]][[3]][[2]] <-
+    htmltools::tagAppendChild(navbar[[4]][[1]]$children[[1]][[1]]$children[[1]][[3]][[2]], form)
+
+  return(navbar)
 }
 
 # translate function
