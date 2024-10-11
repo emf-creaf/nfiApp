@@ -51,7 +51,7 @@ mod_map <- function(
       # style = mapdeck::mapdeck_style('dark'),
       style = "https://raw.githubusercontent.com/CartoDB/basemap-styles/refs/heads/master/mapboxgl/dark-matter-nolabels.json",
       location = c(1.744, 41.726), zoom = 7, pitch = 0,
-      show_view_state = TRUE
+      show_view_state = FALSE # for debug change to true
     )
   }) # end of mapdeck output (empty map)
 
@@ -554,8 +554,41 @@ mod_map <- function(
   map_reactives <- shiny::reactiveValues()
   shiny::observe({
     map_reactives$aesthetics <- aesthetics_builder()
-    map_reactives$nfi_map_shape_click <- input$nfi_map_shape_click
-    map_reactives$nfi_map_draw_all_features <- input$nfi_map_draw_all_features
+    map_reactives$nfi_map_plot_click <- input$nfi_map_scatterplot_click
+    map_reactives$nfi_map_poly_click <- input$nfi_map_polygon_click
+    # map_reactives$nfi_map_shape_click <- input$nfi_map_shape_click
+    # map_reactives$nfi_map_draw_all_features <- input$nfi_map_draw_all_features
   })
+
+  ## custom observers to record the mapdeck clicks (polys and plots), get the id and
+  # the group, create map_reactives$nfi_map_shape_click with that info and
+  # leverage the infraestructure in place for nfi_map_shape_click, which is
+  # shape agnostic.
+  ## polys click
+  shiny::observeEvent(
+    eventExpr = input$nfi_map_polygon_click,
+    handlerExpr = {
+      click_json <- shiny::req(input$nfi_map_polygon_click) |>
+        jsonlite::fromJSON()
+      map_reactives$nfi_map_shape_click <- list(
+        id = click_json$object$properties$id,
+        group = "polys"
+      )
+    }
+  )
+
+  ## plots click
+  shiny::observeEvent(
+    eventExpr = input$nfi_map_scatterplot_click,
+    handlerExpr = {
+      click_json <- shiny::req(input$nfi_map_scatterplot_click) |>
+        jsonlite::fromJSON()
+      map_reactives$nfi_map_shape_click <- list(
+        id = aesthetics_builder()$plot_data[["plot_id"]][click_json$index + 1],
+        group = "plots"
+      )
+    }
+  )
+
   return(map_reactives)
 }
