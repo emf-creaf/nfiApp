@@ -19,8 +19,6 @@ Imports:
     tidyr,
     stringr,
     magrittr,
-    leaflet,
-    leaflet.extras,
     formattable,
     ggplot2,
     readr,
