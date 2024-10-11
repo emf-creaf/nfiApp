@@ -79,7 +79,8 @@ mod_map <- function(
     mapdeck::mapdeck(
       # style = mapdeck::mapdeck_style('dark'),
       style = "https://raw.githubusercontent.com/CartoDB/basemap-styles/refs/heads/master/mapboxgl/dark-matter-nolabels.json",
-      location = c(1.744, 41.726), zoom = 7, pitch = 0
+      location = c(1.744, 41.726), zoom = 7, pitch = 0,
+      show_view_state = TRUE
     )
   }) # end of mapdeck output (empty map)
   
@@ -515,6 +516,7 @@ mod_map <- function(
         dplyr::ungroup() |>
         dplyr::mutate(
           hex = rlang::eval_tidy(aesthetics_data$fill_color),
+          # fake_elevation = scales::rescale(aesthetics_data$color_vector, c(100, 10000)),
           tooltip = paste0(
             "<p>", .data[[labels(terms(aesthetics_data$polygon_label))]], ": ", round(.data[[aesthetics_data$viz_color]], 2), "</p>"
           )
@@ -529,6 +531,7 @@ mod_map <- function(
           id = labels(terms(aesthetics_data$polygon_label)), layer_id = "polys",
           update_view = FALSE, focus_layer = FALSE,
           tooltip = "tooltip",
+          # elevation = "fake_elevation",
           legend = aesthetics_data$legend_js
         )
       # update the map
