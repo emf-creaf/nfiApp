@@ -36,7 +36,10 @@ Imports:
     tidyselect,
     cachem,
     waiter,
-    lubridate
+    lubridate,
+    mapdeck,
+    colourvalues,
+    jsonlite
 Suggests: 
     testthat (>= 2.1.0),
     shinytest

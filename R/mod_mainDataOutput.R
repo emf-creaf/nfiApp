@@ -109,46 +109,46 @@ mod_mainData <- function(
       return(user_file_polygons)
     }
 
-    if (admin_div == 'drawn_poly') {
-      # validation
-      drawn_polygon <- map_reactives$nfi_map_draw_all_features
-      # When removing the features (custom polygon) the
-      # input$map_draw_new_feature is not cleared, so is always filtering the
-      # sites, even after removing. For that we need to control when the removed
-      # feature equals the new, that's it, when we removed the last one
-      shiny::validate(
-        shiny::need(drawn_polygon, 'no draw polys yet'),
-        shiny::need(length(drawn_polygon[['features']]) != 0, 'removed poly')
-      )
-      res <-
-        drawn_polygon[['features']][[1]][['geometry']][['coordinates']] |>
-        purrr::flatten() |>
-        purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) |>
-        dplyr::bind_rows() |>
-        # {list(as.matrix(.))} |>
-        to_matrix_list() |>
-        sf::st_polygon() |>
-        sf::st_sfc() |>
-        sf::st_sf(crs = 4326) |>
-        dplyr::mutate(poly_id = 'drawn_poly')
-      return(res)
+    # if (admin_div == 'drawn_poly') {
+    #   # validation
+    #   drawn_polygon <- map_reactives$nfi_map_draw_all_features
+    #   # When removing the features (custom polygon) the
+    #   # input$map_draw_new_feature is not cleared, so is always filtering the
+    #   # sites, even after removing. For that we need to control when the removed
+    #   # feature equals the new, that's it, when we removed the last one
+    #   shiny::validate(
+    #     shiny::need(drawn_polygon, 'no draw polys yet'),
+    #     shiny::need(length(drawn_polygon[['features']]) != 0, 'removed poly')
+    #   )
+    #   res <-
+    #     drawn_polygon[['features']][[1]][['geometry']][['coordinates']] |>
+    #     purrr::flatten() |>
+    #     purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) |>
+    #     dplyr::bind_rows() |>
+    #     # {list(as.matrix(.))} |>
+    #     to_matrix_list() |>
+    #     sf::st_polygon() |>
+    #     sf::st_sfc() |>
+    #     sf::st_sf(crs = 4326) |>
+    #     dplyr::mutate(poly_id = 'drawn_poly')
+    #   return(res)
 
-      # if (is.null(drawn_polygon) || length(drawn_polygon[['features']]) == 0) {
-      #   return(NULL)
-      # } else {
-      #   res <-
-      #     drawn_polygon[['features']][[1]][['geometry']][['coordinates']] |>
-      #     purrr::flatten() |>
-      #     purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) |>
-      #     dplyr::bind_rows() |>
-      #     {list(as.matrix(.))} |>
-      #     sf::st_polygon() |>
-      #     sf::st_sfc() |>
-      #     sf::st_sf(crs = 4326) |>
-      #     dplyr::mutate(poly_id = 'drawn_poly')
-      #   return(res)
-      # }
-    }
+    #   # if (is.null(drawn_polygon) || length(drawn_polygon[['features']]) == 0) {
+    #   #   return(NULL)
+    #   # } else {
+    #   #   res <-
+    #   #     drawn_polygon[['features']][[1]][['geometry']][['coordinates']] |>
+    #   #     purrr::flatten() |>
+    #   #     purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) |>
+    #   #     dplyr::bind_rows() |>
+    #   #     {list(as.matrix(.))} |>
+    #   #     sf::st_polygon() |>
+    #   #     sf::st_sfc() |>
+    #   #     sf::st_sf(crs = 4326) |>
+    #   #     dplyr::mutate(poly_id = 'drawn_poly')
+    #   #   return(res)
+    #   # }
+    # }
   })
 
   # main data ####

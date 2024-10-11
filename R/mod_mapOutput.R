@@ -9,7 +9,8 @@ mod_mapOutput <- function(id) {
   # ns
   ns <- shiny::NS(id)
   shiny::tagList(
-    leaflet::leafletOutput(ns("nfi_map"), height = 600),
+    # leaflet::leafletOutput(ns("nfi_map"), height = 600),
+    mapdeck::mapdeckOutput(ns("nfi_map"), height = 600),
     shiny::uiOutput(ns('map_container'))
   )
 }
@@ -33,30 +34,30 @@ mod_map <- function(
 ) {
 
   ## helper ####
-  leaflet_legend_helper <- function(map, group_by_div, group_by_dom, aesthetics_data, tables_to_look_at, lang_sel) {
-    # legend in summaries
-    if (!any(group_by_div, group_by_dom)) {
-      return(map)
-    }
+  # leaflet_legend_helper <- function(map, group_by_div, group_by_dom, aesthetics_data, tables_to_look_at, lang_sel) {
+  #   # legend in summaries
+  #   if (!any(group_by_div, group_by_dom)) {
+  #     return(map)
+  #   }
 
-    map |>
-      leaflet::addLegend(
-        position = 'bottomright', pal = aesthetics_data$pal_legend,
-        values = aesthetics_data$color_vector_legend,
-        title = names(
-          translate_var(
-            aesthetics_data$viz_color,
-            tables_to_look_at, lang_sel, var_thes, numerical_thes,
-            texts_thes, is_summary = TRUE, need_order = FALSE
-          )
-        ),
-        layerId = 'color_legend', opacity = 1,
-        na.label = '', className = aesthetics_data$legend_class,
-        labFormat = leaflet::labelFormat(
-          transform = function(x) {sort(x, decreasing = TRUE)}
-        )
-      )
-  }
+  #   map |>
+  #     leaflet::addLegend(
+  #       position = 'bottomright', pal = aesthetics_data$pal_legend,
+  #       values = aesthetics_data$color_vector_legend,
+  #       title = names(
+  #         translate_var(
+  #           aesthetics_data$viz_color,
+  #           tables_to_look_at, lang_sel, var_thes, numerical_thes,
+  #           texts_thes, is_summary = TRUE, need_order = FALSE
+  #         )
+  #       ),
+  #       layerId = 'color_legend', opacity = 1,
+  #       na.label = '', className = aesthetics_data$legend_class,
+  #       labFormat = leaflet::labelFormat(
+  #         transform = function(x) {sort(x, decreasing = TRUE)}
+  #       )
+  #     )
+  # }
 
   ## renderUI ####
   output$map_container <- shiny::renderUI({
@@ -72,66 +73,76 @@ mod_map <- function(
   #   )
   }) # end of renderUI
 
-  ## leaflet output (empty map) ####
-  output$nfi_map <- leaflet::renderLeaflet({
+  
+  ## mapdeck output (empty map) ####
+  output$nfi_map <- mapdeck::renderMapdeck({
+    mapdeck::mapdeck(
+      # style = mapdeck::mapdeck_style('dark'),
+      style = "https://raw.githubusercontent.com/CartoDB/basemap-styles/refs/heads/master/mapboxgl/dark-matter-nolabels.json",
+      location = c(1.744, 41.726), zoom = 7, pitch = 0
+    )
+  }) # end of mapdeck output (empty map)
+  
+  # output$nfi_map <- leaflet::renderLeaflet({
 
-    # we need data, and we need color var at least
-    leaflet::leaflet() |>
-      leaflet::setView(1.1, 41.70, zoom = 8) |>
-      leaflet::addProviderTiles(
-        leaflet::providers$Esri.WorldShadedRelief, group = 'Relief'
-      ) |>
-      leaflet::addProviderTiles(
-        leaflet::providers$Esri.WorldImagery, group = 'Imaginery'
-      ) |>
-      leaflet::addProviderTiles(
-        leaflet::providers$OpenStreetMap, group = 'OSM'
-      ) |>
-      leaflet::addProviderTiles(
-        leaflet::providers$Esri.WorldGrayCanvas, group = 'WorldGrayCanvas'
-      ) |>
-      leaflet::addProviderTiles(
-        leaflet::providers$CartoDB.PositronNoLabels, group = 'PositronNoLabels'
-      ) |>
-      leaflet::addMapPane('admin_divs', zIndex = 410) |>
-      leaflet::addMapPane('plots', zIndex = 420) |>
-      leaflet::addLayersControl(
-        baseGroups = c('Relief', 'Imaginery', 'OSM', 'WorldGrayCanvas', 'PositronNoLabels'),
-        options = leaflet::layersControlOptions(collapsed = TRUE)
-      ) |>
-      # leaflet.extras plugins
-      leaflet.extras::addDrawToolbar(
-        targetGroup = 'drawn_poly',
-        position = 'topleft',
-        polylineOptions = FALSE, circleOptions = FALSE,
-        rectangleOptions = FALSE, markerOptions = FALSE,
-        circleMarkerOptions = FALSE,
-        polygonOptions = leaflet.extras::drawPolygonOptions(
-          shapeOptions = leaflet.extras::drawShapeOptions()
-        ),
-        editOptions = leaflet.extras::editToolbarOptions(
-          edit = TRUE, remove = TRUE
-        ),
-        singleFeature = TRUE
-      )
-  }) # end of leaflet output (empty map)
+  #   # we need data, and we need color var at least
+  #   leaflet::leaflet() |>
+  #     leaflet::setView(1.1, 41.70, zoom = 8) |>
+  #     leaflet::addProviderTiles(
+  #       leaflet::providers$Esri.WorldShadedRelief, group = 'Relief'
+  #     ) |>
+  #     leaflet::addProviderTiles(
+  #       leaflet::providers$Esri.WorldImagery, group = 'Imaginery'
+  #     ) |>
+  #     leaflet::addProviderTiles(
+  #       leaflet::providers$OpenStreetMap, group = 'OSM'
+  #     ) |>
+  #     leaflet::addProviderTiles(
+  #       leaflet::providers$Esri.WorldGrayCanvas, group = 'WorldGrayCanvas'
+  #     ) |>
+  #     leaflet::addProviderTiles(
+  #       leaflet::providers$CartoDB.PositronNoLabels, group = 'PositronNoLabels'
+  #     ) |>
+  #     leaflet::addMapPane('admin_divs', zIndex = 410) |>
+  #     leaflet::addMapPane('plots', zIndex = 420) |>
+  #     leaflet::addLayersControl(
+  #       baseGroups = c('Relief', 'Imaginery', 'OSM', 'WorldGrayCanvas', 'PositronNoLabels'),
+  #       options = leaflet::layersControlOptions(collapsed = TRUE)
+  #     ) |>
+  #     # leaflet.extras plugins
+  #     leaflet.extras::addDrawToolbar(
+  #       targetGroup = 'drawn_poly',
+  #       position = 'topleft',
+  #       polylineOptions = FALSE, circleOptions = FALSE,
+  #       rectangleOptions = FALSE, markerOptions = FALSE,
+  #       circleMarkerOptions = FALSE,
+  #       polygonOptions = leaflet.extras::drawPolygonOptions(
+  #         shapeOptions = leaflet.extras::drawShapeOptions()
+  #       ),
+  #       editOptions = leaflet.extras::editToolbarOptions(
+  #         edit = TRUE, remove = TRUE
+  #       ),
+  #       singleFeature = TRUE
+  #     )
+  # }) # end of mapdeck output (empty map)
 
   ## reactives ####
   # zoom-size transformation. Logic is as follows:
   #   - In closer zooms (10) go to the base size of 750. In far zooms increase
   #     accordingly, until zoom 7 and further, with a max size of 1500
   base_size <- shiny::reactive({
-    current_zoom <- input$nfi_map_zoom
-    if (current_zoom <= 7) {
-      current_zoom <- 7
-    }
-    if (current_zoom >= 10) {
-      current_zoom <- 10
-    }
+    # current_zoom <- input$nfi_map_zoom
+    # if (current_zoom <= 7) {
+    #   current_zoom <- 7
+    # }
+    # if (current_zoom >= 10) {
+    #   current_zoom <- 10
+    # }
 
-    size_transformed <- 750 + ((10 - current_zoom) * 250)
+    # size_transformed <- 750 + ((10 - current_zoom) * 250)
 
-    return(size_transformed)
+    # return(size_transformed)
+    return(750)
   })
 
   # aesthetics builder
@@ -145,7 +156,6 @@ mod_map <- function(
   #   - depending on class of vector, a legend class
   # We also get the data and polygons labels
   aesthetics_builder <- shiny::reactive({
-    # browser()
     # inputs
     group_by_div <- shiny::isolate(data_reactives$group_by_div)
     group_by_dom <- shiny::isolate(data_reactives$group_by_dom)
@@ -166,6 +176,11 @@ mod_map <- function(
 
     shiny::validate(shiny::need(admin_div, 'no inputs yet'))
 
+    tables_to_look_at <- c(
+      main_table_to_look_at(nfi, desglossament, diameter_classes),
+      ancillary_tables_to_look_at(nfi)
+    )
+    
     # polygon labels, join vars for data and join data expression for data
     if (admin_div %in% c('file', 'drawn_poly')) {
       polygon_label <- as.formula('~poly_id')
@@ -304,13 +319,13 @@ mod_map <- function(
           dplyr::pull(!! rlang::sym(viz_size))
 
         if (is.numeric(size_vector_pre)) {
-          size_vector <-
-            ((size_vector_pre/max(size_vector_pre, na.rm = TRUE)) * 1500) + base_size()
+          size_vector <- scales::rescale(size_vector_pre, c(750, 3000))
+          # ((size_vector_pre/max(size_vector_pre, na.rm = TRUE)) * 1500) + base_size()
         } else {
-          size_vector <-
-            ((as.numeric(as.factor(size_vector_pre)) /
-                max(as.numeric(as.factor(size_vector_pre)), na.rm = TRUE))
-             * 1500) + base_size()
+          size_vector <- scales::rescale(as.numeric(as.factor(size_vector_pre)), c(750, 3000))
+          # ((as.numeric(as.factor(size_vector_pre)) /
+          #     max(as.numeric(as.factor(size_vector_pre)), na.rm = TRUE))
+          #  * 1500) + base_size()
         }
       }
       size_vector[is.na(color_vector)] <- base_size()/2
@@ -346,54 +361,100 @@ mod_map <- function(
 
       pal <- switch(
         viz_pal_config,
-        "low" = leaflet::colorNumeric(
+        "low" = scales::col_numeric(
           scales::gradient_n_pal(
-            viridis::mako(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
+            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
-          color_vector_legend, reverse = viz_pal_reverse, na.color = 'transparent'
+          c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
+          na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
         ),
-        "high" = leaflet::colorNumeric(
+        "high" = scales::col_numeric(
           scales::gradient_n_pal(
-            viridis::mako(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
+            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
-          color_vector_legend, reverse = viz_pal_reverse, na.color = 'transparent'
+          c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
+          na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
         ),
-        "normal" = leaflet::colorNumeric(
-          viridis::mako(256), color_vector_legend, reverse = viz_pal_reverse,
-          na.color = 'transparent'
+        "normal" = scales::col_numeric(
+          hcl.colors(256, "ag_GrnYl", alpha = 0.8),
+          c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
+          na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
         )
       )
       # as we need to reverse the legend values (low at bottom) we need an
       # alternative palette for the legend with the reversed values
       pal_legend <- switch(
         viz_pal_config,
-        "low" = leaflet::colorNumeric(
+        "low" = scales::col_numeric(
           scales::gradient_n_pal(
-            viridis::mako(9), c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
+            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
-          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'transparent'
+          c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
+          na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
         ),
-        "high" = leaflet::colorNumeric(
+        "high" = scales::col_numeric(
           scales::gradient_n_pal(
-            viridis::mako(9), c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
+            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
-          color_vector_legend, reverse = !viz_pal_reverse, na.color = 'transparent'
+          c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
+          na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
         ),
-        "normal" = leaflet::colorNumeric(
-          viridis::mako(256), color_vector_legend, reverse = !viz_pal_reverse,
-          na.color = 'transparent'
+        "normal" = scales::col_numeric(
+          hcl.colors(256, "ag_GrnYl", alpha = 0.8),
+          c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
+          na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
         )
       )
       legend_class <- 'info legend na_out'
+
+      # map legend js for mapbox
+      # custom legend (to be able to show in natural order, high values up)
+      legend_js <- mapdeck::legend_element(
+        variables = rev(round(seq(
+          min(color_vector, na.rm = TRUE),
+          max(color_vector, na.rm = TRUE),
+          length.out = 10
+        ), 3)),
+        colours = pal_legend(seq(
+          min(color_vector, na.rm = TRUE),
+          max(color_vector, na.rm = TRUE),
+          length.out = 10
+        )),
+        colour_type = "fill", variable_type = "gradient",
+        title = translate_var(
+          viz_color,
+          tables_to_look_at, lang(), var_thes, numerical_thes,
+          texts_thes, is_summary = TRUE, need_order = FALSE
+        ) |> names()
+      ) |>
+        mapdeck::mapdeck_legend()
     } else {
-      pal <- leaflet::colorFactor(
-        viridis::mako(256), color_vector, reverse = viz_pal_reverse, na.color = 'transparent'
+      pal <- scales::col_factor(
+        hcl.colors(256, "ag_GrnYl", alpha = 0.8), color_vector,
+        na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
       )
-      pal_legend <- leaflet::colorFactor(
-        viridis::mako(256), color_vector, reverse = !viz_pal_reverse, na.color = 'transparent'
+      pal_legend <- scales::col_factor(
+        hcl.colors(256, "ag_GrnYl", alpha = 0.8), color_vector,
+        na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
       )
       legend_class <- 'info legend'
       color_vector_legend <- color_vector
+      # custom legend (to be able to show in natural order, high values up)
+      legend_js <- mapdeck::legend_element(
+        variables = rev(sort(unique(color_vector_legend))),
+        colours = pal_legend(sort(unique(color_vector_legend))),
+        colour_type = "fill", variable_type = "category",
+        title = translate_var(
+          viz_color,
+          tables_to_look_at, lang(), var_thes, numerical_thes,
+          texts_thes, is_summary = TRUE, need_order = FALSE
+        ) |> names()
+      ) |>
+        mapdeck::mapdeck_legend()
     }
 
     return(list(
@@ -417,7 +478,8 @@ mod_map <- function(
       desglossament = desglossament,
       diameter_classes = diameter_classes,
       group_by_dom = group_by_dom,
-      group_by_div = group_by_div
+      group_by_div = group_by_div,
+      legend_js = legend_js
     ))
   })
 
@@ -448,39 +510,63 @@ mod_map <- function(
       ancillary_tables_to_look_at(nfi)
     )
 
-
-    # update the map
-    leaflet::leafletProxy('nfi_map') |>
-      leaflet::clearGroup('aut_community') |>
-      leaflet::clearGroup('province') |>
-      leaflet::clearGroup('vegueria') |>
-      leaflet::clearGroup('region') |>
-      leaflet::clearGroup('municipality') |>
-      leaflet::clearGroup('natural_interest_area') |>
-      leaflet::clearGroup('special_protection_natural_area') |>
-      leaflet::clearGroup('natura_network_2000') |>
-      leaflet::clearGroup('file') |>
-      leaflet::clearGroup('drawn_poly') |>
-      # leaflet::clearGroup('plots') |>
-      leaflet::addPolygons(
-        data = aesthetics_data$polygon_data,
-        group = admin_div,
-        label = aesthetics_data$polygon_label,
-        layerId = aesthetics_data$polygon_label,
-        weight = 1, smoothFactor = 1,
-        opacity = 1.0, fill = TRUE,
-        color = '#6C7A89FF',
-        fillColor = rlang::eval_tidy(aesthetics_data$fill_color),
-        fillOpacity = 0.7,
-        highlightOptions = leaflet::highlightOptions(
-          color = "#CF000F", weight = 2,
-          bringToFront = FALSE
-        ),
-        options = leaflet::pathOptions(
-          pane = 'admin_divs'
+    if (isTRUE(group_by_div)) {
+      map_data <- aesthetics_data$polygon_data |>
+        dplyr::ungroup() |>
+        dplyr::mutate(
+          hex = rlang::eval_tidy(aesthetics_data$fill_color),
+          tooltip = paste0(
+            "<p>", .data[[labels(terms(aesthetics_data$polygon_label))]], ": ", round(.data[[aesthetics_data$viz_color]], 2), "</p>"
+          )
         )
-      ) |>
-      leaflet_legend_helper(group_by_div, group_by_dom, aesthetics_data, tables_to_look_at, lang_sel)
+
+      mapdeck::mapdeck_update(map_id = session$ns("nfi_map")) |>
+        mapdeck::clear_scatterplot(layer_id = "plots") |>
+        mapdeck::clear_polygon(layer_id = "polys") |>
+        mapdeck::add_polygon(
+          data = map_data,
+          fill_colour = "hex", fill_opacity = 0.8,
+          id = labels(terms(aesthetics_data$polygon_label)), layer_id = "polys",
+          update_view = FALSE, focus_layer = FALSE,
+          tooltip = "tooltip",
+          legend = aesthetics_data$legend_js
+        )
+      # update the map
+      # leaflet::leafletProxy('nfi_map') |>
+      #   leaflet::clearGroup('aut_community') |>
+      #   leaflet::clearGroup('province') |>
+      #   leaflet::clearGroup('vegueria') |>
+      #   leaflet::clearGroup('region') |>
+      #   leaflet::clearGroup('municipality') |>
+      #   leaflet::clearGroup('natural_interest_area') |>
+      #   leaflet::clearGroup('special_protection_natural_area') |>
+      #   leaflet::clearGroup('natura_network_2000') |>
+      #   leaflet::clearGroup('file') |>
+      #   leaflet::clearGroup('drawn_poly') |>
+      #   # leaflet::clearGroup('plots') |>
+      #   leaflet::addPolygons(
+      #     data = aesthetics_data$polygon_data,
+      #     group = admin_div,
+      #     label = aesthetics_data$polygon_label,
+      #     layerId = aesthetics_data$polygon_label,
+      #     weight = 1, smoothFactor = 1,
+      #     opacity = 1.0, fill = TRUE,
+      #     color = '#6C7A89FF',
+      #     fillColor = rlang::eval_tidy(aesthetics_data$fill_color),
+      #     fillOpacity = 0.7,
+      #     highlightOptions = leaflet::highlightOptions(
+      #       color = "#CF000F", weight = 2,
+      #       bringToFront = FALSE
+      #     ),
+      #     options = leaflet::pathOptions(
+      #       pane = 'admin_divs'
+      #     )
+      #   ) |>
+      #   leaflet_legend_helper(group_by_div, group_by_dom, aesthetics_data, tables_to_look_at, lang_sel)
+    } else {
+      mapdeck::mapdeck_update(map_id = session$ns("nfi_map")) |>
+        mapdeck::clear_scatterplot(layer_id = "polys")
+    }
   }) # end of polygon observer
 
   # observer to plot plots
@@ -497,6 +583,8 @@ mod_map <- function(
     nfi <- aesthetics_data$nfi
     desglossament <- aesthetics_data$desglossament
     diameter_classes <- aesthetics_data$diameter_classes
+    viz_size <- aesthetics_data$viz_size
+    
     # are we drawing summary data?
     group_by_div <- aesthetics_data$group_by_div
 
@@ -507,37 +595,88 @@ mod_map <- function(
 
     if (!isTRUE(group_by_div)) {
 
-      # update the map
-      leaflet::leafletProxy('nfi_map') |>
-        leaflet::clearGroup('plots') |>
-        leaflet::addCircles(
-          data = aesthetics_data$plot_data,
-          group = 'plots', label = ~plot_id, layerId = ~plot_id,
-          stroke = FALSE, fillOpacity = 0.7,
-          fillColor = aesthetics_data$pal(aesthetics_data$color_vector),
-          radius = aesthetics_data$size_vector,
-          options = leaflet::pathOptions(pane = 'plots')
-        ) |>
-        leaflet::addLegend(
-          position = 'bottomright', pal = aesthetics_data$pal_legend,
-          values = aesthetics_data$color_vector_legend,
-          title = names(
-            translate_var(
-              aesthetics_data$viz_color,
-              tables_to_look_at, lang_sel, var_thes, numerical_thes,
-              texts_thes, is_summary = TRUE, need_order = FALSE
-            )
-          ),
-          layerId = 'color_legend', opacity = 1,
-          na.label = '', className = aesthetics_data$legend_class,
-          labFormat = leaflet::labelFormat(
-            transform = function(x) {sort(x, decreasing = TRUE)}
-          )
+      if (viz_size == "") {
+        viz_size_tooltip <- paste0(
+          "<p>", aesthetics_data$plot_data$plot_id, ":</p>",
+          "<p>", translate_var(
+            aesthetics_data$viz_color,
+            tables_to_look_at, lang_sel, var_thes, numerical_thes,
+            texts_thes, is_summary = TRUE, need_order = FALSE
+          ) |> names(),
+          " ", aesthetics_data$plot_data[[aesthetics_data$viz_color]], "</p>"
         )
+      } else {
+        viz_size_tooltip <- paste0(
+          "<p>", aesthetics_data$plot_data$plot_id, ":</p>",
+          "<p>", translate_var(
+            aesthetics_data$viz_color,
+            tables_to_look_at, lang_sel, var_thes, numerical_thes,
+            texts_thes, is_summary = TRUE, need_order = FALSE
+          ) |> names(),
+          " ", aesthetics_data$plot_data[[aesthetics_data$viz_color]], "</p>",
+          "<p>", translate_var(
+            aesthetics_data$viz_size,
+            tables_to_look_at, lang_sel, var_thes, numerical_thes,
+            texts_thes, is_summary = TRUE, need_order = FALSE
+          ) |> names(),
+          " ", aesthetics_data$plot_data[[aesthetics_data$viz_size]], "</p>"
+        )
+      }
+
+      map_data <- aesthetics_data$plot_data |>
+        dplyr::mutate(
+          hex = aesthetics_data$pal(aesthetics_data$color_vector),
+          tooltip = viz_size_tooltip,
+          radius = aesthetics_data$size_vector
+        )
+
+      mapdeck::mapdeck_update(map_id = session$ns("nfi_map")) |>
+        mapdeck::clear_polygon(layer_id = "polys") |>
+        mapdeck::clear_scatterplot(layer_id = "plots") |>
+        mapdeck::add_scatterplot(
+          data = map_data,
+          fill_colour = "hex", fill_opacity = 0.8,
+          stroke_colour = "hex", stroke_opacity = 0.8,
+          id = "plot_id", layer_id = "plots",
+          update_view = FALSE, focus_layer = FALSE,
+          tooltip = "tooltip",
+          legend = aesthetics_data$legend_js,
+          radius = "radius"
+        )
+
+      # update the map
+      # leaflet::leafletProxy('nfi_map') |>
+      #   leaflet::clearGroup('plots') |>
+      #   leaflet::addCircles(
+      #     data = aesthetics_data$plot_data,
+      #     group = 'plots', label = ~plot_id, layerId = ~plot_id,
+      #     stroke = FALSE, fillOpacity = 0.7,
+      #     fillColor = aesthetics_data$pal(aesthetics_data$color_vector),
+      #     radius = aesthetics_data$size_vector,
+      #     options = leaflet::pathOptions(pane = 'plots')
+      #   ) |>
+      #   leaflet::addLegend(
+      #     position = 'bottomright', pal = aesthetics_data$pal_legend,
+      #     values = aesthetics_data$color_vector_legend,
+      #     title = names(
+      #       translate_var(
+      #         aesthetics_data$viz_color,
+      #         tables_to_look_at, lang_sel, var_thes, numerical_thes,
+      #         texts_thes, is_summary = TRUE, need_order = FALSE
+      #       )
+      #     ),
+      #     layerId = 'color_legend', opacity = 1,
+      #     na.label = '', className = aesthetics_data$legend_class,
+      #     labFormat = leaflet::labelFormat(
+      #       transform = function(x) {sort(x, decreasing = TRUE)}
+      #     )
+      #   )
     } else {
       # update the map
-      leaflet::leafletProxy('nfi_map') |>
-        leaflet::clearGroup('plots')
+      # leaflet::leafletProxy('nfi_map') |>
+      #   leaflet::clearGroup('plots')
+      mapdeck::mapdeck_update(map_id = session$ns("nfi_map")) |>
+        mapdeck::clear_scatterplot(layer_id = "plots")
     }
   })
 
