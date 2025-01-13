@@ -186,6 +186,7 @@ mod_map <- function(
       fill_color <- rlang::expr(
         aesthetics_data$pal(aesthetics_data$color_vector)
       )
+      custom_opacity <- 1
 
       geometry_column <-
         attr(rlang::eval_tidy(polygon_join_data_expr), 'sf_column')
@@ -210,6 +211,7 @@ mod_map <- function(
       # size vector
       size_vector <- NULL
     } else {
+      custom_opacity <- 0.8
       # data, color is already set in this case
       polygon_data <- rlang::eval_tidy(polygon_join_data_expr)
       # plot data
@@ -292,7 +294,7 @@ mod_map <- function(
         viz_pal_config,
         "low" = scales::col_numeric(
           scales::gradient_n_pal(
-            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            hcl.colors(9, "ag_GrnYl", alpha = custom_opacity),
             c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
           c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
@@ -300,14 +302,14 @@ mod_map <- function(
         ),
         "high" = scales::col_numeric(
           scales::gradient_n_pal(
-            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            hcl.colors(9, "ag_GrnYl", alpha = custom_opacity),
             c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
           c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
           na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
         ),
         "normal" = scales::col_numeric(
-          hcl.colors(256, "ag_GrnYl", alpha = 0.8),
+          hcl.colors(256, "ag_GrnYl", alpha = custom_opacity),
           c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
           na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
         )
@@ -318,7 +320,7 @@ mod_map <- function(
         viz_pal_config,
         "low" = scales::col_numeric(
           scales::gradient_n_pal(
-            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            hcl.colors(9, "ag_GrnYl", alpha = custom_opacity),
             c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.35, 0.55, 1)
           ),
           c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
@@ -326,14 +328,14 @@ mod_map <- function(
         ),
         "high" = scales::col_numeric(
           scales::gradient_n_pal(
-            hcl.colors(9, "ag_GrnYl", alpha = 0.8),
+            hcl.colors(9, "ag_GrnYl", alpha = custom_opacity),
             c(0, 0.45, 0.65, 0.75, 0.8, 0.85, 0.9, 0.95, 1)
           ),
           c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
           na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
         ),
         "normal" = scales::col_numeric(
-          hcl.colors(256, "ag_GrnYl", alpha = 0.8),
+          hcl.colors(256, "ag_GrnYl", alpha = custom_opacity),
           c(min(color_vector_legend, na.rm = TRUE), max(color_vector_legend, na.rm = TRUE)),
           na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
         )
@@ -363,11 +365,11 @@ mod_map <- function(
         mapdeck::mapdeck_legend()
     } else {
       pal <- scales::col_factor(
-        hcl.colors(256, "ag_GrnYl", alpha = 0.8), color_vector,
+        hcl.colors(256, "ag_GrnYl", alpha = custom_opacity), color_vector,
         na.color = "#FFFFFF00", reverse = viz_pal_reverse, alpha = TRUE
       )
       pal_legend <- scales::col_factor(
-        hcl.colors(256, "ag_GrnYl", alpha = 0.8), color_vector,
+        hcl.colors(256, "ag_GrnYl", alpha = custom_opacity), color_vector,
         na.color = "#FFFFFF00", reverse = !viz_pal_reverse, alpha = TRUE
       )
       legend_class <- 'info legend'
@@ -444,10 +446,10 @@ mod_map <- function(
         dplyr::ungroup() |>
         dplyr::mutate(
           hex = rlang::eval_tidy(aesthetics_data$fill_color),
-          # fake_elevation = scales::rescale(aesthetics_data$color_vector, c(100, 10000)),
           tooltip = paste0(
             "<p>", .data[[labels(terms(aesthetics_data$polygon_label))]], ": ", round(.data[[aesthetics_data$viz_color]], 2), "</p>"
-          )
+          ),
+          fake_elevation = 20000 * .data[[aesthetics_data$viz_color]] / max(.data[[aesthetics_data$viz_color]], na.rm = TRUE)
         )
 
       # update the map
@@ -456,11 +458,11 @@ mod_map <- function(
         mapdeck::clear_polygon(layer_id = "polys") |>
         mapdeck::add_polygon(
           data = map_data,
-          fill_colour = "hex", fill_opacity = 0.8,
+          fill_colour = "hex",
           id = labels(terms(aesthetics_data$polygon_label)), layer_id = "polys",
           update_view = FALSE, focus_layer = FALSE,
           tooltip = "tooltip",
-          # elevation = "fake_elevation",
+          elevation = "fake_elevation",
           legend = aesthetics_data$legend_js
         )
     } else {
@@ -536,8 +538,8 @@ mod_map <- function(
         mapdeck::clear_scatterplot(layer_id = "plots") |>
         mapdeck::add_scatterplot(
           data = map_data,
-          fill_colour = "hex", fill_opacity = 0.8,
-          stroke_colour = "hex", stroke_opacity = 0.8,
+          fill_colour = "hex",
+          stroke_colour = "hex",
           id = "plot_id", layer_id = "plots",
           update_view = FALSE, focus_layer = FALSE,
           tooltip = "tooltip",
