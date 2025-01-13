@@ -449,7 +449,14 @@ mod_map <- function(
           tooltip = paste0(
             "<p>", .data[[labels(terms(aesthetics_data$polygon_label))]], ": ", round(.data[[aesthetics_data$viz_color]], 2), "</p>"
           ),
-          fake_elevation = 20000 * .data[[aesthetics_data$viz_color]] / max(.data[[aesthetics_data$viz_color]], na.rm = TRUE)
+          fake_elevation = 20000 * (
+            .data[[aesthetics_data$viz_color]] +
+              abs(min(.data[[aesthetics_data$viz_color]], na.rm = TRUE))
+          ) /
+            max((
+              .data[[aesthetics_data$viz_color]] +
+                abs(min(.data[[aesthetics_data$viz_color]], na.rm = TRUE))
+            ), na.rm = TRUE)
         )
 
       # update the map
