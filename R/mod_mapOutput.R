@@ -465,7 +465,7 @@ mod_map <- function(
         )
     } else {
       mapdeck::mapdeck_update(map_id = session$ns("nfi_map")) |>
-        mapdeck::clear_scatterplot(layer_id = "polys")
+        mapdeck::clear_scatterplot(layer_id = "plots")
     }
   }) # end of polygon observer
 
