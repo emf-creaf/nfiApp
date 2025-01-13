@@ -369,6 +369,9 @@ mod_viz <- function(
             value = selected_pal_reverse, status = 'info'
           )
         )
+      ),
+      shiny::fluidRow(
+        shiny::column(8, shiny::p(text_translate('using_3d', lang(), texts_thes)))
       )
     )
   })

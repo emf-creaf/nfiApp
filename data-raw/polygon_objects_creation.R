@@ -227,6 +227,7 @@ texts_thes <- tibble::tribble(
   "pal_high", "Discriminate higher values", "Discriminar valores altos", "Discriminar valors alts",
   "pal_low", "Discriminate lower values", "Discriminar valores bajos", "Discriminar valors baixos",
   "pal_normal", "Normal", "Normal", "Normal",
+  'using_3d', 'To modify the viewing angle, hold down Ctrl while dragging with the mouse', 'Para modificar el ángulo de visión mantener apretado Ctrl mientras se arrastra con el ratón', "Per modificar l'angle de visió mantenir apretat Ctrl mentre s'arrossega amb el ratolí",
   "main_tab_translation", "Explore", "Explora", "Explora",
   "data_translation", "Data", "Datos", "Dades",
   "filters_translation", "Filters", "Filtros", "Filtres",
