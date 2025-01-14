@@ -206,6 +206,9 @@ $(document).on('shiny:disconnected', function(event) {
       input$lang
     })
 
+    ## mapbox token
+    mapdeck::set_token(Sys.getenv("MAPBOX_TOKEN"))
+
     # cache ####
     data_inputs_cache <- cachem::cache_mem(evict = 'fifo')
     filters_cache <- cachem::cache_mem(evict = 'fifo')
