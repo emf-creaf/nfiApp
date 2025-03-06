@@ -71,16 +71,16 @@ _paq.push(['enableLinkTracking']);
 // Event Tracking Code
 $(document).on('shiny:inputchanged', function(event) {
   if (/^mod_data*/.test(event.name)) {
-    _paq.push(['trackEvent', 'dataInputs', 'updates', event.name, 1, {dimension1: event.value}]);
+    _paq.push(['trackEvent', 'dataInputs', event.name, event.value, 1, {dimension1: event.value}]);
   }
   if (/^mod_save*/.test(event.name)) {
-    _paq.push(['trackEvent', 'saveInputs', 'updates', event.name, 2, {dimension1: event.value}]);
+    _paq.push(['trackEvent', 'saveInputs', event.name, event.value, 2, {dimension1: event.value}]);
   }
   if (/^mod_filters*/.test(event.name)) {
-    _paq.push(['trackEvent', 'filterInputs', 'updates', event.name, 2, {dimension1: event.value}]);
+    _paq.push(['trackEvent', 'filterInputs', event.name, event.value, 2, {dimension1: event.value}]);
   }
   if (/^mod_viz*/.test(event.name)) {
-    _paq.push(['trackEvent', 'vizInputs', 'updates', event.name, 2, {dimension1: event.value}]);
+    _paq.push(['trackEvent', 'vizInputs', event.name, event.value, 2, {dimension1: event.value}]);
   }
 });"
   )
