@@ -56,6 +56,43 @@ $(document).on('shiny:disconnected', function(event) {
 });"
   )
 
+  matomo_script <- shiny::HTML(
+    "var _paq = window._paq = window._paq || [];
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+  var u='https://stats-emf.creaf.cat/';
+  _paq.push(['setTrackerUrl', u+'matomo.php']);
+  _paq.push(['setSiteId', '4']);
+  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+  g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+})();
+
+// Event Tracking Code
+$(document).on('shiny:inputchanged', function(event) {
+  if (/^mod_data*/.test(event.name)) {
+    console.log(event.name)
+    console.log(event.value)
+    _paq.push(['trackEvent', 'dataInputs', 'updates', event.name, 1, {dimension1: event.value}]);
+  }
+  if (/^mod_save*/.test(event.name)) {
+    console.log(event.name)
+    console.log(event.value)
+    _paq.push(['trackEvent', 'saveInputs', 'updates', event.name, 2, {dimension1: event.value}]);
+  }
+  if (/^mod_filters*/.test(event.name)) {
+    console.log(event.name)
+    console.log(event.value)
+    _paq.push(['trackEvent', 'filterInputs', 'updates', event.name, 2, {dimension1: event.value}]);
+  }
+  if (/^mod_viz*/.test(event.name)) {
+    console.log(event.name)
+    console.log(event.value)
+    _paq.push(['trackEvent', 'vizInputs', 'updates', event.name, 2, {dimension1: event.value}]);
+  }
+});"
+  )
+
 
   ## UI ########################################################################
   ui <- shiny::tagList(
@@ -65,6 +102,8 @@ $(document).on('shiny:disconnected', function(event) {
     # waiter
     waiter::use_waiter(),
     # waiter::use_hostess(),
+    # matomo stats
+    shiny::tags$script(matomo_script),
 
     # navbar with inputs (custom function, see helpers.R)
     navbarPageWithInputs(
